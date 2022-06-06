@@ -1,0 +1,164 @@
+{% extends 'base.html' %} {% block content %}
+<!--  -->
+<div class="row mb-2">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Soldes clients</div>
+            <span class="badge bg-primary rounded-pill">
+              {{get_sold_client()}}
+              <small>TND</small>
+            </span>
+          </li>
+
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Solde Portefeuille Cheques</div>
+            <span class="badge bg-primary rounded-pill">
+              {{get_sold_portefeuille(2)}}
+              <small>TND</small>
+            </span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Solde Portefeuille Traites</div>
+            <span class="badge bg-primary rounded-pill">
+              {{get_sold_portefeuille(3)}}
+              <small>TND</small>
+            </span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Solde Impayees Cheques</div>
+            <span class="badge bg-primary rounded-pill">
+              {{get_impayees(2)}}
+              <small>TND</small>
+            </span>
+          </li>
+
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Solde Impayees Traites</div>
+            <span class="badge bg-primary rounded-pill">
+              {{get_impayees(3)}}
+              <small>TND</small>
+            </span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Solde TPE</div>
+            <span class="badge bg-primary rounded-pill">
+              {{get_sold_portefeuille(5)}}
+              <small>TND</small>
+            </span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Solde Ticket Resto</div>
+            <span class="badge bg-primary rounded-pill">
+              {{get_sold_portefeuille(6)}}
+              <small>TND</small>
+            </span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Solde Bancaire</div>
+            <span class="badge bg-primary rounded-pill">
+              {{get_banque()}}
+              <small>TND</small>
+            </span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Solde Caisse</div>
+            <span class="badge bg-primary rounded-pill">
+              {{get_caisse()}}
+              <small>TND</small>
+            </span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Stock en cours</div>
+            <span class="badge bg-primary rounded-pill">
+              {{get_stock()}}
+              <small>TND</small>
+            </span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Engagements Fournisseurs (Cheque)</div>
+            <span class="badge bg-danger rounded-pill">
+              {{get_engagements(2)}}
+              <small>TND</small>
+            </span>
+          </li>
+
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Engagements Fournisseurs (Traite)</div>
+            <span class="badge bg-danger rounded-pill">
+              {{get_engagements(3)}}
+              <small>TND</small>
+            </span>
+          </li>
+
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Dettes Fournisseurs</div>
+            <span class="badge bg-danger rounded-pill">
+              {{ get_engagements(4) }}
+              <small>TND</small>
+            </span>
+          </li>
+        </ul>
+        <ul class="list-group list-group-flush">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">Situation Economique de l'entreprise</div>
+            <span class="badge bg-success rounded-pill">
+              {{ get_sold_client()
+              +get_sold_portefeuille(2)+get_sold_portefeuille(3) +
+              get_sold_portefeuille(5)+ get_sold_portefeuille(6)+ get_caisse()
+              -(get_engagements(2) + get_engagements(3) + get_engagements(4)) }}
+              <small>TND</small>
+            </span>
+          </li>
+
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">
+              Capacite financiere
+              <small>"Caisse+Banque - Engagemen/Dette"</small>
+            </div>
+
+            <span class="badge bg-success rounded-pill">
+              {{ get_banque() + get_caisse()-(get_engagements(2) +
+              get_engagements(3) + get_engagements(4))}}
+              <small>TND</small>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

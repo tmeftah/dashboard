@@ -1,0 +1,30 @@
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+
+#database
+*.sqlite3
+*.database
+*.db

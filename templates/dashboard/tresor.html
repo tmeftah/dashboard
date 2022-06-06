@@ -1,0 +1,63 @@
+{% extends 'base.html' %} {% block content %}
+<!--  -->
+
+<div class="card">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            {% for i in
+            ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]%}
+            <th scope="col">{{i}}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="table-success">
+            <th scope="row">Sold Initial de la Tresorerie</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="table-success">
+            <th scope="row">Encaissement</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="table-secondary">
+            <th scope="row">Decaissement</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="table-secondary">
+            <th scope="row">Solde final de Tresorerie</th>
+            <td colspan="2"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends 'base.html' %} {% block content %}
+
+<!--  -->
+<div class="row mb-2">
+  <div class="col">
+    <button
+      class="btn btn-success float-end"
+      data-bs-toggle="modal"
+      data-bs-target="#addSalesModal"
+    >
+      + Ajouter
+    </button>
+  </div>
+</div>
+<div class="row mb-3">
+  <div class="col">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">Achats</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-sm table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Type de Payment</th>
+                <th scope="col">Montant</th>
+                <th scope="col">Ajouté le</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for purchasing in purchasings %}
+              <tr>
+                <td>{{purchasing.paymentmethod.name}}</td>
+                <td>{{purchasing.amount}} <small>TND</small></td>
+                <td>{{purchasing.date}}</td>
+                <td>
+                  <div class="dropdown me-2">
+                    <a
+                      class="btn btn-link dropdown float-end text-decoration-none"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      ...
+                    </a>
+
+                    <ul
+                      class="dropdown-menu dropdown-menu-end"
+                      aria-labelledby="dropdownMenuButton2"
+                    >
+                      <li><a class="dropdown-item" href="#">Afficher</a></li>
+                      <li>
+                        <a class="dropdown-item" href="#">My Companie 2</a>
+                      </li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li>
+                        <a class="dropdown-item" href="#"
+                          >Ajouter une société</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="addSalesModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form action="/purchasings" method="post">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            Ajouter un nouveau Achat
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Type:</label>
+
+            <label for="recipient-name" class="col-form-label"
+              >Mode de payment:</label
+            >
+            <select
+              name="payment_id"
+              class="form-select"
+              aria-label="Default select example"
+            >
+              {% for payment in paymentmethod %}
+              <option value="{{payment.id}}">{{payment.name}}</option>
+              {% endfor %}
+            </select>
+            <label for="recipient-name" class="col-form-label">Date:</label>
+            <div class="input-group mb-3">
+              <input
+                name="date"
+                type="date"
+                class="form-control"
+                id="date"
+                required
+              />
+            </div>
+
+            <label for="recipient-name" class="col-form-label">Valeur:</label>
+            <div class="input-group mb-3">
+              <input
+                name="amount"
+                type="number"
+                min="0"
+                class="form-control"
+                id="recipient-name"
+                required
+              />
+              <span class="input-group-text">TND</span>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="message-text" class="col-form-label">Message:</label>
+            <textarea
+              name="comment"
+              class="form-control"
+              id="message-text"
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Fermer
+          </button>
+          <button type="submit" class="btn btn-primary">Sauvegarder</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

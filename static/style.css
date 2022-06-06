@@ -1,0 +1,104 @@
+/*  */
+
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&display=swap");
+
+:root {
+  --header-height: 3rem;
+  --nav-width: 250px !important;
+  --first-color: #224b97;
+  --second-color: #3681f0;
+  --first-color-light: rgba(255, 255, 255, 0.6);
+  --white-color: #fff;
+  --body-font: "Sora", sans-serif;
+  --normal-font-size: 0.9rem;
+  --z-fixed: 100;
+}
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: -webkit-fill-available;
+}
+body {
+  font-family: var(--body-font);
+  font-size: var(--normal-font-size);
+  transition: 0.5s;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
+
+a {
+  text-decoration: none;
+}
+
+#top-bar {
+  border-bottom: 1px solid #cacaca;
+}
+
+.navbar {
+  background-color: var(--first-color-light);
+}
+
+.sidebar {
+  width: var(--nav-width);
+  min-width: var(--nav-width);
+  max-width: var(--nav-width);
+
+  background-color: var(--first-color);
+
+  transition: 0.5s;
+  z-index: var(--z-fixed);
+}
+
+.separator {
+  margin: 15px 0px;
+  border-bottom: 1px solid #dddddd;
+}
+
+.nav {
+  display: grid;
+  flex-direction: column;
+  word-wrap: normal;
+  overflow: hidden;
+}
+
+.side {
+  color: var(--first-color-light) !important;
+  margin-bottom: 0.75rem;
+  transition: 0.3s;
+}
+.side:hover {
+  color: var(--white-color) !important;
+}
+
+.nav_icon {
+  font-size: 1.25rem;
+}
+
+.link-active {
+  color: var(--white-color) !important;
+}
+
+.link-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 2px;
+  height: 32px;
+  background-color: var(--white-color);
+}
+
+@media screen and (max-width: 991px) {
+  .sidebar {
+    width: 60px;
+
+    min-width: 60px;
+    max-width: 60px;
+  }
+  .side span {
+    display: none !important;
+  }
+}

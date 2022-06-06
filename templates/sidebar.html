@@ -1,0 +1,135 @@
+<div class="sidebar">
+  <ul class="nav">
+    <li class="nav-item mt-5">
+      <a
+        href="/dashboard"
+        class="nav-link side {%- if request.path == '/dashboard' %} link-active {% endif %} d-flex"
+      >
+        <i class="nav_icon bi bi-heart-pulse"></i>
+        <span class="ms-2 d-none d-md-inline">
+          Situation Financiere et Economique
+        </span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a
+        href="/exploit"
+        class="nav-link side {%- if request.path == '/exploit' %} link-active {% endif %} d-flex"
+      >
+        <i class="nav_icon bi bi-building"></i>
+        <span class="ms-2 d-none d-md-inline">
+          Tableau de board d'exploitation
+        </span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a
+        href="/tresor"
+        class="nav-link side {%- if request.path == '/tresor' %} link-active {% endif %} d-flex"
+      >
+        <i class="nav_icon bi bi-cash-stack"></i>
+        <span class="ms-2 d-none d-md-inline"
+          >Tableau de board de Tresorerie</span
+        >
+      </a>
+    </li>
+
+    <!-- 
+
+    -->
+    <span class="separator"></span>
+    <li class="nav-item">
+      <a
+        href="/companies"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/companies' %} link-active {% endif %}"
+      >
+        <i class="nav_icon bi bi-journal"></i>
+        <span class="ms-2">Clients / Fournisseurs</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a
+        href="/sales"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/sales' %} link-active {% endif %}"
+      >
+        <i class="nav_icon bi bi-currency-exchange"></i>
+        <span class="ms-2">Chiffre d'affaires</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a
+        href="/costs"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/costs' %} link-active {% endif %}"
+      >
+        <i class="nav_icon bi bi-bag"></i>
+        <span class="ms-2">Charges</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a
+        href="/purchasings"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/purchasings' %} link-active {% endif %}"
+      >
+        <i class="nav_icon bi bi-cart"></i>
+        <span class="ms-2">Achats</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a
+        href="/stocks"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/stocks' %} link-active {% endif %}"
+      >
+        <i class="nav_icon bi bi-boxes"></i>
+        <span class="ms-2">Stock</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a
+        href="/recovers"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/recovers' %} link-active {% endif %}"
+      >
+        <i class="nav_icon bi bi-shuffle"></i>
+        <span class="ms-2">Recouvrements</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a
+        href="/rapprochements"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/rapprochements' %} link-active {% endif %}"
+      >
+        <i class="nav_icon bi bi-bank"></i>
+        <span class="ms-2">Rapprochement</span>
+      </a>
+    </li>
+
+    <span
+      class="mb-2"
+      style="border-bottom: 2px solid #b4b4b4; width: 100%"
+    ></span>
+
+    <li class="nav-item">
+      <a href="#" class="nav-link side ms-3 px-0 align-middle">
+        <i class="bi bi-people"></i>
+        <span class="ms-2"> Utilisateurs </span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="#" class="nav-link side ms-3 px-0 align-middle">
+        <i class="bi bi-bar-chart"></i>
+        <span class="ms-2"> Rapports </span>
+      </a>
+    </li>
+    <li>
+      <a href="#" class="nav-link side ms-3 px-0 align-middle">
+        <i class="bi bi-gear"></i>
+        <span class="ms-2 d-none d-sm-inline"> Paramèters </span>
+      </a>
+    </li>
+  </ul>
+</div>

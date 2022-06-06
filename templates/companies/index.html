@@ -1,0 +1,94 @@
+{% extends 'base.html' %} {% block content %}
+
+<!--  -->
+<div class="row mb-2">
+  <div class="col">
+    <button
+      class="btn btn-success float-end"
+      data-bs-toggle="modal"
+      data-bs-target="#addSalesModal"
+    >
+      + Ajouter
+    </button>
+  </div>
+</div>
+<!--  -->
+
+<div class="row mb-2">
+  <div class="col">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">Clients</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="table-responsive mb-0">
+          <table class="table table-sm table-striped">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Type</th>
+                <th scope="col">Contact</th>
+                <th scope="col">Chiffre d'affaire</th>
+                <th scope="col">Ajouté le</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for company in companies %}
+              <tr>
+                <th scope="row">1</th>
+                <td>{{company.name}}</td>
+                <td>
+                  Client: {% if company.is_customer %}
+                  <i class="bi bi-check"></i> {%else%}
+                  <i class="bi bi-x"></i> {% endif %} <br />
+                  Fournissour: {% if company.is_supplier %}
+                  <i class="bi bi-check"></i> {% else %}
+                  <i class="bi bi-x"></i> {% endif %}
+                </td>
+                <td>
+                  Email: {{company.email|default("...", true)}}
+                  <br />Phone: {{company.phone|default("...", true)}}
+                </td>
+                <td>{{ company.sales | sum(attribute='amount') }} TND</td>
+                <td>{{company.createdAt}}</td>
+                <td>
+                  <div class="dropdown" style="position: static; z-index: 2000">
+                    <button
+                      class="btn btn-primary dropdown btn-sm"
+                      type="button"
+                      id="dropdownMenuButton1"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      ...
+                    </button>
+                    <ul
+                      class="dropdown-menu"
+                      aria-labelledby="dropdownMenuButton1"
+                    >
+                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li>
+                        <a class="dropdown-item" href="#">Another action</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#"
+                          >Something else here</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
