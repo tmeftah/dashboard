@@ -15,52 +15,52 @@ def init_db():
     from models import PaymentMethod, SalesCategories, Companies, CostsDef
 
     # Recreate database each time for demo
-    # Base.metadata.drop_all(bind=engine)
+    Base.metadata.drop_all(bind=engine)
 
     Base.metadata.create_all(bind=engine)
 
     # init clients
-    # db_session.add(
-    #     Companies(name="Client n°1", email="client1@client.com", customer=True, supplier=False)
-    # )
-    # db_session.add(
-    #     Companies(name="Client n°2", email="client2@client.com", customer=True, supplier=False)
-    # )
-    # db_session.add(
-    #     Companies(
-    #         name="Fournisseur n°1", email="fournisseur1@client.com", customer=False, supplier=True
-    #     )
-    # )
-    # db_session.add(
-    #     Companies(
-    #         name="Fournisseur n°2", email="fournisseur2@client.com", customer=False, supplier=True
-    #     )
-    # )
+    db_session.add(
+        Companies(name="Client n°1", email="client1@client.com", customer=True, supplier=False)
+    )
+    db_session.add(
+        Companies(name="Client n°2", email="client2@client.com", customer=True, supplier=False)
+    )
+    db_session.add(
+        Companies(
+            name="Fournisseur n°1", email="fournisseur1@client.com", customer=False, supplier=True
+        )
+    )
+    db_session.add(
+        Companies(
+            name="Fournisseur n°2", email="fournisseur2@client.com", customer=False, supplier=True
+        )
+    )
 
-    # db_session.add(
-    #     Companies(
-    #         name="Client/Fournisseur n°2",
-    #         email="client/fournisseur@client.com",
-    #         customer=True,
-    #         supplier=True,
-    #     )
-    # )
+    db_session.add(
+        Companies(
+            name="Client/Fournisseur n°2",
+            email="client/fournisseur@client.com",
+            customer=True,
+            supplier=True,
+        )
+    )
 
-    # # init mode de payment
-    # db_session.add(PaymentMethod(name="Espèce"))  # 1
-    # db_session.add(PaymentMethod(name="Chèque"))  # 2
-    # db_session.add(PaymentMethod(name="Traite"))  # 3
-    # db_session.add(PaymentMethod(name="Credit"))  # 4
-    # db_session.add(PaymentMethod(name="TPE"))  # 5
-    # db_session.add(PaymentMethod(name="Ticket Resto"))  # 6
-    # db_session.add(PaymentMethod(name="Virement Banquaire"))  # 7
+    # init mode de payment
+    db_session.add(PaymentMethod(name="Espèce"))  # 1
+    db_session.add(PaymentMethod(name="Chèque"))  # 2
+    db_session.add(PaymentMethod(name="Traite"))  # 3
+    db_session.add(PaymentMethod(name="Credit"))  # 4
+    db_session.add(PaymentMethod(name="TPE"))  # 5
+    db_session.add(PaymentMethod(name="Ticket Resto"))  # 6
+    db_session.add(PaymentMethod(name="Virement Banquaire"))  # 7
 
-    # # init CA categorie
-    # db_session.add(SalesCategories(name="Gros"))
-    # db_session.add(SalesCategories(name="Magasin"))
+    # init CA categorie
+    db_session.add(SalesCategories(name="Gros"))
+    db_session.add(SalesCategories(name="Magasin"))
 
-    # # init CostDef
-    # db_session.add(CostsDef(name="LOYER", fixed=True))
-    # db_session.add(CostsDef(name="Carburant", fixed=False))
+    # init CostDef
+    db_session.add(CostsDef(name="LOYER", fixed=True))
+    db_session.add(CostsDef(name="Carburant", fixed=False))
 
-    # db_session.commit()
+    db_session.commit()
