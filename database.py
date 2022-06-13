@@ -53,6 +53,7 @@ def init_db():
     # db_session.add(PaymentMethod(name="Credit"))  # 4
     # db_session.add(PaymentMethod(name="TPE"))  # 5
     # db_session.add(PaymentMethod(name="Ticket Resto"))  # 6
+    # db_session.add(PaymentMethod(name="Virement Banquaire"))  # 7
 
     # # init CA categorie
     # db_session.add(SalesCategories(name="Gros"))

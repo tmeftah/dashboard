@@ -35,6 +35,18 @@
       </a>
     </li>
 
+    <li class="nav-item">
+      <a
+        href="/#"
+        class="nav-link side {%- if request.path == '/#' %} link-active {% endif %} d-flex"
+      >
+        <i class="nav_icon bi bi-heart-pulse"></i>
+        <span class="ms-2 d-none d-md-inline">
+          Tableau de board Marketing
+        </span>
+      </a>
+    </li>
+
     <!-- 
 
     -->
@@ -100,8 +112,20 @@
 
     <li class="nav-item">
       <a
-        href="/rapprochements"
-        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/rapprochements' %} link-active {% endif %}"
+        href="/payments"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/payments' %} link-active {% endif %}"
+      >
+        <i class="nav_icon bi bi-credit-card-2-back"></i>
+        <span class="ms-2"
+          >Payment des Dettes (<small>Fournisseur/Charge</small>)</span
+        >
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a
+        href="/reconciliations"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/reconciliations' %} link-active {% endif %}"
       >
         <i class="nav_icon bi bi-bank"></i>
         <span class="ms-2">Rapprochement</span>

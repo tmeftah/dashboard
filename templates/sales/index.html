@@ -24,9 +24,9 @@
           <table class="table table-sm table-striped">
             <thead>
               <tr>
-                <th scope="col">Categorie</th>
+                <th scope="col">Categorie (a suprimee)</th>
                 <th scope="col">Client</th>
-                <th scope="col">Type de Payment</th>
+                <th scope="col">Mode de Payment</th>
                 <th scope="col">Montant</th>
                 <th scope="col">Ajouté le</th>
                 <th scope="col"></th>
@@ -70,6 +70,11 @@
                 </td>
               </tr>
               {% endfor %}
+              <tr>
+                <td colspan="2"></td>
+                <td>Somme:</td>
+                <td colspan="2">{{sales| sum(attribute='amount')}}</td>
+              </tr>
             </tbody>
           </table>
         </div>

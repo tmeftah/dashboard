@@ -24,16 +24,17 @@
           <table class="table table-sm table-striped">
             <thead>
               <tr>
-                <th scope="col">Valeur</th>
                 <th scope="col">Ajouté le</th>
+                <th scope="col">Valeur</th>
                 <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
-              {% for sale in sales %}
+              {% for stock in stocks %}
               <tr>
-                <td>{{sale.amount}} <small>TND</small></td>
-                <td>{{sale.date}}</td>
+                <td>{{stock.date}}</td>
+                <td>{{stock.amount}} <small>TND</small></td>
+
                 <td>
                   <div class="dropdown me-2">
                     <a
@@ -82,10 +83,10 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action="/sales" method="post">
+      <form action="/stocks" method="post">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
-            Ajouter un nouveau Chiffre d'affaire
+            Ajouter un nouveau Stock
           </h5>
           <button
             type="button"
@@ -96,42 +97,6 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label for="recipient-name" class="col-form-label"
-              >Categorie:</label
-            >
-            <select
-              name="categorie_id"
-              class="form-select"
-              aria-label="Default select example"
-            >
-              {% for categorie in salescategories %}
-              <option value="{{categorie.id}}">{{categorie.name}}</option>
-              {% endfor %}
-            </select>
-
-            <label for="recipient-name" class="col-form-label">Client:</label>
-            <select
-              name="company_id"
-              class="form-select"
-              aria-label="Default select example"
-            >
-              {% for company in companies %}
-              <option value="{{company.id}}">{{company.name}}</option>
-              {% endfor %}
-            </select>
-
-            <label for="recipient-name" class="col-form-label"
-              >Mode de payment:</label
-            >
-            <select
-              name="payment_id"
-              class="form-select"
-              aria-label="Default select example"
-            >
-              {% for payment in paymentmethod %}
-              <option value="{{payment.id}}">{{payment.name}}</option>
-              {% endfor %}
-            </select>
             <label for="recipient-name" class="col-form-label">Date:</label>
             <div class="input-group mb-3">
               <input

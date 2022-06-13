@@ -15,7 +15,9 @@
 <div class="row mb-3">
   <div class="col">
     <div class="card">
-      <div class="card-header"><h5 class="card-title">Charges</h5></div>
+      <div class="card-header">
+        <h5 class="card-title">Rapprochements</h5>
+      </div>
 
       <div class="card-body">
         <div class="table-responsive">
@@ -31,12 +33,16 @@
               </tr>
             </thead>
             <tbody>
-              {% for cost in costsmappings %}
+              {% for reconciliation in reconciliations %}
               <tr>
-                <td>{{cost.costsdef.name}}</td>
-                <td>{{cost.paymentmethod.name}}</td>
-                <td>{{cost.amount}} <small>TND</small></td>
-                <td>{{cost.date}}</td>
+                <td>{{reconciliation.company.name}}</td>
+                <td>
+                  {% if reconciliation.cashing ==True %} Encaissement {% else %}
+                  Decaissement {% endif %}
+                </td>
+                <td>{{reconciliation.paymentmethod.name}}</td>
+                <td>{{reconciliation.amount}} <small>TND</small></td>
+                <td>{{reconciliation.date}}</td>
                 <td>
                   <div class="dropdown me-2">
                     <a
@@ -85,10 +91,10 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action="/costs" method="post">
+      <form action="/reconciliations" method="post">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
-            Ajouter une nouvelle Charge
+            Ajouter un nouveau Rapprochement
           </h5>
           <button
             type="button"
@@ -99,15 +105,16 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label for="recipient-name" class="col-form-label">Type:</label>
+            <label for="recipient-name" class="col-form-label"
+              >Type de Rapprochement:</label
+            >
             <select
-              name="cost_id"
+              name="cashing"
               class="form-select"
               aria-label="Default select example"
             >
-              {% for costsdef in costsdefs %}
-              <option value="{{costsdef.id}}">{{costsdef.name}}</option>
-              {% endfor %}
+              <option value="1">Encaissement</option>
+              <option value="0">Decaissement</option>
             </select>
 
             <label for="recipient-name" class="col-form-label"
@@ -122,6 +129,20 @@
               <option value="{{payment.id}}">{{payment.name}}</option>
               {% endfor %}
             </select>
+
+            <label for="recipient-name" class="col-form-label"
+              >Client/Fournisseur:</label
+            >
+            <select
+              name="company_id"
+              class="form-select"
+              aria-label="Default select example"
+            >
+              {% for companie in companies %}
+              <option value="{{companie.id}}">{{companie.name}}</option>
+              {% endfor %}
+            </select>
+
             <label for="recipient-name" class="col-form-label">Date:</label>
             <div class="input-group mb-3">
               <input

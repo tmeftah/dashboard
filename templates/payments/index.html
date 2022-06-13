@@ -15,9 +15,7 @@
 <div class="row mb-3">
   <div class="col">
     <div class="card">
-      <div class="card-header">
-        <h5 class="card-title">Rapprochements</h5>
-      </div>
+      <div class="card-header"><h5 class="card-title">Paiements</h5></div>
 
       <div class="card-body">
         <div class="table-responsive">
@@ -25,24 +23,19 @@
             <thead>
               <tr>
                 <th scope="col">Nom</th>
-
-                <th scope="col">Type de Payment</th>
+                <th scope="col">Mode de Payment</th>
                 <th scope="col">Montant</th>
                 <th scope="col">Ajouté le</th>
                 <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
-              {% for rapprochement in rapprochements %}
+              {% for recover in recovers %}
               <tr>
-                <td>{{rapprochement.company.name}}</td>
-                <td>
-                  {% if rapprochement.cashing ==True %} Encaissement {% else %}
-                  Decaissement {% endif %}
-                </td>
-                <td>{{rapprochement.paymentmethod.name}}</td>
-                <td>{{rapprochement.amount}} <small>TND</small></td>
-                <td>{{rapprochement.date}}</td>
+                <td>{{recover.company.name}}</td>
+                <td>{{recover.paymentmethod.name}}</td>
+                <td>{{recover.amount}} <small>TND</small></td>
+                <td>{{recover.date}}</td>
                 <td>
                   <div class="dropdown me-2">
                     <a
@@ -91,10 +84,10 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action="/rapprochements" method="post">
+      <form action="/recovers" method="post">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
-            Ajouter un nouveau Rapprochement
+            Ajouter un nouveau Paiement
           </h5>
           <button
             type="button"
@@ -106,15 +99,27 @@
         <div class="modal-body">
           <div class="mb-3">
             <label for="recipient-name" class="col-form-label"
-              >Type de Rapprochement:</label
+              >Type de recouvremnet:</label
             >
             <select
-              name="cashing"
+              name="payment_id-"
               class="form-select"
               aria-label="Default select example"
             >
-              <option value="1">Encaissement</option>
-              <option value="0">Decaissement</option>
+              <option value="">REC Solde Client</option>
+              <option value="">REC Solde impayees Cheques</option>
+              <option value="">REC Solde impayees Traites</option>
+            </select>
+
+            <label for="recipient-name" class="col-form-label">Client:</label>
+            <select
+              name="company_id"
+              class="form-select"
+              aria-label="Default select example"
+            >
+              {% for company in companies %}
+              <option value="{{company.id}}">{{company.name}}</option>
+              {% endfor %}
             </select>
 
             <label for="recipient-name" class="col-form-label"
@@ -129,20 +134,6 @@
               <option value="{{payment.id}}">{{payment.name}}</option>
               {% endfor %}
             </select>
-
-            <label for="recipient-name" class="col-form-label"
-              >Client/Fournisseur:</label
-            >
-            <select
-              name="company_id"
-              class="form-select"
-              aria-label="Default select example"
-            >
-              {% for companie in companies %}
-              <option value="{{companie.id}}">{{companie.name}}</option>
-              {% endfor %}
-            </select>
-
             <label for="recipient-name" class="col-form-label">Date:</label>
             <div class="input-group mb-3">
               <input

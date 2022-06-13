@@ -26,7 +26,18 @@
             <td></td>
           </tr>
           <tr class="table-success">
-            <th scope="row">Encaissement</th>
+            <th scope="row">
+              <span
+                data-bs-toggle="collapse"
+                href="#encaisse"
+                role="button"
+                aria-expanded="false"
+                aria-controls="encaisse"
+              >
+                (+)
+              </span>
+              Encaissement
+            </th>
             <td></td>
             <td></td>
             <td></td>
@@ -35,8 +46,31 @@
             <td></td>
             <td></td>
           </tr>
+          {% for paymentmethod in paymentmethods%}
+          <tr class="collapse" id="encaisse">
+            <th scope="row">{{paymentmethod.name}}</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          {% endfor %}
           <tr class="table-secondary">
-            <th scope="row">Decaissement</th>
+            <th scope="row">
+              <span
+                data-bs-toggle="collapse"
+                href="#decaisse"
+                role="button"
+                aria-expanded="false"
+                aria-controls="decaisse"
+              >
+                (+)
+              </span>
+              Decaissement
+            </th>
             <td></td>
             <td></td>
             <td></td>
@@ -45,6 +79,18 @@
             <td></td>
             <td></td>
           </tr>
+          {% for paymentmethod in paymentmethods%}
+          <tr class="collapse" id="decaisse">
+            <th scope="row">{{paymentmethod.name}}</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          {% endfor %}
           <tr class="table-secondary">
             <th scope="row">Solde final de Tresorerie</th>
             <td colspan="2"></td>

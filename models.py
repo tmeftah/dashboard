@@ -45,7 +45,8 @@ class Companies(Base, DictMixIn):
 
     sales = relationship("Sales", back_populates="company")
     recovers = relationship("Recovers", back_populates="company")
-    rapprochements = relationship("Rapprochements", back_populates="company")
+    payments = relationship("Payments", back_populates="company")
+    reconciliations = relationship("Reconciliations", back_populates="company")
 
     def __init__(self, name=None, email=None, customer=True, supplier=False):
         self.name = name
@@ -122,7 +123,8 @@ class PaymentMethod(Base, DictMixIn):
     costsmappings = relationship("CostsMapping", back_populates="paymentmethod")
     purchasings = relationship("Purchasing", back_populates="paymentmethod")
     recovers = relationship("Recovers", back_populates="paymentmethod")
-    rapprochements = relationship("Rapprochements", back_populates="paymentmethod")
+    payments = relationship("Payments", back_populates="paymentmethod")
+    reconciliations = relationship("Reconciliations", back_populates="paymentmethod")
 
     def __init__(self, name=None):
         self.name = name
@@ -243,8 +245,8 @@ class Recovers(Base, DictMixIn):
         return f"<Recovers {self.company.name!r}>"
 
 
-class Rapprochements(Base, DictMixIn):
-    __tablename__ = "rapprochements"
+class Reconciliations(Base, DictMixIn):
+    __tablename__ = "reconciliations"
 
     # categorie_id = Column(Integer, ForeignKey("salescategories.id"), nullable=False)
     paymentmethod_id = Column(Integer, ForeignKey("paymentmethod.id"), nullable=False)
@@ -258,8 +260,8 @@ class Rapprochements(Base, DictMixIn):
     comment = Column(String(50), nullable=False)
 
     # categorie = relationship("SalesCategories", back_populates="sales")
-    paymentmethod = relationship("PaymentMethod", back_populates="rapprochements")
-    company = relationship("Companies", back_populates="rapprochements")
+    paymentmethod = relationship("PaymentMethod", back_populates="reconciliations")
+    company = relationship("Companies", back_populates="reconciliations")
 
     def __init__(
         self,
@@ -281,7 +283,7 @@ class Rapprochements(Base, DictMixIn):
         self.comment = comment
 
     def __repr__(self):
-        return f"<Rapprochements {self.id!r}>"
+        return f"<Reconciliations {self.id!r}>"
 
 
 class Stocks(Base, DictMixIn):
@@ -305,3 +307,39 @@ class Stocks(Base, DictMixIn):
 
     def __repr__(self):
         return f"<Stocks {self.id!r}>"
+
+
+class Payments(Base, DictMixIn):
+    __tablename__ = "payments"
+
+    # categorie_id = Column(Integer, ForeignKey("salescategories.id"), nullable=False)
+    paymentmethod_id = Column(Integer, ForeignKey("paymentmethod.id"), nullable=False)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
+    date = Column(Date, default=datetime.datetime.now)
+
+    amount = Column(Float, default=0.0)
+    comment = Column(String(50), nullable=False)
+
+    # categorie = relationship("SalesCategories", back_populates="sales")
+    paymentmethod = relationship("PaymentMethod", back_populates="payments")
+    company = relationship("Companies", back_populates="payments")
+
+    def __init__(
+        self,
+        # categorie_id=None,
+        company_id=None,
+        paymentmethod_id=None,
+        date=None,
+        amount=0.0,
+        comment=None,
+    ):
+
+        # self.categorie_id = categorie_id
+        self.company_id = company_id
+        self.paymentmethod_id = paymentmethod_id
+        self.date = date
+        self.amount = amount
+        self.comment = comment
+
+    def __repr__(self):
+        return f"<Recovers {self.company.name!r}>"

@@ -20,7 +20,6 @@
       <div class="card-header">
         <h5 class="card-title">Clients</h5>
       </div>
-
       <div class="card-body">
         <div class="table-responsive mb-0">
           <table class="table table-sm table-striped">
@@ -28,7 +27,7 @@
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Nom</th>
-                <th scope="col">Type</th>
+                <th scope="col">Type ( Hotel /Grossiste etc..)</th>
                 <th scope="col">Contact</th>
                 <th scope="col">Chiffre d'affaire</th>
                 <th scope="col">Ajouté le</th>
@@ -45,7 +44,7 @@
                   Client: {% if company.is_customer %}
                   <i class="bi bi-check"></i> {%else%}
                   <i class="bi bi-x"></i> {% endif %} <br />
-                  Fournissour: {% if company.is_supplier %}
+                  Fournisseur: {% if company.is_supplier %}
                   <i class="bi bi-check"></i> {% else %}
                   <i class="bi bi-x"></i> {% endif %}
                 </td>

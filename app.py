@@ -1,4 +1,3 @@
-from xmlrpc.client import boolean
 from flask import Flask, render_template, request, redirect, url_for, flash
 from sqlalchemy import desc
 from sqlalchemy.orm import scoped_session
@@ -13,17 +12,18 @@ from models import (
     CostsDef,
     CostsMapping,
     Purchasing,
-    Rapprochements,
+    Reconciliations,
     Stocks,
 )
 from utils import (
-    get_sold_client,
+    get_sold_clients,
     get_sold_portefeuille,
     get_impayees,
     get_banque,
     get_caisse,
     get_stock,
     get_engagements,
+    get_chiffre_affaire,
 )
 import datetime
 
@@ -46,28 +46,52 @@ def index():
 @app.route("/dashboard")
 def dashboard():
 
+    companies = db_session.query(Companies).filter(Companies.customer == True).all()
+
     return render_template(
         "dashboard/dashboard.html",
-        get_sold_client=get_sold_client,
+        get_sold_clients=get_sold_clients,
         get_sold_portefeuille=get_sold_portefeuille,
         get_impayees=get_impayees,
         get_banque=get_banque,
         get_caisse=get_caisse,
         get_stock=get_stock,
         get_engagements=get_engagements,
+        companies=companies,
     )
 
 
 @app.route("/exploit")
 def exploit():
+    salesCategories = db_session.query(SalesCategories).all()
 
-    return render_template("dashboard/exploit.html")
+    return render_template(
+        "dashboard/exploit.html",
+        salesCategories=salesCategories,
+        get_chiffre_affaire=get_chiffre_affaire,
+    )
 
 
 @app.route("/tresor")
 def tresor():
+    paymentmethods = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
-    return render_template("dashboard/tresor.html")
+    encaiss = (
+        db_session.query(Reconciliations)
+        .filter(Reconciliations.cashing == True)
+        .order_by(desc(Reconciliations.date))
+        .all()
+    )
+    decaiss = (
+        db_session.query(Reconciliations)
+        .filter(Reconciliations.cashing == False)
+        .order_by(desc(Reconciliations.date))
+        .all()
+    )
+
+    return render_template(
+        "dashboard/tresor.html", encaiss=encaiss, decaiss=decaiss, paymentmethods=paymentmethods
+    )
 
 
 @app.route("/companies")
@@ -78,10 +102,25 @@ def companies():
 
 @app.route("/sales", methods=["GET"])
 def sales():
-    sales = db_session.query(Sales).order_by(desc(Sales.date)).all()
+    categorie = request.args.get("categorie", type=int, default=0)
+
+    paymentme = request.args.get("paymentmethod", type=int, default=0)
+    print(categorie)
+    print(paymentme)
+
+    query = db_session.query(Sales)
+
+    if categorie:
+        query = query.filter(Sales.categorie_id == categorie)
+
+    if paymentme:
+        query = query.filter(Sales.paymentmethod_id == paymentme)
+
+    sales = query.order_by(desc(Sales.date)).all()
+
     companies = db_session.query(Companies).filter_by(customer=True).all()
     salescategories = db_session.query(SalesCategories).all()
-    paymentmethod = db_session.query(PaymentMethod).all()
+    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/sales/index.html",
@@ -133,7 +172,7 @@ def salescategories():
 def costs():
     costsmappings = db_session.query(CostsMapping).order_by(desc(CostsMapping.date)).all()
     costsdefs = db_session.query(CostsDef).all()
-    paymentmethod = db_session.query(PaymentMethod).all()
+    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/costs/index.html",
@@ -230,25 +269,108 @@ def recovers():
         recovers=recovers,
         paymentmethod=paymentmethod,
         companies=companies,
+        get_sold_clients=get_sold_clients,
     )
 
 
-@app.route("/rapprochements", methods=["GET"])
-def rapprochements():
-    rapprochements = db_session.query(Rapprochements).order_by(desc(Rapprochements.date)).all()
-    companies = db_session.query(Companies).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.in_([2, 3])).all()
+@app.route("/recovers", methods=["POST"])
+def add_recovers():
+    categorie_id = request.form.get("categorie_id", type=int)
+    company_id = request.form.get("company_id", type=int)
+    payment_id = request.form.get("payment_id")
+    date = request.form.get("date")
+    amount = request.form.get("amount")
+    comment = request.form.get("comment")
+
+    new_recover = Recovers(
+        # categorie_id=categorie_id,
+        company_id=company_id,
+        paymentmethod_id=payment_id,
+        date=datetime.datetime.strptime(date, "%Y-%m-%d"),
+        amount=amount,
+        comment=comment,
+    )
+
+    try:
+        db_session.add(new_recover)
+        db_session.commit()
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
+        flash("db error", category="error")
+
+    else:
+        flash("Recovers ajouter", category="success")
+
+    return redirect(url_for("recovers"))
+
+
+@app.route("/payments", methods=["GET"])
+def payments():
+    recovers = db_session.query(Recovers).order_by(desc(Recovers.date)).all()
+    companies = db_session.query(Companies).filter_by(customer=True).all()
+
+    paymentmethod = (
+        db_session.query(PaymentMethod).filter(PaymentMethod.name.not_like("Credit")).all()
+    )
 
     return render_template(
-        "/rapprochements/index.html",
-        rapprochements=rapprochements,
+        "/payments/index.html",
+        recovers=recovers,
+        paymentmethod=paymentmethod,
+        companies=companies,
+        get_sold_clients=get_sold_clients,
+    )
+
+
+@app.route("/payments", methods=["POST"])
+def add_payments():
+    categorie_id = request.form.get("categorie_id", type=int)
+    company_id = request.form.get("company_id", type=int)
+    payment_id = request.form.get("payment_id")
+    date = request.form.get("date")
+    amount = request.form.get("amount")
+    comment = request.form.get("comment")
+
+    new_payment = Recovers(
+        # categorie_id=categorie_id,
+        company_id=company_id,
+        paymentmethod_id=payment_id,
+        date=datetime.datetime.strptime(date, "%Y-%m-%d"),
+        amount=amount,
+        comment=comment,
+    )
+
+    try:
+        db_session.add(new_payment)
+        db_session.commit()
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
+        flash("db error", category="error")
+
+    else:
+        flash("Recovers ajouter", category="success")
+
+    return redirect(url_for("recovers"))
+
+
+@app.route("/reconciliations", methods=["GET"])
+def reconciliations():
+    reconciliations = db_session.query(Reconciliations).order_by(desc(Reconciliations.date)).all()
+    companies = db_session.query(Companies).all()
+    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
+
+    return render_template(
+        "/reconciliations/index.html",
+        reconciliations=reconciliations,
         paymentmethod=paymentmethod,
         companies=companies,
     )
 
 
-@app.route("/rapprochements", methods=["POST"])
-def add_rapprochements():
+@app.route("/reconciliations", methods=["POST"])
+def add_reconciliations():
     categorie_id = request.form.get("categorie_id", type=int)
     company_id = request.form.get("company_id", type=int)
     cashing = request.form.get("cashing", type=int)
@@ -257,7 +379,7 @@ def add_rapprochements():
     amount = request.form.get("amount")
     comment = request.form.get("comment")
 
-    new_rapprochement = Rapprochements(
+    new_reconciliation = Reconciliations(
         # categorie_id=categorie_id,
         cashing=cashing,
         company_id=company_id,
@@ -268,7 +390,7 @@ def add_rapprochements():
     )
 
     try:
-        db_session.add(new_rapprochement)
+        db_session.add(new_reconciliation)
         db_session.commit()
     except SQLAlchemyError as e:
         print(e)
@@ -278,7 +400,7 @@ def add_rapprochements():
     else:
         flash("Rapprochement ajouter", category="success")
 
-    return redirect(url_for("rapprochements"))
+    return redirect(url_for("reconciliations"))
 
 
 @app.route("/stocks", methods=["GET"])

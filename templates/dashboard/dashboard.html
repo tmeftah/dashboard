@@ -4,54 +4,191 @@
   <div class="col-12">
     <div class="card">
       <div class="card-body">
+        <!-- Sold Client -->
         <ul class="list-group list-group-flush">
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
-            <div class="me-auto">Soldes clients</div>
+            <div class="me-auto">
+              <span
+                data-bs-toggle="collapse"
+                href="#soldClient"
+                role="button"
+                aria-expanded="false"
+                aria-controls="soldClient"
+              >
+                (+)
+              </span>
+              Soldes clients
+            </div>
             <span class="badge bg-primary rounded-pill">
-              {{get_sold_client()}}
+              {{get_sold_clients()}}
               <small>TND</small>
             </span>
           </li>
+          <ul class="collapse list-group list-group-flush" id="soldClient">
+            {% for company in companies %}
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start list-group-item-info"
+            >
+              <div class="me-auto ps-3">{{company.name}}</div>
+              <span class="badge bg-primary rounded-pill">
+                {{get_sold_clients(company.id)}}
+                <small>TND</small>
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+
+          <!-- port Cheque -->
 
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
-            <div class="me-auto">Solde Portefeuille Cheques</div>
+            <div class="me-auto">
+              <span
+                data-bs-toggle="collapse"
+                href="#portCheque"
+                role="button"
+                aria-expanded="false"
+                aria-controls="portCheque"
+              >
+                (+)
+              </span>
+              Solde Portefeuille Cheques
+            </div>
             <span class="badge bg-primary rounded-pill">
-              {{get_sold_portefeuille(2)}}
+              {{get_sold_portefeuille(pay_methode=2)}}
               <small>TND</small>
             </span>
           </li>
+
+          <ul class="collapse list-group list-group-flush" id="portCheque">
+            {% for company in companies %}
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start list-group-item-info"
+            >
+              <div class="me-auto ps-3">{{company.name}}</div>
+              <span class="badge bg-primary rounded-pill">
+                {{get_sold_portefeuille(company.id,pay_methode=2)}}
+                <small>TND</small>
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+
+          <!-- port Traites -->
+
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
-            <div class="me-auto">Solde Portefeuille Traites</div>
+            <div class="me-auto">
+              <span
+                data-bs-toggle="collapse"
+                href="#portTraite"
+                role="button"
+                aria-expanded="false"
+                aria-controls="portTraite"
+              >
+                (+)
+              </span>
+              Solde Portefeuille Traites
+            </div>
             <span class="badge bg-primary rounded-pill">
-              {{get_sold_portefeuille(3)}}
+              {{get_sold_portefeuille(pay_methode=3)}}
               <small>TND</small>
             </span>
           </li>
+          <ul class="collapse list-group list-group-flush" id="portTraite">
+            {% for company in companies %}
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start list-group-item-info"
+            >
+              <div class="me-auto ps-3">{{company.name}}</div>
+              <span class="badge bg-primary rounded-pill">
+                {{get_sold_portefeuille(company.id,pay_methode=3)}}
+                <small>TND</small>
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+
+          <!-- Impayee Cheques  -->
+
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
-            <div class="me-auto">Solde Impayees Cheques</div>
+            <div class="me-auto">
+              <span
+                data-bs-toggle="collapse"
+                href="#impCheque"
+                role="button"
+                aria-expanded="false"
+                aria-controls="impCheque"
+              >
+                (+)
+              </span>
+              Solde Impayees Cheques
+            </div>
             <span class="badge bg-primary rounded-pill">
               {{get_impayees(2)}}
               <small>TND</small>
             </span>
           </li>
 
+          <ul class="collapse list-group list-group-flush" id="impCheque">
+            {% for company in companies %}
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start list-group-item-info"
+            >
+              <div class="me-auto ps-3">{{company.name}}</div>
+              <span class="badge bg-primary rounded-pill">
+                ----
+                <small>TND</small>
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+
+          <!-- Impayee Traites -->
+
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
-            <div class="me-auto">Solde Impayees Traites</div>
+            <div class="me-auto">
+              <span
+                data-bs-toggle="collapse"
+                href="#impTraite"
+                role="button"
+                aria-expanded="false"
+                aria-controls="impTraite"
+              >
+                (+)
+              </span>
+              Solde Impayees Traites
+            </div>
             <span class="badge bg-primary rounded-pill">
               {{get_impayees(3)}}
               <small>TND</small>
             </span>
           </li>
+
+          <ul class="collapse list-group list-group-flush" id="impTraite">
+            {% for company in companies %}
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start list-group-item-info"
+            >
+              <div class="me-auto ps-3">{{company.name}}</div>
+              <span class="badge bg-primary rounded-pill">
+                ----
+                <small>TND</small>
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+
+          <!-- Solde TPE -->
+
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
@@ -61,6 +198,9 @@
               <small>TND</small>
             </span>
           </li>
+
+          <!-- Ticket Resto  -->
+
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
@@ -70,6 +210,9 @@
               <small>TND</small>
             </span>
           </li>
+
+          <!-- Banque  -->
+
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
@@ -79,6 +222,9 @@
               <small>TND</small>
             </span>
           </li>
+
+          <!-- Caisse -->
+
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
@@ -88,44 +234,168 @@
               <small>TND</small>
             </span>
           </li>
+
+          <!-- STock  -->
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
-            <div class="me-auto">Stock en cours</div>
+            <div class="me-auto">
+              Stock en cours <small>(dernier sesaisie du Stock)</small>
+            </div>
             <span class="badge bg-primary rounded-pill">
               {{get_stock()}}
               <small>TND</small>
             </span>
           </li>
+
+          <!-- Eng Cheque -->
+
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
-            <div class="me-auto">Engagements Fournisseurs (Cheque)</div>
+            <div class="me-auto">
+              <span
+                data-bs-toggle="collapse"
+                href="#engCheque"
+                role="button"
+                aria-expanded="false"
+                aria-controls="engCheque"
+              >
+                (+)
+              </span>
+              Engagements (Cheque)
+            </div>
             <span class="badge bg-danger rounded-pill">
               {{get_engagements(2)}}
               <small>TND</small>
             </span>
           </li>
 
+          <ul class="collapse list-group list-group-flush" id="engCheque">
+            {% for company in companies %}
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start list-group-item-danger"
+            >
+              <div class="me-auto ps-3">{{company.name}}</div>
+              <span class="badge bg-danger rounded-pill">
+                ---
+                <small>TND</small>
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+
+          <!-- Eng Traites -->
+
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
-            <div class="me-auto">Engagements Fournisseurs (Traite)</div>
+            <div class="me-auto">
+              <span
+                data-bs-toggle="collapse"
+                href="#engTraite"
+                role="button"
+                aria-expanded="false"
+                aria-controls="engTraite"
+              >
+                (+)
+              </span>
+              Engagements (Traite)
+            </div>
             <span class="badge bg-danger rounded-pill">
               {{get_engagements(3)}}
               <small>TND</small>
             </span>
           </li>
 
+          <ul class="collapse list-group list-group-flush" id="engTraite">
+            {% for company in companies %}
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start list-group-item-danger"
+            >
+              <div class="me-auto ps-3">{{company.name}}</div>
+              <span class="badge bg-danger rounded-pill">
+                ---
+                <small>TND</small>
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+
+          <!-- Eng TPE -->
+
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
-            <div class="me-auto">Dettes Fournisseurs</div>
+            <div class="me-auto">
+              <span
+                data-bs-toggle="collapse"
+                href="#engTPE"
+                role="button"
+                aria-expanded="false"
+                aria-controls="engTPE"
+              >
+                (+)
+              </span>
+              Engagements (TPE)
+            </div>
+            <span class="badge bg-danger rounded-pill">
+              {{get_engagements(5)}}
+              <small>TND</small>
+            </span>
+          </li>
+
+          <ul class="collapse list-group list-group-flush" id="engTPE">
+            {% for company in companies %}
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start list-group-item-danger"
+            >
+              <div class="me-auto ps-3">{{company.name}}</div>
+              <span class="badge bg-danger rounded-pill">
+                ---
+                <small>TND</small>
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+
+          <!-- Dettes -->
+
+          <li
+            class="list-group-item d-flex justify-content-between align-items-start"
+          >
+            <div class="me-auto">
+              <span
+                data-bs-toggle="collapse"
+                href="#dettes"
+                role="button"
+                aria-expanded="false"
+                aria-controls="dettes"
+              >
+                (+)
+              </span>
+              Dettes
+            </div>
             <span class="badge bg-danger rounded-pill">
               {{ get_engagements(4) }}
               <small>TND</small>
             </span>
           </li>
+
+          <ul class="collapse list-group list-group-flush" id="dettes">
+            {% for company in companies %}
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start list-group-item-danger"
+            >
+              <div class="me-auto ps-3">{{company.name}}</div>
+              <span class="badge bg-danger rounded-pill">
+                ---
+                <small>TND</small>
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+          <!--  -->
         </ul>
         <ul class="list-group list-group-flush">
           <li
@@ -133,7 +403,7 @@
           >
             <div class="me-auto">Situation Economique de l'entreprise</div>
             <span class="badge bg-success rounded-pill">
-              {{ get_sold_client()
+              {{ get_sold_clients()
               +get_sold_portefeuille(2)+get_sold_portefeuille(3) +
               get_sold_portefeuille(5)+ get_sold_portefeuille(6)+ get_caisse()
               -(get_engagements(2) + get_engagements(3) + get_engagements(4)) }}

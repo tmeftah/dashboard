@@ -3,6 +3,39 @@
 <!--  -->
 <div class="row mb-2">
   <div class="col">
+    <div class="card mb-2">
+      <div class="card-header">Sold Clients</div>
+      <div class="card-body">
+        <div class="me-auto">
+          Calendrier de recouvrement (c'est seullemt un calandrier) par semainne
+        </div>
+
+        <ul class="list-group">
+          <li class="list-group-item">Client n°1 : Crediit j-1 (1500TND)</li>
+          <li class="list-group-item">Client n°2 : Crediit j-1 (5000TND)</li>
+        </ul>
+      </div>
+    </div>
+    <button
+      class="btn btn-success float-end"
+      data-bs-toggle="modal"
+      data-bs-target="#addSalesModal"
+    >
+      + Ajouter
+    </button>
+  </div>
+  <div class="col">
+    <div class="card mb-2">
+      <div class="card-header">Sold Clients</div>
+      <div class="card-body">
+        <div class="me-auto">List des Impayees (Cheque et Traite)</div>
+
+        <ul class="list-group">
+          <li class="list-group-item">Client n°1 : Cheque n°1</li>
+          <li class="list-group-item">Client n°2 : Traite n°2</li>
+        </ul>
+      </div>
+    </div>
     <button
       class="btn btn-success float-end"
       data-bs-toggle="modal"
@@ -23,7 +56,7 @@
             <thead>
               <tr>
                 <th scope="col">Nom</th>
-                <th scope="col">Type de Payment</th>
+                <th scope="col">Mode de Payment</th>
                 <th scope="col">Montant</th>
                 <th scope="col">Ajouté le</th>
                 <th scope="col"></th>
