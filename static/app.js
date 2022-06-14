@@ -2,7 +2,7 @@ window.onload = () => {
   "use strict";
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("{{ url_for('.sw.js')}}");
+    navigator.serviceWorker.register("./sw.js");
   }
 };
 
