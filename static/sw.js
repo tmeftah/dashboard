@@ -4,6 +4,7 @@ var filesToCache = [
   "/static/manifest.json",
   "/static/app.js",
   "/static/style.css",
+  "/static/login.css",
   "/static/icon-512x512.png",
 ];
 
