@@ -1,6 +1,6 @@
 var cacheName = "main_cache_v3";
 var filesToCache = [
-  "/",
+  ".",
   "/static/manifest.json",
   "/static/app.js",
   "/static/style.css",
