@@ -91,7 +91,7 @@
 
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename = 'style.css') }}"
+      href="{{ url_for('static', filename = 'style.css') }}?rnd={{range(1, 100) | random  }}"
     />
 
     <script
