@@ -1,11 +1,11 @@
 var cacheName = "main_cache_v3";
 var filesToCache = [
-  "/login",
-  "/static/manifest.json",
-  "/static/app.js",
-  "/static/style.css",
-  "/static/login.css",
-  "/static/icon-512x512.png",
+  "/",
+  "/manifest.json",
+  "/app.js",
+  "/style.css",
+  "/login.css",
+  "/icon-512x512.png",
 ];
 
 /* Start the service worker and cache all of the app's content */
