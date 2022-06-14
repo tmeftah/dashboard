@@ -1,7 +1,7 @@
 {
   "name": "Meka-it",
   "short_name": "Meka-it",
-  "start_url": ".",
+  "start_url": "https://sub.meka-it.com",
   "display": "standalone",
   "background_color": "#fff",
   "description": "A Asset tracking app",
