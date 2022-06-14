@@ -1,4 +1,4 @@
-var cacheName = "main_cache_v3";
+var cacheName = "main_cache_v4";
 var filesToCache = [
   ".",
   "/static/manifest.json",
