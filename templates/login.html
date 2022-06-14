@@ -103,36 +103,38 @@
     <title>{% block title %} {% endblock %} - MY-Point</title>
   </head>
   <body>
-    <div class="container-fuild d-flex">
-      <div class="flex-grow-1 bg-light p-3" style="min-width: 0"></div>
-      <form action="/login" method="post">
-        <div class="container">
-          <label for="email"><b>Email</b></label>
+    <div class="vh-100 col-12 col-md-6 offset-md-3 pt-2">
+      <form action="/login" method="post" class="border-0">
+        <div class="form-control-sm">
+          <label for="email" class="form-label"><b>Email</b></label>
           <input
             type="text"
             placeholder="Enter Email"
+            class="form-control"
             name="email"
             required
             value="user1@test.com"
           />
-
-          <label for="password"><b>Password</b></label>
+        </div>
+        <div class="form-control-sm">
+          <label for="password" class="form-label"><b>Password</b></label>
           <input
             type="password"
             placeholder="Enter Password"
+            class="form-control"
             name="password"
             required
           />
-
-          <button type="submit">Login</button>
-          <label>
-            <input type="checkbox" checked="checked" name="remember" /> Remember
-            me
-          </label>
         </div>
-
-        <div class="container">
-          <span class="psw">Forgot <a href="#">password?</a></span>
+        <div class="form-control-sm">
+          <button type="submit" class="btn btn-success">Login</button>
+          <label>
+            <input type="checkbox" checked="checked" name="remember" />
+            Remember me
+          </label>
+          <div class="container">
+            <span class="psw">Forgot <a href="#">password?</a></span>
+          </div>
         </div>
       </form>
       {% include 'messages.html' %}
