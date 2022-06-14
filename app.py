@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_login import LoginManager, login_user, login_required, current_user, logout_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import desc
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.exc import SQLAlchemyError
 from database import db_session, engine, init_db
 from models import (
+    User,
     Recovers,
     Sales,
     SalesCategories,
@@ -32,18 +35,66 @@ import datetime
 app = Flask(__name__)
 app.secret_key = "super secret key"
 
+login_manager = LoginManager()
+login_manager.login_view = "login"
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    # since the user_id is just the primary key of our user table, use it in the query for the user
+    user = db_session.query(User).get(int(user_id))
+    print(user)
+    return user
+
 
 @app.before_first_request
 def setup():
     init_db()
 
 
+@app.route("/login", methods=["GET"])
+def login():
+    return render_template("login.html")
+
+
+@app.route("/login", methods=["POST"])
+def login_post():
+
+    email = request.form.get("email")
+    password = request.form.get("password")
+    remember = True if request.form.get("remember") else False
+
+    user = db_session.query(User).filter_by(email=email).first()
+
+    # check if the user actually exists
+    # take the user-supplied password, hash it, and compare it to the hashed password in the database
+    if not user or not check_password_hash(user.password, password):
+        flash("Please check your login details and try again.")
+        return redirect(
+            url_for("login")
+        )  # if the user doesn't exist or password is wrong, reload the page
+
+    # if the above check passes, then we know the user has the right credentials
+    login_user(user, remember=remember)
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("login"))
+
+
 @app.route("/")
+@login_required
 def index():
     return render_template("about.html")
 
 
 @app.route("/dashboard")
+@login_required
 def dashboard():
 
     companies = db_session.query(Companies).filter(Companies.customer == True).all()
@@ -62,6 +113,7 @@ def dashboard():
 
 
 @app.route("/exploit")
+@login_required
 def exploit():
     salesCategories = db_session.query(SalesCategories).all()
 
@@ -95,12 +147,14 @@ def tresor():
 
 
 @app.route("/companies")
+@login_required
 def companies():
     companies = db_session.query(Companies).all()
     return render_template("companies/index.html", companies=companies)
 
 
 @app.route("/sales", methods=["GET"])
+@login_required
 def sales():
     categorie = request.args.get("categorie", type=int, default=0)
 
@@ -132,6 +186,7 @@ def sales():
 
 
 @app.route("/sales", methods=["POST"])
+@login_required
 def add_sales():
     categorie_id = request.form.get("categorie_id")
     company_id = request.form.get("company_id")
@@ -164,11 +219,13 @@ def add_sales():
 
 
 @app.route("/salescategories")
+@login_required
 def salescategories():
     return render_template("sales/categories.html")
 
 
 @app.route("/costs", methods=["GET"])
+@login_required
 def costs():
     costsmappings = db_session.query(CostsMapping).order_by(desc(CostsMapping.date)).all()
     costsdefs = db_session.query(CostsDef).all()
@@ -183,6 +240,7 @@ def costs():
 
 
 @app.route("/costs", methods=["POST"])
+@login_required
 def add_costs():
 
     cost_id = request.form.get("cost_id")
@@ -214,6 +272,7 @@ def add_costs():
 
 
 @app.route("/purchasings", methods=["GET"])
+@login_required
 def purchasings():
     purchasings = db_session.query(Purchasing).order_by(desc(Purchasing.date)).all()
 
@@ -227,6 +286,7 @@ def purchasings():
 
 
 @app.route("/purchasings", methods=["POST"])
+@login_required
 def add_purchasings():
 
     payment_id = request.form.get("payment_id")
@@ -256,6 +316,7 @@ def add_purchasings():
 
 
 @app.route("/recovers", methods=["GET"])
+@login_required
 def recovers():
     recovers = db_session.query(Recovers).order_by(desc(Recovers.date)).all()
     companies = db_session.query(Companies).filter_by(customer=True).all()
@@ -274,6 +335,7 @@ def recovers():
 
 
 @app.route("/recovers", methods=["POST"])
+@login_required
 def add_recovers():
     categorie_id = request.form.get("categorie_id", type=int)
     company_id = request.form.get("company_id", type=int)
@@ -306,6 +368,7 @@ def add_recovers():
 
 
 @app.route("/payments", methods=["GET"])
+@login_required
 def payments():
     recovers = db_session.query(Recovers).order_by(desc(Recovers.date)).all()
     companies = db_session.query(Companies).filter_by(customer=True).all()
@@ -324,6 +387,7 @@ def payments():
 
 
 @app.route("/payments", methods=["POST"])
+@login_required
 def add_payments():
     categorie_id = request.form.get("categorie_id", type=int)
     company_id = request.form.get("company_id", type=int)
@@ -356,6 +420,7 @@ def add_payments():
 
 
 @app.route("/reconciliations", methods=["GET"])
+@login_required
 def reconciliations():
     reconciliations = db_session.query(Reconciliations).order_by(desc(Reconciliations.date)).all()
     companies = db_session.query(Companies).all()
@@ -370,6 +435,7 @@ def reconciliations():
 
 
 @app.route("/reconciliations", methods=["POST"])
+@login_required
 def add_reconciliations():
     categorie_id = request.form.get("categorie_id", type=int)
     company_id = request.form.get("company_id", type=int)
@@ -404,6 +470,7 @@ def add_reconciliations():
 
 
 @app.route("/stocks", methods=["GET"])
+@login_required
 def stocks():
     stocks = db_session.query(Stocks).order_by(desc(Stocks.date)).all()
 
@@ -414,6 +481,7 @@ def stocks():
 
 
 @app.route("/stocks", methods=["POST"])
+@login_required
 def add_stocks():
 
     amount = request.form.get("amount")

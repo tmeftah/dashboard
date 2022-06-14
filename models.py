@@ -25,10 +25,30 @@ class User(Base, DictMixIn):
 
     name = Column(String(50), unique=True)
     email = Column(String(120), unique=True)
+    password = Column(String(100))
+    authenticated = Column(Boolean, default=False)
 
-    def __init__(self, name=None, email=None):
+    def __init__(self, name=None, email=None, password=None):
         self.name = name
         self.email = email
+        self.password = password
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        # False as we do not support annonymity
+        return False
+
+    def get_id(self):
+        # returns the user e-mail
+        return self.id
 
     def __repr__(self):
         return f"<User {self.name!r}>"
