@@ -6,6 +6,8 @@ var filesToCache = [
   "/static/style.css",
   "/static/login.css",
   "/static/icon-512x512.png",
+  "/static/particles-7193862_960_720.webp",
+  "/static/meinAvatar.png",
 ];
 
 /* Start the service worker and cache all of the app's content */
