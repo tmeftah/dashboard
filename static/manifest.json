@@ -1,0 +1,16 @@
+{
+  "name": "Meka-it",
+  "short_name": "Meka-it",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "A Asset tracking app",
+  "theme_color": "#fff",
+  "icons": [
+    {
+      "src": "/static/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

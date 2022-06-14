@@ -53,6 +53,11 @@ def setup():
     init_db()
 
 
+@app.route("/sw.js")
+def sw():
+    return app.send_static_file("sw.js")
+
+
 @app.route("/login", methods=["GET"])
 def login():
     return render_template("login.html")
