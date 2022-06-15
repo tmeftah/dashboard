@@ -1,7 +1,7 @@
 {
   "name": "Meka-it",
   "short_name": "Meka-it",
-  "start_url": "./login",
+  "start_url": "../login",
   "display": "standalone",
   "background_color": "#214a80",
   "description": "A Asset tracking app",
