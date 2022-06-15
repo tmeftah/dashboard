@@ -7,11 +7,11 @@
   <!--  -->
   {% if messages %}
   <!--  -->
-  {% for category, message in messages %}
+  {% for category, message in messages %} {{category}}
   <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header text-bg-{{category}}">
+    <div class="toast-header text-white bg-{{category}}">
       <img
-        src="static/icon-512x512.png"
+        src="/static/icon-512x512.png"
         width="25"
         class="rounded me-2"
         alt="..."
