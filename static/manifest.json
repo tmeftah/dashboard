@@ -2,7 +2,7 @@
   "name": "Meka-it",
   "short_name": "Meka-it",
   "start_url": "https://sub.meka-it.com/login",
-  "display": "minimal-ui",
+  "display": "standalone",
   "background_color": "#214a80",
   "description": "A Asset tracking app",
   "theme_color": "#214a80",
