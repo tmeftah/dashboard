@@ -9,7 +9,7 @@ window.onload = () => {
 let deferredPrompt;
 const addBtn = document.querySelector(".add-button");
 // const demoBtn = document.querySelector(".demo");
-addBtn.style.display = "block";
+addBtn.style.display = "none";
 // demoBtn.style.display = "block";
 
 window.addEventListener("beforeinstallprompt", (e) => {
