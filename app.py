@@ -276,6 +276,29 @@ def add_costs():
     return redirect(url_for("costs"))
 
 
+@app.route("/costs_type", methods=["POST"])
+@login_required
+def add_costs_type():
+
+    fixed = request.form.get("fixed", type=int)
+    name = request.form.get("name")
+
+    new_cost_type = CostsDef(fixed=fixed, name=name)
+
+    try:
+        db_session.add(new_cost_type)
+        db_session.commit()
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
+        flash("db error", category="error")
+
+    else:
+        flash("Type de Charge ajouter", category="success")
+
+    return redirect(url_for("costs"))
+
+
 @app.route("/purchasings", methods=["GET"])
 @login_required
 def purchasings():
