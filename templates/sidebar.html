@@ -54,15 +54,6 @@
 
     <li class="nav-item">
       <a
-        href="/companies"
-        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/companies' %} link-active {% endif %}"
-      >
-        <i class="nav_icon bi bi-journal"></i>
-        <span class="ms-2">Clients / Fournisseurs</span>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a
         href="/sales"
         class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/sales' %} link-active {% endif %}"
       >
@@ -142,6 +133,16 @@
         <span class="ms-2"> Utilisateurs </span>
       </a>
     </li>
+    <li class="nav-item">
+      <a
+        href="/companies"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/companies' %} link-active {% endif %}"
+      >
+        <i class="nav_icon bi bi-journal"></i>
+        <span class="ms-2">Clients / Fournisseurs</span>
+      </a>
+    </li>
+
     <li class="nav-item">
       <a href="#" class="nav-link side ms-3 px-0 align-middle">
         <i class="bi bi-bar-chart"></i>
