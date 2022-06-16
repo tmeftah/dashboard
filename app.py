@@ -197,12 +197,15 @@ def sales():
 @app.route("/sales", methods=["POST"])
 @login_required
 def add_sales():
-    categorie_id = request.form.get("categorie_id")
-    company_id = request.form.get("company_id")
-    payment_id = request.form.get("payment_id")
+    categorie_id = request.form.get("categorie_id", type=int)
+    company_id = request.form.get("company_id", type=int)
+    payment_id = request.form.get("payment_id", type=int)
     date = request.form.get("date")
     amount = request.form.get("amount")
     comment = request.form.get("comment")
+
+    document_number = request.form.get("document_number")
+    due_date = request.form.get("due_date")
 
     new_sale = Sales(
         categorie_id=categorie_id,
@@ -212,6 +215,9 @@ def add_sales():
         amount=amount,
         comment=comment,
     )
+    if payment_id in [2, 3]:
+        new_sale.due_date = datetime.datetime.strptime(due_date, "%Y-%m-%d")
+        new_sale.document_number = document_number
 
     try:
         db_session.add(new_sale)

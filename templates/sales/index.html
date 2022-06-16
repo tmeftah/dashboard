@@ -37,7 +37,21 @@
               <tr>
                 <td>{{sale.categorie.name}}</td>
                 <td>{{sale.company.name}}</td>
-                <td>{{sale.paymentmethod.name}}</td>
+                <td>
+                  {{sale.paymentmethod.name}}
+                  <!--  -->
+                  {% if sale.paymentmethod_id in [2,3] %}
+                  <br />
+                  <small style="font-size: 10px"
+                    >Nummero: <b> {{sale.document_number | upper}}</b>
+                  </small>
+                  ,
+                  <small class="text-end" style="font-size: 10px"
+                    >Échéance le: <b> {{sale.due_date}}</b>
+                  </small>
+
+                  {% endif %}
+                </td>
                 <td>{{sale.amount}} <small>TND</small></td>
                 <td>{{sale.date}}</td>
                 <td>
@@ -136,13 +150,16 @@
             >
             <select
               name="payment_id"
+              id="payment_id"
               class="form-select"
               aria-label="Default select example"
+              onchange="ChangePaymentmethod()"
             >
               {% for payment in paymentmethod %}
               <option value="{{payment.id}}">{{payment.name}}</option>
               {% endfor %}
             </select>
+
             <label for="recipient-name" class="col-form-label">Date:</label>
             <div class="input-group mb-3">
               <input
@@ -168,7 +185,38 @@
               />
               <span class="input-group-text">TND</span>
             </div>
+            <div id="document">
+              <label for="recipient-name" class="col-form-label"
+                >Document:</label
+              >
+              <div class="input-group mb-3">
+                <input
+                  name="document_number"
+                  type="text"
+                  class="form-control"
+                  id="document_number"
+                  required
+                  value=""
+                />
+              </div>
+
+              <label for="recipient-name" class="col-form-label"
+                >Date d'échéance:</label
+              >
+              <div class="input-group mb-3">
+                <input
+                  name="due_date"
+                  type="date"
+                  class="form-control"
+                  id="due_date"
+                  min="{{today()}}"
+                  value="{{today()}}"
+                  required
+                />
+              </div>
+            </div>
           </div>
+
           <div class="mb-3">
             <label for="message-text" class="col-form-label">Message:</label>
             <textarea
@@ -193,4 +241,22 @@
   </div>
 </div>
 
+<script>
+  var document_div = document.getElementById("document");
+  var document_number = document.getElementById("document_number");
+
+  document_div.style.display = "none";
+  document_number.setAttribute("disabled", "");
+
+  function ChangePaymentmethod() {
+    var paymentmethod = document.getElementById("payment_id").value;
+    if (paymentmethod == 2 || paymentmethod == 3) {
+      document_div.style.display = "block";
+      document_number.removeAttribute("disabled");
+    } else {
+      document_div.style.display = "none";
+      document_number.setAttribute("disabled", "");
+    }
+  }
+</script>
 {% endblock %}

@@ -95,6 +95,9 @@ class Sales(Base, DictMixIn):
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
     date = Column(Date, default=datetime.datetime.now)
 
+    document_number = Column(String(50), nullable=False)
+    due_date = Column(Date, default=datetime.datetime.now)
+
     amount = Column(Float, default=0.0)
     comment = Column(String(50), nullable=False)
 
@@ -110,6 +113,7 @@ class Sales(Base, DictMixIn):
         date=None,
         amount=0.0,
         comment=None,
+        document_number="nop",
     ):
 
         self.categorie_id = categorie_id
@@ -118,6 +122,7 @@ class Sales(Base, DictMixIn):
         self.date = date
         self.amount = amount
         self.comment = comment
+        self.document_number = document_number
 
     def __repr__(self):
         return f"<Sales {self.categorie.name!r}>"
@@ -369,3 +374,30 @@ class Payments(Base, DictMixIn):
 
     def __repr__(self):
         return f"<Recovers {self.company.name!r}>"
+
+
+class PaymentsDocs(Base, DictMixIn):
+    __tablename__ = "paymentsDocs"
+
+    title = Column(String(50), nullable=False)
+    due_date = Column(Date, default=datetime.datetime.now)
+
+    def __init__(
+        self,
+        # categorie_id=None,
+        company_id=None,
+        paymentmethod_id=None,
+        date=None,
+        amount=0.0,
+        comment=None,
+    ):
+
+        # self.categorie_id = categorie_id
+        self.company_id = company_id
+        self.paymentmethod_id = paymentmethod_id
+        self.date = date
+        self.amount = amount
+        self.comment = comment
+
+    def __repr__(self):
+        return f"<PaymentsDocs {self.company.name!r}>"
