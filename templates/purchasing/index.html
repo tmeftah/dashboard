@@ -24,6 +24,8 @@
           <table class="table table-sm table-striped">
             <thead>
               <tr>
+                <th scope="col">Fournisseur</th>
+
                 <th scope="col">Mode de Payment</th>
                 <th scope="col">Montant</th>
                 <th scope="col">Ajouté le</th>
@@ -33,6 +35,7 @@
             <tbody>
               {% for purchasing in purchasings %}
               <tr>
+                <td>{{purchasing.company.name}}</td>
                 <td>{{purchasing.paymentmethod.name}}</td>
                 <td>{{purchasing.amount}} <small>TND</small></td>
                 <td>{{purchasing.date}}</td>
@@ -98,6 +101,19 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Fournisseur:</label
+            >
+            <select
+              name="company_id"
+              class="form-select"
+              aria-label="Default select example"
+            >
+              {% for company in companies %}
+              <option value="{{company.id}}">{{company.name}}</option>
+              {% endfor %}
+            </select>
+
             <label for="recipient-name" class="col-form-label">Type:</label>
 
             <label for="recipient-name" class="col-form-label"
