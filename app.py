@@ -102,7 +102,7 @@ def index():
 @login_required
 def dashboard():
 
-    companies = db_session.query(Companies).filter(Companies.customer == True).all()
+    companies = db_session.query(Companies).all()
 
     return render_template(
         "dashboard/dashboard.html",
@@ -517,7 +517,10 @@ def add_stocks():
 def utility_processor():
     import calendar
     from calendar import Calendar, monthrange
-    from datetime import datetime
+    from datetime import datetime, date
+
+    def today():
+        return date.today()
 
     def toDate(year, month, day):
         return datetime.strptime(f"{year}-{month}-{day}", "%Y-%m-%d").date()
@@ -551,6 +554,7 @@ def utility_processor():
         get_monthdates=get_monthdates,
         get_monthdays_with_name=get_monthdays_with_name,
         toDate=toDate,
+        today=today,
     )
 
 

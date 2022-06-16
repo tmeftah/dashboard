@@ -27,7 +27,8 @@
             </span>
           </li>
           <ul class="collapse list-group list-group-flush" id="soldClient">
-            {% for company in companies %}
+            {% for company in companies | selectattr('customer', "equalto",True)
+            %}
             <li
               class="list-group-item d-flex justify-content-between align-items-start list-group-item-info"
             >
@@ -64,7 +65,8 @@
           </li>
 
           <ul class="collapse list-group list-group-flush" id="portCheque">
-            {% for company in companies %}
+            {% for company in companies | selectattr('customer', "equalto",True)
+            %}
             <li
               class="list-group-item d-flex justify-content-between align-items-start list-group-item-info"
             >
@@ -100,7 +102,8 @@
             </span>
           </li>
           <ul class="collapse list-group list-group-flush" id="portTraite">
-            {% for company in companies %}
+            {% for company in companies | selectattr('customer',
+            "equalto",True)%}
             <li
               class="list-group-item d-flex justify-content-between align-items-start list-group-item-info"
             >
@@ -131,13 +134,14 @@
               Solde Impayees Cheques
             </div>
             <span class="badge bg-primary rounded-pill">
-              {{get_impayees(2)}}
+              {{get_impayees(pay_methode=2)}}
               <small>TND</small>
             </span>
           </li>
 
           <ul class="collapse list-group list-group-flush" id="impCheque">
-            {% for company in companies %}
+            {% for company in companies | selectattr('customer', "equalto",True)
+            %}
             <li
               class="list-group-item d-flex justify-content-between align-items-start list-group-item-info"
             >
@@ -168,13 +172,14 @@
               Solde Impayees Traites
             </div>
             <span class="badge bg-primary rounded-pill">
-              {{get_impayees(3)}}
+              {{get_impayees(pay_methode=3)}}
               <small>TND</small>
             </span>
           </li>
 
           <ul class="collapse list-group list-group-flush" id="impTraite">
-            {% for company in companies %}
+            {% for company in companies | selectattr('customer', "equalto",True)
+            %}
             <li
               class="list-group-item d-flex justify-content-between align-items-start list-group-item-info"
             >
@@ -194,7 +199,7 @@
           >
             <div class="me-auto">Solde TPE</div>
             <span class="badge bg-primary rounded-pill">
-              {{get_sold_portefeuille(5)}}
+              {{get_sold_portefeuille(pay_methode=5)}}
               <small>TND</small>
             </span>
           </li>
@@ -206,7 +211,7 @@
           >
             <div class="me-auto">Solde Ticket Resto</div>
             <span class="badge bg-primary rounded-pill">
-              {{get_sold_portefeuille(6)}}
+              {{get_sold_portefeuille(pay_methode=6)}}
               <small>TND</small>
             </span>
           </li>
@@ -272,7 +277,8 @@
           </li>
 
           <ul class="collapse list-group list-group-flush" id="engCheque">
-            {% for company in companies %}
+            {% for company in companies | selectattr('supplier', "equalto",True)
+            %}
             <li
               class="list-group-item d-flex justify-content-between align-items-start list-group-item-danger"
             >
@@ -309,7 +315,8 @@
           </li>
 
           <ul class="collapse list-group list-group-flush" id="engTraite">
-            {% for company in companies %}
+            {% for company in companies | selectattr('supplier', "equalto",True)
+            %}
             <li
               class="list-group-item d-flex justify-content-between align-items-start list-group-item-danger"
             >
@@ -346,7 +353,8 @@
           </li>
 
           <ul class="collapse list-group list-group-flush" id="engTPE">
-            {% for company in companies %}
+            {% for company in companies | selectattr('supplier', "equalto",True)
+            %}
             <li
               class="list-group-item d-flex justify-content-between align-items-start list-group-item-danger"
             >
@@ -383,7 +391,8 @@
           </li>
 
           <ul class="collapse list-group list-group-flush" id="dettes">
-            {% for company in companies %}
+            {% for company in companies | selectattr('supplier',
+            "equalto",True)%}
             <li
               class="list-group-item d-flex justify-content-between align-items-start list-group-item-danger"
             >
@@ -404,9 +413,11 @@
             <div class="me-auto">Situation Economique de l'entreprise</div>
             <span class="badge bg-success rounded-pill">
               {{ get_sold_clients()
-              +get_sold_portefeuille(2)+get_sold_portefeuille(3) +
-              get_sold_portefeuille(5)+ get_sold_portefeuille(6)+ get_caisse()
-              -(get_engagements(2) + get_engagements(3) + get_engagements(4)) }}
+              +get_sold_portefeuille(pay_methode=2)+get_sold_portefeuille(pay_methode=3)
+              + get_sold_portefeuille(pay_methode=5)+
+              get_sold_portefeuille(pay_methode=6)+ get_caisse()+ get_stock()
+              -(get_engagements(pay_methode=2) + get_engagements(pay_methode=3)
+              + get_engagements(pay_methode=4)) }}
               <small>TND</small>
             </span>
           </li>
