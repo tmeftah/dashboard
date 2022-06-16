@@ -1,4 +1,3 @@
-from platform import python_branch
 from database import db_session
 from sqlalchemy.sql import func
 from sqlalchemy import extract
@@ -60,7 +59,12 @@ def get_sold_portefeuille(company=0, pay_methode=0):
 
     sum_encaissements = get_sum_reconciliations(company, pay_methode)
 
-    return sum_sales + sum_recovers - sum_encaissements
+    cost_and_purchasing = 0
+
+    if pay_methode == 6:
+        cost_and_purchasing = get_costs(6) + get_purchasing(pay_methode=6)
+
+    return sum_sales + sum_recovers - sum_encaissements - cost_and_purchasing
 
 
 def get_impayees(pay_methode=1):
@@ -131,20 +135,66 @@ def get_stock():
         return 0
 
 
-def get_engagements(pay_methode=1):
+def get_costs(pay_methode=0):
+
+    query = db_session.query(func.coalesce(func.sum(CostsMapping.amount), 0))
+    if pay_methode:
+        query = query.filter(CostsMapping.paymentmethod_id == pay_methode)
+
+    sum_cost = query.scalar()
+
+    return sum_cost
+
+
+def get_purchasing(company_id=0, pay_methode=0):
+
+    query = db_session.query(func.coalesce(func.sum(Purchasing.amount), 0))
+
+    if company_id:
+        query = query.filter(Purchasing.company_id == company_id)
+
+    if pay_methode:
+        query = query.filter(Purchasing.paymentmethod_id == pay_methode)
+
+    sum_purchasing = query.scalar()
+
+    return sum_purchasing
+
+
+def get_all_liabilities():  # tout les engagements/dettes
+
     sum_cost = (
         db_session.query(func.coalesce(func.sum(CostsMapping.amount), 0))
-        .filter(CostsMapping.paymentmethod_id == pay_methode)
+        .filter(CostsMapping.paymentmethod_id.notin_([1, 6]))  # TODO: to be verified
         .scalar()
     )
-
     sum_purchasing = (
         db_session.query(func.coalesce(func.sum(Purchasing.amount), 0))
-        .filter(Purchasing.paymentmethod_id == pay_methode)
+        .filter(Purchasing.paymentmethod_id.notin_([1, 6]))  # TODO: to be verified
         .scalar()
     )
-
     return sum_cost + sum_purchasing
+
+
+def get_economic_situation():
+    res = (
+        get_sold_clients()
+        + get_sold_portefeuille(pay_methode=2)
+        + get_sold_portefeuille(pay_methode=3)
+        + get_sold_portefeuille(pay_methode=5)
+        + get_sold_portefeuille(pay_methode=6)
+        + get_banque()
+        + get_caisse()
+        + get_stock()
+        - get_all_liabilities()
+    )
+
+    return res
+
+
+def get_financial_capacity():
+
+    return get_banque() + get_caisse() - get_all_liabilities()
 
 
 def get_chiffre_affaire(cum=False, pay_methode=0):

@@ -271,12 +271,21 @@
               Engagements (Cheque)
             </div>
             <span class="badge bg-danger rounded-pill">
-              {{get_engagements(2)}}
+              {{get_costs(pay_methode=2) + get_purchasing(pay_methode=2)}}
               <small>TND</small>
             </span>
           </li>
 
           <ul class="collapse list-group list-group-flush" id="engCheque">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start list-group-item-danger"
+            >
+              <div class="me-auto ps-3">Charges en general</div>
+              <span class="badge bg-danger rounded-pill">
+                {{ get_costs(pay_methode=2) }}
+                <small>TND</small>
+              </span>
+            </li>
             {% for company in companies | selectattr('supplier', "equalto",True)
             %}
             <li
@@ -284,7 +293,7 @@
             >
               <div class="me-auto ps-3">{{company.name}}</div>
               <span class="badge bg-danger rounded-pill">
-                ---
+                {{ get_purchasing(company_id=company.id,pay_methode=2) }}
                 <small>TND</small>
               </span>
             </li>
@@ -309,12 +318,22 @@
               Engagements (Traite)
             </div>
             <span class="badge bg-danger rounded-pill">
-              {{get_engagements(3)}}
+              {{get_costs(pay_methode=3) + get_purchasing(pay_methode=3)}}
               <small>TND</small>
             </span>
           </li>
 
           <ul class="collapse list-group list-group-flush" id="engTraite">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start list-group-item-danger"
+            >
+              <div class="me-auto ps-3">Charges en general</div>
+              <span class="badge bg-danger rounded-pill">
+                {{ get_costs(pay_methode=3) }}
+                <small>TND</small>
+              </span>
+            </li>
+
             {% for company in companies | selectattr('supplier', "equalto",True)
             %}
             <li
@@ -322,7 +341,7 @@
             >
               <div class="me-auto ps-3">{{company.name}}</div>
               <span class="badge bg-danger rounded-pill">
-                ---
+                {{ get_purchasing(company_id=company.id,pay_methode=3) }}
                 <small>TND</small>
               </span>
             </li>
@@ -347,12 +366,21 @@
               Engagements (TPE)
             </div>
             <span class="badge bg-danger rounded-pill">
-              {{get_engagements(5)}}
+              {{get_costs(pay_methode=5) + get_purchasing(pay_methode=5)}}
               <small>TND</small>
             </span>
           </li>
 
           <ul class="collapse list-group list-group-flush" id="engTPE">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start list-group-item-danger"
+            >
+              <div class="me-auto ps-3">Charges en general</div>
+              <span class="badge bg-danger rounded-pill">
+                {{ get_costs(pay_methode=5) }}
+                <small>TND</small>
+              </span>
+            </li>
             {% for company in companies | selectattr('supplier', "equalto",True)
             %}
             <li
@@ -360,7 +388,7 @@
             >
               <div class="me-auto ps-3">{{company.name}}</div>
               <span class="badge bg-danger rounded-pill">
-                ---
+                {{ get_purchasing(company_id=company.id,pay_methode=5) }}
                 <small>TND</small>
               </span>
             </li>
@@ -385,12 +413,21 @@
               Dettes
             </div>
             <span class="badge bg-danger rounded-pill">
-              {{ get_engagements(4) }}
+              {{get_costs(pay_methode=4) + get_purchasing(pay_methode=4)}}
               <small>TND</small>
             </span>
           </li>
 
           <ul class="collapse list-group list-group-flush" id="dettes">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start list-group-item-danger"
+            >
+              <div class="me-auto ps-3">Charges en general</div>
+              <span class="badge bg-danger rounded-pill">
+                {{ get_costs(pay_methode=4) }}
+                <small>TND</small>
+              </span>
+            </li>
             {% for company in companies | selectattr('supplier',
             "equalto",True)%}
             <li
@@ -398,7 +435,7 @@
             >
               <div class="me-auto ps-3">{{company.name}}</div>
               <span class="badge bg-danger rounded-pill">
-                ---
+                {{ get_purchasing(company_id=company.id,pay_methode=4) }}
                 <small>TND</small>
               </span>
             </li>
@@ -412,12 +449,7 @@
           >
             <div class="me-auto">Situation Economique de l'entreprise</div>
             <span class="badge bg-success rounded-pill">
-              {{ get_sold_clients()
-              +get_sold_portefeuille(pay_methode=2)+get_sold_portefeuille(pay_methode=3)
-              + get_sold_portefeuille(pay_methode=5)+
-              get_sold_portefeuille(pay_methode=6)+ get_caisse()+ get_stock()
-              -(get_engagements(pay_methode=2) + get_engagements(pay_methode=3)
-              + get_engagements(pay_methode=4)) }}
+              {{ get_economic_situation() }}
               <small>TND</small>
             </span>
           </li>
@@ -431,8 +463,7 @@
             </div>
 
             <span class="badge bg-success rounded-pill">
-              {{ get_banque() + get_caisse()-(get_engagements(2) +
-              get_engagements(3) + get_engagements(4))}}
+              {{ get_financial_capacity() }}
               <small>TND</small>
             </span>
           </li>

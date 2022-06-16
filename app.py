@@ -25,8 +25,11 @@ from utils import (
     get_banque,
     get_caisse,
     get_stock,
-    get_engagements,
+    get_costs,
+    get_purchasing,
     get_chiffre_affaire,
+    get_economic_situation,
+    get_financial_capacity,
 )
 import datetime
 
@@ -112,7 +115,10 @@ def dashboard():
         get_banque=get_banque,
         get_caisse=get_caisse,
         get_stock=get_stock,
-        get_engagements=get_engagements,
+        get_costs=get_costs,
+        get_purchasing=get_purchasing,
+        get_economic_situation=get_economic_situation,
+        get_financial_capacity=get_financial_capacity,
         companies=companies,
     )
 
@@ -164,8 +170,6 @@ def sales():
     categorie = request.args.get("categorie", type=int, default=0)
 
     paymentme = request.args.get("paymentmethod", type=int, default=0)
-    print(categorie)
-    print(paymentme)
 
     query = db_session.query(Sales)
 
@@ -302,14 +306,15 @@ def add_costs_type():
 @app.route("/purchasings", methods=["GET"])
 @login_required
 def purchasings():
+    companies = db_session.query(Companies).filter_by(supplier=True).all()
     purchasings = db_session.query(Purchasing).order_by(desc(Purchasing.date)).all()
-
     paymentmethod = db_session.query(PaymentMethod).all()
 
     return render_template(
         "/purchasing/index.html",
         purchasings=purchasings,
         paymentmethod=paymentmethod,
+        companies=companies,
     )
 
 
@@ -318,12 +323,14 @@ def purchasings():
 def add_purchasings():
 
     payment_id = request.form.get("payment_id")
+    company_id = request.form.get("company_id")
     date = request.form.get("date")
     amount = request.form.get("amount")
     comment = request.form.get("comment")
 
     new_purchasing = Purchasing(
         paymentmethod_id=payment_id,
+        company_id=company_id,
         date=datetime.datetime.strptime(date, "%Y-%m-%d"),
         amount=amount,
         comment=comment,
