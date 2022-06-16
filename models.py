@@ -64,6 +64,7 @@ class Companies(Base, DictMixIn):
     phone = Column(String(120))
 
     sales = relationship("Sales", back_populates="company")
+    purchasings = relationship("Purchasing", back_populates="company")
     recovers = relationship("Recovers", back_populates="company")
     payments = relationship("Payments", back_populates="company")
     reconciliations = relationship("Reconciliations", back_populates="company")
@@ -204,6 +205,8 @@ class Purchasing(Base, DictMixIn):
     __tablename__ = "purchasing"
 
     paymentmethod_id = Column(Integer, ForeignKey("paymentmethod.id"), nullable=False)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
+
     comment = Column(String(50), nullable=False)
 
     amount = Column(Float, default=0.0)
@@ -211,16 +214,19 @@ class Purchasing(Base, DictMixIn):
     month_for = Column(Date, default=datetime.datetime.now)
 
     paymentmethod = relationship("PaymentMethod", back_populates="purchasings")
+    company = relationship("Companies", back_populates="purchasings")
 
     def __init__(
         self,
         paymentmethod_id=paymentmethod_id,
+        company_id=company_id,
         amount=amount,
         date=date,
         comment=comment,
     ):
 
         self.paymentmethod_id = paymentmethod_id
+        self.company_id = company_id
         self.amount = amount
         self.date = date
         self.comment = comment
