@@ -2,7 +2,7 @@ from platform import python_branch
 from database import db_session
 from sqlalchemy.sql import func
 from sqlalchemy import extract
-from models import Sales, Recovers, CostsMapping, Purchasing, Reconciliations
+from models import Sales, Recovers, CostsMapping, Purchasing, Reconciliations, Stocks
 import datetime
 
 
@@ -117,7 +117,18 @@ def get_caisse():
 
 
 def get_stock():
-    return 0
+    today = datetime.date.today()
+    res = (
+        db_session.query(func.coalesce(func.sum(Stocks.amount), 0))
+        .filter(Stocks.date <= today)
+        .order_by(Stocks.date.desc())
+        .group_by(Stocks.date)
+        .all()
+    )
+    if len(res) > 0:
+        return res[0][0]
+    else:
+        return 0
 
 
 def get_engagements(pay_methode=1):
