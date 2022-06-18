@@ -1,0 +1,26 @@
+<div id="document">
+  <label for="recipient-name" class="col-form-label">Document:</label>
+  <div class="input-group mb-3">
+    <input
+      name="document_number"
+      type="text"
+      class="form-control"
+      id="document_number"
+      required
+      value=""
+    />
+  </div>
+
+  <label for="recipient-name" class="col-form-label">Date d'échéance:</label>
+  <div class="input-group mb-3">
+    <input
+      name="due_date"
+      type="date"
+      class="form-control"
+      id="due_date"
+      min="{{today()}}"
+      value="{{today()}}"
+      required
+    />
+  </div>
+</div>
