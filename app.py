@@ -65,6 +65,7 @@ def allowed_file(filename):
 
 
 @app.route("/uploads/<name>")
+@login_required
 def download_file(name):
     return send_from_directory(app.config["UPLOAD_FOLDER"], name)
 
