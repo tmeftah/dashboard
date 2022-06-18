@@ -101,6 +101,8 @@ class Sales(Base, DictMixIn):
     amount = Column(Float, default=0.0)
     comment = Column(String(50), nullable=False)
 
+    document_filename = Column(String(50))
+
     # categorie = relationship("SalesCategories", back_populates="sales")
     paymentmethod = relationship("PaymentMethod", back_populates="sales")
     company = relationship("Companies", back_populates="sales")

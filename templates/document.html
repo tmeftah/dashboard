@@ -48,7 +48,16 @@
           type="file"
           class="form-control form-control-sm"
           id="foto"
+          accept="image/jpeg,image/png,image/jpeg,application/pdf"
+          onchange="checkSize()"
         />
+      </div>
+      <div
+        class="alert alert-danger visually-hidden mt-1"
+        id="alertsize"
+        role="alert"
+      >
+        <small>Le fichier doit être inférieur à 2MB.</small>
       </div>
     </div>
   </div>

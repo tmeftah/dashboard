@@ -20,7 +20,7 @@
       </div>
 
       <div class="card-body">
-        <div class="table-responsive">
+        <div class="table-responsive" style="min-height: 300px">
           <table class="table table-sm table-striped">
             <thead>
               <tr>
@@ -48,7 +48,15 @@
                   <small class="text-end" style="font-size: 10px"
                     >Échéance le: <b> {{sale.due_date}}</b>
                   </small>
+                  ,
+                  <!--  -->
+                  {% if sale.document_filename != "" %}
 
+                  <a href="/uploads/{{sale.document_filename}}" target="_blank"
+                    <i class="bi bi-file-earmark-arrow-down"></i
+                  ></a>
+                  {% endif %}
+                  <!--  -->
                   {% endif %}
                 </td>
                 <td>{{sale.amount}} <small>TND</small></td>

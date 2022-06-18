@@ -1,6 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+import os
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+
 from sqlalchemy import desc
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.exc import SQLAlchemyError
@@ -36,6 +39,10 @@ import datetime
 
 # models.Base.metadata.create_all(bind=engine)
 
+
+UPLOAD_FOLDER = "./uploads"
+ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg"}
+
 app = Flask(__name__)
 
 app.secret_key = "super secret key"
@@ -43,10 +50,23 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Strict"
 app.config["SESSION_COOKIE_HTTPONLY"] = False
 app.config["SESSION_COOKIE_SECURE"] = True
 
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["MAX_CONTENT_LENGTH"] = 2 * 1000 * 1000
+
 
 login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
+
+
+#
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route("/uploads/<name>")
+def download_file(name):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], name)
 
 
 @login_manager.user_loader
@@ -226,6 +246,22 @@ def add_sales():
     try:
         db_session.add(new_sale)
         db_session.commit()
+        # check if the post request has the file part
+        if "foto" not in request.files:
+            flash("No file part")
+            return redirect(request.url)
+        file = request.files["foto"]
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == "":
+            flash("No selected file")
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            new_sale.document_filename = filename
+            db_session.commit()
+
     except SQLAlchemyError as e:
         print(e)
         db_session.rollback()

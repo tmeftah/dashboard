@@ -102,3 +102,19 @@ function onlyNumberKey1(evt) {
   alert2.classList.add("visually-hidden");
   return true;
 }
+
+function checkSize() {
+  var input = document.getElementById("foto");
+  var alertsize = document.getElementById("alertsize");
+  // check for browser support (may need to be modified)
+  if (input.files && input.files.length == 1) {
+    if (input.files[0].size > 2 * 1024 * 1024) {
+      alertsize.classList.remove("visually-hidden");
+      input.value = "";
+
+      return false;
+    }
+  }
+  alertsize.classList.add("visually-hidden");
+  return true;
+}
