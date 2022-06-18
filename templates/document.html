@@ -1,5 +1,5 @@
 <div id="document">
-  <label for="recipient-name" class="col-form-label">Document:</label>
+  <label for="recipient-name" class="col-form-label">Nummero:</label>
   <div class="input-group mb-3">
     <input
       name="document_number"
@@ -19,8 +19,12 @@
       class="form-control"
       id="due_date"
       min="{{today()}}"
-      value="{{today()}}"
       required
     />
+  </div>
+
+  <label for="recipient-name" class="col-form-label">Documment:</label>
+  <div class="input-group mb-3">
+    <input name="foto" type="file" class="form-control" id="foto" required />
   </div>
 </div>
