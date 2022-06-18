@@ -90,7 +90,7 @@ class Companies(Base, DictMixIn):
 class Sales(Base, DictMixIn):
     __tablename__ = "sales"
 
-    categorie_id = Column(Integer, ForeignKey("salescategories.id"), nullable=False)
+    # categorie_id = Column(Integer, ForeignKey("salescategories.id"), nullable=False)
     paymentmethod_id = Column(Integer, ForeignKey("paymentmethod.id"), nullable=False)
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
     date = Column(Date, default=datetime.datetime.now)
@@ -101,13 +101,13 @@ class Sales(Base, DictMixIn):
     amount = Column(Float, default=0.0)
     comment = Column(String(50), nullable=False)
 
-    categorie = relationship("SalesCategories", back_populates="sales")
+    # categorie = relationship("SalesCategories", back_populates="sales")
     paymentmethod = relationship("PaymentMethod", back_populates="sales")
     company = relationship("Companies", back_populates="sales")
 
     def __init__(
         self,
-        categorie_id=None,
+        # categorie_id=None,
         company_id=None,
         paymentmethod_id=None,
         date=None,
@@ -116,7 +116,7 @@ class Sales(Base, DictMixIn):
         document_number="nop",
     ):
 
-        self.categorie_id = categorie_id
+        # self.categorie_id = categorie_id
         self.company_id = company_id
         self.paymentmethod_id = paymentmethod_id
         self.date = date
@@ -132,7 +132,7 @@ class SalesCategories(Base, DictMixIn):
     __tablename__ = "salescategories"
 
     name = Column(String(50), nullable=False)
-    sales = relationship("Sales", back_populates="categorie")
+    # sales = relationship("Sales", back_populates="categorie")
 
     def __init__(self, name=None):
         self.name = name

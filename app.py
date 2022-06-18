@@ -202,7 +202,7 @@ def sales():
 @app.route("/sales", methods=["POST"])
 @login_required
 def add_sales():
-    categorie_id = request.form.get("categorie_id", type=int)
+
     company_id = request.form.get("company_id", type=int)
     payment_id = request.form.get("payment_id", type=int)
     date = request.form.get("date")
@@ -213,7 +213,6 @@ def add_sales():
     due_date = request.form.get("due_date")
 
     new_sale = Sales(
-        categorie_id=categorie_id,
         company_id=company_id,
         paymentmethod_id=payment_id,
         date=datetime.datetime.strptime(date, "%Y-%m-%d"),
