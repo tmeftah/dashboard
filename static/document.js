@@ -6,6 +6,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
   var document_div1 = document.getElementById("document1");
 
   if (document_div) {
+    document.addEventListener("shown.bs.modal", function (e) {
+      document.getElementById("amount").focus();
+    });
+
     var document_number = document.getElementById("document_number");
     var paymentmethod = document.getElementById("payment_id").value;
     var due_date = document.getElementById("due_date");
@@ -21,6 +25,9 @@ document.addEventListener("DOMContentLoaded", function (event) {
   }
 
   if (document_div1) {
+    document.addEventListener("shown.bs.modal", function (e) {
+      document.getElementById("amount1").focus();
+    });
     var document_number1 = document.getElementById("document_number1");
     var paymentmethod1 = document.getElementById("payment_id1").value;
     var due_date1 = document.getElementById("due_date1");
@@ -41,6 +48,7 @@ function ChangePaymentmethod() {
   var document_number = document.getElementById("document_number");
   var paymentmethod = document.getElementById("payment_id").value;
   var due_date = document.getElementById("due_date");
+  document.getElementById("amount").focus();
 
   if (paymentmethod == 2 || paymentmethod == 3) {
     document_div.style.display = "block";
@@ -58,6 +66,7 @@ function ChangePaymentmethod1() {
   var document_number = document.getElementById("document_number1");
   var paymentmethod = document.getElementById("payment_id1").value;
   var due_date1 = document.getElementById("due_date1");
+  document.getElementById("amount1").focus();
 
   if (paymentmethod == 2 || paymentmethod == 3) {
     document_div.style.display = "block";
@@ -68,4 +77,28 @@ function ChangePaymentmethod1() {
     document_number.setAttribute("disabled", "");
     due_date1.required = false;
   }
+}
+
+function onlyNumberKey(evt) {
+  // Only ASCII character in that range allowed
+  var alert2 = document.getElementById("alert");
+  var ASCIICode = evt.which ? evt.which : evt.keyCode;
+  if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57)) {
+    alert2.classList.remove("visually-hidden");
+    return false;
+  }
+  alert2.classList.add("visually-hidden");
+  return true;
+}
+
+function onlyNumberKey1(evt) {
+  // Only ASCII character in that range allowed
+  var alert2 = document.getElementById("alert1");
+  var ASCIICode = evt.which ? evt.which : evt.keyCode;
+  if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57)) {
+    alert2.classList.remove("visually-hidden");
+    return false;
+  }
+  alert2.classList.add("visually-hidden");
+  return true;
 }
