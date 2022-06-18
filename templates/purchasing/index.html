@@ -36,7 +36,21 @@
               {% for purchasing in purchasings %}
               <tr>
                 <td>{{purchasing.company.name}}</td>
-                <td>{{purchasing.paymentmethod.name}}</td>
+                <td>
+                  {{purchasing.paymentmethod.name}}
+                  <!--  -->
+                  {% if purchasing.paymentmethod_id in [2,3] %}
+                  <br />
+                  <small style="font-size: 10px"
+                    >Nummero: <b> {{purchasing.document_number | upper}}</b>
+                  </small>
+                  ,
+                  <small class="text-end" style="font-size: 10px"
+                    >Échéance le: <b> {{purchasing.due_date}}</b>
+                  </small>
+
+                  {% endif %}
+                </td>
                 <td>{{purchasing.amount}} <small>TND</small></td>
                 <td>{{purchasing.date}}</td>
                 <td>
@@ -121,8 +135,10 @@
             >
             <select
               name="payment_id"
+              id="payment_id"
               class="form-select"
               aria-label="Default select example"
+              onchange="ChangePaymentmethod()"
             >
               {% for payment in paymentmethod %}
               <option value="{{payment.id}}">{{payment.name}}</option>
@@ -153,6 +169,8 @@
               />
               <span class="input-group-text">TND</span>
             </div>
+            <!-- document -->
+            {% include 'document.html' %}
           </div>
           <div class="mb-3">
             <label for="message-text" class="col-form-label">Message:</label>

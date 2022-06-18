@@ -185,36 +185,8 @@
               />
               <span class="input-group-text">TND</span>
             </div>
-            <div id="document">
-              <label for="recipient-name" class="col-form-label"
-                >Document:</label
-              >
-              <div class="input-group mb-3">
-                <input
-                  name="document_number"
-                  type="text"
-                  class="form-control"
-                  id="document_number"
-                  required
-                  value=""
-                />
-              </div>
-
-              <label for="recipient-name" class="col-form-label"
-                >Date d'échéance:</label
-              >
-              <div class="input-group mb-3">
-                <input
-                  name="due_date"
-                  type="date"
-                  class="form-control"
-                  id="due_date"
-                  min="{{today()}}"
-                  value="{{today()}}"
-                  required
-                />
-              </div>
-            </div>
+            <!-- document -->
+            {% include 'document.html' %}
           </div>
 
           <div class="mb-3">
@@ -241,22 +213,4 @@
   </div>
 </div>
 
-<script>
-  var document_div = document.getElementById("document");
-  var document_number = document.getElementById("document_number");
-
-  document_div.style.display = "none";
-  document_number.setAttribute("disabled", "");
-
-  function ChangePaymentmethod() {
-    var paymentmethod = document.getElementById("payment_id").value;
-    if (paymentmethod == 2 || paymentmethod == 3) {
-      document_div.style.display = "block";
-      document_number.removeAttribute("disabled");
-    } else {
-      document_div.style.display = "none";
-      document_number.setAttribute("disabled", "");
-    }
-  }
-</script>
 {% endblock %}

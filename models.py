@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, Integer, String, ForeignKey, Boolean
+from sqlalchemy import Column, Float, Integer, String, ForeignKey, Boolean, CheckConstraint
 from sqlalchemy.types import Date
 
 from sqlalchemy.orm import relationship
@@ -165,6 +165,7 @@ class CostsDef(Base, DictMixIn):
     name = Column(String(50), nullable=False)
     fixed = Column(Boolean, default=False)
     costsmappings = relationship("CostsMapping", back_populates="costsdef")
+    payments = relationship("Payments", back_populates="costsdef")
 
     def __init__(self, name=None, fixed=False):
         self.name = name
@@ -184,6 +185,9 @@ class CostsMapping(Base, DictMixIn):
     date = Column(Date, default=datetime.datetime.now)
     comment = Column(String(50), nullable=False)
 
+    document_number = Column(String(50), nullable=False)
+    due_date = Column(Date, default=datetime.datetime.now)
+
     costsdef = relationship("CostsDef", back_populates="costsmappings")
     paymentmethod = relationship("PaymentMethod", back_populates="costsmappings")
 
@@ -194,6 +198,7 @@ class CostsMapping(Base, DictMixIn):
         amount=amount,
         date=date,
         comment=comment,
+        document_number="nop",
     ):
 
         self.cost_id = cost_id
@@ -201,6 +206,7 @@ class CostsMapping(Base, DictMixIn):
         self.amount = amount
         self.date = date
         self.comment = comment
+        self.document_number = document_number
 
     def __repr__(self):
         return f"<CostsMapping {self.id!r}>"
@@ -218,6 +224,9 @@ class Purchasing(Base, DictMixIn):
     date = Column(Date, default=datetime.datetime.now)
     month_for = Column(Date, default=datetime.datetime.now)
 
+    document_number = Column(String(50), nullable=False)
+    due_date = Column(Date, default=datetime.datetime.now)
+
     paymentmethod = relationship("PaymentMethod", back_populates="purchasings")
     company = relationship("Companies", back_populates="purchasings")
 
@@ -228,6 +237,7 @@ class Purchasing(Base, DictMixIn):
         amount=amount,
         date=date,
         comment=comment,
+        document_number="nop",
     ):
 
         self.paymentmethod_id = paymentmethod_id
@@ -235,6 +245,7 @@ class Purchasing(Base, DictMixIn):
         self.amount = amount
         self.date = date
         self.comment = comment
+        self.document_number = document_number
 
     def __repr__(self):
         return f"<Purchasing {self.id!r}>"
@@ -251,6 +262,9 @@ class Recovers(Base, DictMixIn):
     amount = Column(Float, default=0.0)
     comment = Column(String(50), nullable=False)
 
+    document_number = Column(String(50), nullable=False)
+    due_date = Column(Date, default=datetime.datetime.now)
+
     # categorie = relationship("SalesCategories", back_populates="sales")
     paymentmethod = relationship("PaymentMethod", back_populates="recovers")
     company = relationship("Companies", back_populates="recovers")
@@ -263,6 +277,7 @@ class Recovers(Base, DictMixIn):
         date=None,
         amount=0.0,
         comment=None,
+        document_number="nop",
     ):
 
         # self.categorie_id = categorie_id
@@ -271,6 +286,7 @@ class Recovers(Base, DictMixIn):
         self.date = date
         self.amount = amount
         self.comment = comment
+        self.document_number = document_number
 
     def __repr__(self):
         return f"<Recovers {self.company.name!r}>"
@@ -345,32 +361,50 @@ class Payments(Base, DictMixIn):
 
     # categorie_id = Column(Integer, ForeignKey("salescategories.id"), nullable=False)
     paymentmethod_id = Column(Integer, ForeignKey("paymentmethod.id"), nullable=False)
-    company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
+    company_id = Column(Integer, ForeignKey("companies.id"))
+    cost_id = Column(Integer, ForeignKey("costsdef.id"))
     date = Column(Date, default=datetime.datetime.now)
 
     amount = Column(Float, default=0.0)
     comment = Column(String(50), nullable=False)
 
+    document_number = Column(String(50), nullable=False)
+    due_date = Column(Date, default=datetime.datetime.now)
+
     # categorie = relationship("SalesCategories", back_populates="sales")
     paymentmethod = relationship("PaymentMethod", back_populates="payments")
     company = relationship("Companies", back_populates="payments")
+    costsdef = relationship("CostsDef", back_populates="payments")
+
+    # table level CHECK constraint.  'name' is optional.
+
+    __table_args__ = (
+        CheckConstraint(
+            "(company_id  is null or cost_id is null) and not (company_id is null and cost_id is null)",
+            name="only_one_value",
+        ),
+    )
 
     def __init__(
         self,
         # categorie_id=None,
         company_id=None,
+        cost_id=None,
         paymentmethod_id=None,
         date=None,
         amount=0.0,
         comment=None,
+        document_number="nop",
     ):
 
         # self.categorie_id = categorie_id
         self.company_id = company_id
+        self.cost_id = cost_id
         self.paymentmethod_id = paymentmethod_id
         self.date = date
         self.amount = amount
         self.comment = comment
+        self.document_number = document_number
 
     def __repr__(self):
         return f"<Recovers {self.company.name!r}>"

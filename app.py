@@ -17,6 +17,7 @@ from models import (
     Purchasing,
     Reconciliations,
     Stocks,
+    Payments,
 )
 from utils import (
     get_sold_clients,
@@ -36,7 +37,12 @@ import datetime
 # models.Base.metadata.create_all(bind=engine)
 
 app = Flask(__name__)
+
 app.secret_key = "super secret key"
+app.config["SESSION_COOKIE_SAMESITE"] = "Strict"
+app.config["SESSION_COOKIE_HTTPONLY"] = False
+app.config["SESSION_COOKIE_SECURE"] = True
+
 
 login_manager = LoginManager()
 login_manager.login_view = "login"
@@ -47,7 +53,6 @@ login_manager.init_app(app)
 def load_user(user_id):
     # since the user_id is just the primary key of our user table, use it in the query for the user
     user = db_session.query(User).get(int(user_id))
-    print(user)
     return user
 
 
@@ -258,11 +263,14 @@ def costs():
 @login_required
 def add_costs():
 
-    cost_id = request.form.get("cost_id")
-    payment_id = request.form.get("payment_id")
+    cost_id = request.form.get("cost_id", type=int)
+    payment_id = request.form.get("payment_id", type=int)
     date = request.form.get("date")
     amount = request.form.get("amount")
     comment = request.form.get("comment")
+
+    document_number = request.form.get("document_number")
+    due_date = request.form.get("due_date")
 
     new_cost = CostsMapping(
         cost_id=cost_id,
@@ -271,6 +279,10 @@ def add_costs():
         amount=amount,
         comment=comment,
     )
+
+    if payment_id in [2, 3]:
+        new_cost.due_date = datetime.datetime.strptime(due_date, "%Y-%m-%d")
+        new_cost.document_number = document_number
 
     try:
         db_session.add(new_cost)
@@ -328,11 +340,14 @@ def purchasings():
 @login_required
 def add_purchasings():
 
-    payment_id = request.form.get("payment_id")
-    company_id = request.form.get("company_id")
+    payment_id = request.form.get("payment_id", type=int)
+    company_id = request.form.get("company_id", type=int)
     date = request.form.get("date")
     amount = request.form.get("amount")
     comment = request.form.get("comment")
+
+    document_number = request.form.get("document_number")
+    due_date = request.form.get("due_date")
 
     new_purchasing = Purchasing(
         paymentmethod_id=payment_id,
@@ -341,6 +356,10 @@ def add_purchasings():
         amount=amount,
         comment=comment,
     )
+
+    if payment_id in [2, 3]:
+        new_purchasing.due_date = datetime.datetime.strptime(due_date, "%Y-%m-%d")
+        new_purchasing.document_number = document_number
 
     try:
         db_session.add(new_purchasing)
@@ -380,10 +399,13 @@ def recovers():
 def add_recovers():
     categorie_id = request.form.get("categorie_id", type=int)
     company_id = request.form.get("company_id", type=int)
-    payment_id = request.form.get("payment_id")
+    payment_id = request.form.get("payment_id", type=int)
     date = request.form.get("date")
     amount = request.form.get("amount")
     comment = request.form.get("comment")
+
+    document_number = request.form.get("document_number")
+    due_date = request.form.get("due_date")
 
     new_recover = Recovers(
         # categorie_id=categorie_id,
@@ -393,6 +415,10 @@ def add_recovers():
         amount=amount,
         comment=comment,
     )
+
+    if payment_id in [2, 3]:
+        new_recover.due_date = datetime.datetime.strptime(due_date, "%Y-%m-%d")
+        new_recover.document_number = document_number
 
     try:
         db_session.add(new_recover)
@@ -411,8 +437,9 @@ def add_recovers():
 @app.route("/payments", methods=["GET"])
 @login_required
 def payments():
-    recovers = db_session.query(Recovers).order_by(desc(Recovers.date)).all()
-    companies = db_session.query(Companies).filter_by(customer=True).all()
+    payments = db_session.query(Payments).order_by(desc(Payments.date)).all()
+    suppliers = db_session.query(Companies).filter_by(supplier=True).all()
+    cost_defs = db_session.query(CostsDef).all()
 
     paymentmethod = (
         db_session.query(PaymentMethod).filter(PaymentMethod.name.not_like("Credit")).all()
@@ -420,9 +447,10 @@ def payments():
 
     return render_template(
         "/payments/index.html",
-        recovers=recovers,
+        payments=payments,
         paymentmethod=paymentmethod,
-        companies=companies,
+        suppliers=suppliers,
+        cost_defs=cost_defs,
         get_sold_clients=get_sold_clients,
     )
 
@@ -430,21 +458,31 @@ def payments():
 @app.route("/payments", methods=["POST"])
 @login_required
 def add_payments():
-    categorie_id = request.form.get("categorie_id", type=int)
-    company_id = request.form.get("company_id", type=int)
-    payment_id = request.form.get("payment_id")
+    # categorie_id = request.form.get("categorie_id", type=int)
+    payment_id = request.form.get("payment_id", type=int)
     date = request.form.get("date")
     amount = request.form.get("amount")
     comment = request.form.get("comment")
 
-    new_payment = Recovers(
+    company_id = request.form.get("company_id", type=int)
+    cost_id = request.form.get("cost_id", type=int)
+
+    document_number = request.form.get("document_number")
+    due_date = request.form.get("due_date")
+
+    new_payment = Payments(
         # categorie_id=categorie_id,
         company_id=company_id,
+        cost_id=cost_id,
         paymentmethod_id=payment_id,
         date=datetime.datetime.strptime(date, "%Y-%m-%d"),
         amount=amount,
         comment=comment,
     )
+
+    if payment_id in [2, 3]:
+        new_payment.due_date = datetime.datetime.strptime(due_date, "%Y-%m-%d")
+        new_payment.document_number = document_number
 
     try:
         db_session.add(new_payment)
@@ -455,9 +493,9 @@ def add_payments():
         flash("db error", category="error")
 
     else:
-        flash("Recovers ajouter", category="success")
+        flash("Payment ajouter", category="success")
 
-    return redirect(url_for("recovers"))
+    return redirect(url_for("payments"))
 
 
 @app.route("/reconciliations", methods=["GET"])

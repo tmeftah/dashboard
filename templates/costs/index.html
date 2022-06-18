@@ -68,7 +68,21 @@
               {% for cost in costsmappings %}
               <tr>
                 <td>{{cost.costsdef.name}}</td>
-                <td>{{cost.paymentmethod.name}}</td>
+                <td>
+                  {{cost.paymentmethod.name}}
+                  <!--  -->
+                  {% if cost.paymentmethod_id in [2,3] %}
+                  <br />
+                  <small style="font-size: 10px"
+                    >Nummero: <b> {{cost.document_number | upper}}</b>
+                  </small>
+                  ,
+                  <small class="text-end" style="font-size: 10px"
+                    >Échéance le: <b> {{cost.due_date}}</b>
+                  </small>
+
+                  {% endif %}
+                </td>
                 <td>{{cost.amount}} <small>TND</small></td>
                 <td>{{cost.date}}</td>
                 <td>
@@ -149,8 +163,10 @@
             >
             <select
               name="payment_id"
+              id="payment_id"
               class="form-select"
               aria-label="Default select example"
+              onchange="ChangePaymentmethod()"
             >
               {% for payment in paymentmethod %}
               <option value="{{payment.id}}">{{payment.name}}</option>
@@ -181,6 +197,8 @@
               />
               <span class="input-group-text">TND</span>
             </div>
+            <!-- document -->
+            {% include 'document.html' %}
           </div>
           <div class="mb-3">
             <label for="message-text" class="col-form-label">Message:</label>
