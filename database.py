@@ -23,7 +23,11 @@ def init_db():
     from werkzeug.security import generate_password_hash
 
     db_session.add(
-        User(name="John Doe", email="user1@test.com", password=generate_password_hash("test"))
+        User(
+            name="Saleh",
+            email="user1@test.com",
+            password=generate_password_hash("test"),
+        )
     )
 
     # init clients
