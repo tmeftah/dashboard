@@ -1,30 +1,55 @@
 <div id="document">
-  <label for="recipient-name" class="col-form-label">Nummero:</label>
-  <div class="input-group mb-3">
-    <input
-      name="document_number"
-      type="text"
-      class="form-control"
-      id="document_number"
-      required
-      value=""
-    />
-  </div>
+  <div class="card">
+    <div class="card-header bg-warning">Cheque/Traite</div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-6">
+          <label for="recipient-name" class="col-form-label">Nummero:</label>
+          <div class="input-group">
+            <input
+              name="document_number"
+              type="text"
+              class="form-control form-control-sm border-primary"
+              id="document_number"
+              required
+              value=""
+              onkeypress="return onlyNumberKey(event)"
+            />
+          </div>
+          <div
+            class="alert alert-danger visually-hidden mt-1"
+            id="alert"
+            role="alert"
+          >
+            <small>Veuillez saisir uniquement des chiffres</small>
+          </div>
+        </div>
+        <div class="col-6">
+          <label for="recipient-name" class="col-form-label"
+            >Date d'échéance:</label
+          >
+          <div class="input-group">
+            <input
+              name="due_date"
+              type="date"
+              class="form-control form-control-sm border-primary"
+              id="due_date"
+              min="{{today()}}"
+              required
+            />
+          </div>
+        </div>
+      </div>
 
-  <label for="recipient-name" class="col-form-label">Date d'échéance:</label>
-  <div class="input-group mb-3">
-    <input
-      name="due_date"
-      type="date"
-      class="form-control"
-      id="due_date"
-      min="{{today()}}"
-      required
-    />
-  </div>
-
-  <label for="recipient-name" class="col-form-label">Documment:</label>
-  <div class="input-group mb-3">
-    <input name="foto" type="file" class="form-control" id="foto" />
+      <label for="recipient-name" class="col-form-label">Document:</label>
+      <div class="input-group mb-3">
+        <input
+          name="foto"
+          type="file"
+          class="form-control form-control-sm"
+          id="foto"
+        />
+      </div>
+    </div>
   </div>
 </div>

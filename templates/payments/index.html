@@ -198,58 +198,70 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label for="recipient-name" class="col-form-label"
-              >Fournisseurs:</label
-            >
-            <select
-              name="company_id"
-              class="form-select"
-              aria-label="Default select example"
-            >
-              {% for supplier in suppliers %}
-              <option value="{{supplier.id}}">{{supplier.name}}</option>
-              {% endfor %}
-            </select>
-
-            <label for="recipient-name" class="col-form-label"
-              >Mode de payment:</label
-            >
-            <select
-              name="payment_id"
-              id="payment_id"
-              class="form-select"
-              aria-label="Default select example"
-              onchange="ChangePaymentmethod(this)"
-            >
-              {% for payment in paymentmethod %}
-              <option value="{{payment.id}}">{{payment.name}}</option>
-              {% endfor %}
-            </select>
-            <label for="recipient-name" class="col-form-label">Date:</label>
-            <div class="input-group mb-3">
-              <input
-                name="date"
-                type="date"
-                class="form-control"
-                id="date"
-                max="{{today()}}"
-                value="{{today()}}"
-                required
-              />
+            <div class="row">
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label"
+                  >Fournisseurs:</label
+                >
+                <select
+                  name="company_id"
+                  class="form-select form-select-sm"
+                  aria-label="Default select example"
+                >
+                  {% for supplier in suppliers %}
+                  <option value="{{supplier.id}}">{{supplier.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label"
+                  >Mode de payment:</label
+                >
+                <select
+                  name="payment_id"
+                  id="payment_id"
+                  class="form-select form-select-sm"
+                  aria-label="Default select example"
+                  onchange="ChangePaymentmethod(this)"
+                >
+                  {% for payment in paymentmethod %}
+                  <option value="{{payment.id}}">{{payment.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
             </div>
 
-            <label for="recipient-name" class="col-form-label">Valeur:</label>
-            <div class="input-group mb-3">
-              <input
-                name="amount"
-                type="number"
-                min="0"
-                class="form-control"
-                id="recipient-name"
-                required
-              />
-              <span class="input-group-text">TND</span>
+            <div class="row">
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label">Date:</label>
+                <div class="input-group mb-3">
+                  <input
+                    name="date"
+                    type="date"
+                    class="form-control form-control-sm"
+                    id="date"
+                    max="{{today()}}"
+                    value="{{today()}}"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-6">
+                <label for="amount" class="col-form-label">Montant:</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input
+                    name="amount"
+                    type="number"
+                    min="0"
+                    class="form-control border-primary"
+                    id="amount"
+                    required
+                  />
+                  <span class="input-group-text">TND</span>
+                </div>
+              </div>
             </div>
+
             <!-- document -->
             {% include 'document.html' %}
           </div>
@@ -301,86 +313,127 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label for="recipient-name" class="col-form-label">Charge:</label>
-            <select
-              name="cost_id"
-              class="form-select"
-              aria-label="Default select example"
-            >
-              {% for cost_def in cost_defs %}
-              <option value="{{cost_def.id}}">{{cost_def.name}}</option>
-              {% endfor %}
-            </select>
-
-            <label for="recipient-name" class="col-form-label"
-              >Mode de payment:</label
-            >
-            <select
-              name="payment_id"
-              id="payment_id1"
-              class="form-select"
-              aria-label="Default select example"
-              onchange="ChangePaymentmethod1()"
-            >
-              {% for payment in paymentmethod %}
-              <option value="{{payment.id}}">{{payment.name}}</option>
-              {% endfor %}
-            </select>
-            <label for="recipient-name" class="col-form-label">Date:</label>
-            <div class="input-group mb-3">
-              <input
-                name="date"
-                type="date"
-                class="form-control"
-                id="date"
-                max="{{today()}}"
-                value="{{today()}}"
-                required
-              />
+            <div class="row">
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label"
+                  >Charge:</label
+                >
+                <select
+                  name="cost_id"
+                  class="form-select form-select-sm"
+                  aria-label="Default select example"
+                >
+                  {% for cost_def in cost_defs %}
+                  <option value="{{cost_def.id}}">{{cost_def.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label"
+                  >Mode de payment:</label
+                >
+                <select
+                  name="payment_id"
+                  id="payment_id1"
+                  class="form-select form-select-sm"
+                  aria-label="Default select example"
+                  onchange="ChangePaymentmethod1()"
+                >
+                  {% for payment in paymentmethod %}
+                  <option value="{{payment.id}}">{{payment.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
             </div>
 
-            <label for="recipient-name" class="col-form-label">Valeur:</label>
-            <div class="input-group mb-3">
-              <input
-                name="amount"
-                type="number"
-                min="0"
-                class="form-control"
-                id="recipient-name"
-                required
-              />
-              <span class="input-group-text">TND</span>
+            <div class="row">
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label">Date:</label>
+                <div class="input-group mb-3">
+                  <input
+                    name="date"
+                    type="date"
+                    class="form-control form-control-sm"
+                    id="date"
+                    max="{{today()}}"
+                    value="{{today()}}"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-6">
+                <label for="amount" class="col-form-label">Montant:</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input
+                    name="amount"
+                    type="number"
+                    min="0"
+                    class="form-control border-primary"
+                    id="amount1"
+                    required
+                  />
+                  <span class="input-group-text">TND</span>
+                </div>
+              </div>
             </div>
 
             <!-- document1 -->
             <div id="document1">
-              <label for="recipient-name" class="col-form-label"
-                >Document:</label
-              >
-              <div class="input-group mb-3">
-                <input
-                  name="document_number"
-                  type="text"
-                  class="form-control"
-                  id="document_number1"
-                  required
-                  value=""
-                />
-              </div>
-
-              <label for="recipient-name" class="col-form-label"
-                >Date d'échéance:</label
-              >
-              <div class="input-group mb-3">
-                <input
-                  name="due_date"
-                  type="date"
-                  class="form-control"
-                  id="due_date"
-                  min="{{today()}}"
-                  value="{{today()}}"
-                  required
-                />
+              <div class="card">
+                <div class="card-header bg-warning">Cheque/Traite</div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-6">
+                      <label for="recipient-name" class="col-form-label"
+                        >Nummero:</label
+                      >
+                      <div class="input-group mb-3">
+                        <input
+                          name="document_number"
+                          type="text"
+                          class="form-control form-control-sm border-primary"
+                          id="document_number1"
+                          required
+                          value=""
+                          onkeypress="return onlyNumberKey1(event)"
+                        />
+                      </div>
+                      <div
+                        class="alert alert-danger visually-hidden mt-1"
+                        id="alert1"
+                        role="alert"
+                      >
+                        <small>Veuillez saisir uniquement des chiffres</small>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <label for="recipient-name" class="col-form-label"
+                        >Date d'échéance:</label
+                      >
+                      <div class="input-group mb-3">
+                        <input
+                          name="due_date"
+                          type="date"
+                          class="form-control form-control-sm border-primary"
+                          id="due_date1"
+                          min="{{today()}}"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <label for="recipient-name" class="col-form-label"
+                      >Document:</label
+                    >
+                    <div class="input-group mb-3">
+                      <input
+                        name="foto"
+                        type="file"
+                        class="form-control form-control-sm"
+                        id="foto"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

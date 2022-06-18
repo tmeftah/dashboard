@@ -24,7 +24,7 @@
           <table class="table table-sm table-striped">
             <thead>
               <tr>
-                <th scope="col">Categorie (a suprimee)</th>
+                <!-- <th scope="col">Categorie (a suprimee)</th> -->
                 <th scope="col">Client</th>
                 <th scope="col">Mode de Payment</th>
                 <th scope="col">Montant</th>
@@ -35,7 +35,6 @@
             <tbody>
               {% for sale in sales %}
               <tr>
-                <td>{{sale.categorie.name}}</td>
                 <td>{{sale.company.name}}</td>
                 <td>
                   {{sale.paymentmethod.name}}
@@ -107,84 +106,80 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action="/sales" method="post">
+      <form action="/sales" method="post" enctype="multipart/form-data">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
             Ajouter un nouveau Chiffre d'affaire
           </h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label for="recipient-name" class="col-form-label"
-              >Categorie:</label
-            >
-            <select
-              name="categorie_id"
-              class="form-select"
-              aria-label="Default select example"
-            >
-              {% for categorie in salescategories %}
-              <option value="{{categorie.id}}">{{categorie.name}}</option>
-              {% endfor %}
-            </select>
-
-            <label for="recipient-name" class="col-form-label">Client:</label>
-            <select
-              name="company_id"
-              class="form-select"
-              aria-label="Default select example"
-            >
-              {% for company in companies %}
-              <option value="{{company.id}}">{{company.name}}</option>
-              {% endfor %}
-            </select>
-
-            <label for="recipient-name" class="col-form-label"
-              >Mode de payment:</label
-            >
-            <select
-              name="payment_id"
-              id="payment_id"
-              class="form-select"
-              aria-label="Default select example"
-              onchange="ChangePaymentmethod()"
-            >
-              {% for payment in paymentmethod %}
-              <option value="{{payment.id}}">{{payment.name}}</option>
-              {% endfor %}
-            </select>
-
-            <label for="recipient-name" class="col-form-label">Date:</label>
-            <div class="input-group mb-3">
-              <input
-                name="date"
-                type="date"
-                class="form-control"
-                id="date"
-                max="{{today()}}"
-                value="{{today()}}"
-                required
-              />
+            <div class="row">
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label"
+                  >Client:</label
+                >
+                <select
+                  name="company_id"
+                  class="form-select form-select-sm"
+                  aria-label="Default select example"
+                >
+                  {% for company in companies %}
+                  <option value="{{company.id}}">{{company.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label"
+                  >Mode de payment:</label
+                >
+                <select
+                  name="payment_id"
+                  id="payment_id"
+                  class="form-select form-select-sm"
+                  aria-label="Default select example"
+                  onchange="ChangePaymentmethod()"
+                >
+                  {% for payment in paymentmethod %}
+                  <option value="{{payment.id}}">{{payment.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
             </div>
 
-            <label for="recipient-name" class="col-form-label">Valeur:</label>
-            <div class="input-group mb-3">
-              <input
-                name="amount"
-                type="number"
-                min="0"
-                class="form-control"
-                id="recipient-name"
-                required
-              />
-              <span class="input-group-text">TND</span>
+            <div class="row">
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label">Date:</label>
+                <div class="input-group">
+                  <input
+                    name="date"
+                    type="date"
+                    class="form-control form-control-sm"
+                    id="date"
+                    max="{{today()}}"
+                    value="{{today()}}"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="col-6">
+                <label for="amount" class="col-form-label">Montant:</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input
+                    name="amount"
+                    type="number"
+                    min="0"
+                    class="form-control border-primary"
+                    id="amount"
+                    required
+                    autofocus
+                  />
+                  <span class="input-group-text">TND</span>
+                </div>
+              </div>
             </div>
+
             <!-- document -->
             {% include 'document.html' %}
           </div>

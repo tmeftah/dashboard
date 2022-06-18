@@ -25,7 +25,7 @@
             <thead>
               <tr>
                 <th scope="col">Ajouté le</th>
-                <th scope="col">Valeur</th>
+                <th scope="col">Montant</th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -97,30 +97,35 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label for="recipient-name" class="col-form-label">Valeur:</label>
-            <div class="input-group mb-3">
-              <input
-                name="amount"
-                type="number"
-                min="0"
-                class="form-control"
-                id="recipient-name"
-                required
-              />
-              <span class="input-group-text">TND</span>
-            </div>
-
-            <label for="recipient-name" class="col-form-label">Date:</label>
-            <div class="input-group mb-3">
-              <input
-                name="date"
-                type="date"
-                class="form-control"
-                id="date"
-                max="{{today()}}"
-                value="{{today()}}"
-                required
-              />
+            <div class="row">
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label">Date:</label>
+                <div class="input-group mb-3">
+                  <input
+                    name="date"
+                    type="date"
+                    class="form-control form-control-sm"
+                    id="date"
+                    max="{{today()}}"
+                    value="{{today()}}"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-6">
+                <label for="amount" class="col-form-label">Montant:</label>
+                <div class="input-group input-group-sm mb-3">
+                  <input
+                    name="amount"
+                    type="number"
+                    min="0"
+                    class="form-control border-primary"
+                    id="amount"
+                    required
+                  />
+                  <span class="input-group-text">TND</span>
+                </div>
+              </div>
             </div>
           </div>
           <div class="mb-3">
