@@ -34,31 +34,38 @@ def init_db():
     )
 
     # init clients
-    db_session.add(
-        Companies(name="Client n°1", email="client1@client.com", customer=True, supplier=False)
-    )
-    db_session.add(
-        Companies(name="Client n°2", email="client2@client.com", customer=True, supplier=False)
-    )
-    db_session.add(
-        Companies(
-            name="Fournisseur n°1", email="fournisseur1@client.com", customer=False, supplier=True
+    if current_app.config["FLASK_ENV"] != "production":
+        db_session.add(
+            Companies(name="Client n°1", email="client1@client.com", customer=True, supplier=False)
         )
-    )
-    db_session.add(
-        Companies(
-            name="Fournisseur n°2", email="fournisseur2@client.com", customer=False, supplier=True
+        db_session.add(
+            Companies(name="Client n°2", email="client2@client.com", customer=True, supplier=False)
         )
-    )
+        db_session.add(
+            Companies(
+                name="Fournisseur n°1",
+                email="fournisseur1@client.com",
+                customer=False,
+                supplier=True,
+            )
+        )
+        db_session.add(
+            Companies(
+                name="Fournisseur n°2",
+                email="fournisseur2@client.com",
+                customer=False,
+                supplier=True,
+            )
+        )
 
-    db_session.add(
-        Companies(
-            name="Client/Fournisseur n°2",
-            email="client/fournisseur@client.com",
-            customer=True,
-            supplier=True,
+        db_session.add(
+            Companies(
+                name="Client/Fournisseur n°2",
+                email="client/fournisseur@client.com",
+                customer=True,
+                supplier=True,
+            )
         )
-    )
 
     # init mode de payment
     db_session.add(PaymentMethod(name="Espèce"))  # 1
