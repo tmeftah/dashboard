@@ -40,19 +40,13 @@ import datetime
 # models.Base.metadata.create_all(bind=engine)
 
 
-UPLOAD_FOLDER = "./uploads"
-ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg"}
-
 app = Flask(__name__)
 
-app.secret_key = "super secret key"
-app.config["SESSION_COOKIE_SAMESITE"] = "Strict"
-app.config["SESSION_COOKIE_HTTPONLY"] = False
-app.config["SESSION_COOKIE_SECURE"] = True
-
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-app.config["MAX_CONTENT_LENGTH"] = 2 * 1000 * 1000
-
+environment_configuration = os.getenv("APPENV")
+if environment_configuration == "dev":
+    app.config.from_object("config.DevConfig")
+else:
+    app.config.from_object("config.ProdConfig")
 
 login_manager = LoginManager()
 login_manager.login_view = "login"
@@ -674,4 +668,4 @@ def shutdown_session(exception=None):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    app.run(host="0.0.0.0")
