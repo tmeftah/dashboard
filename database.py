@@ -3,6 +3,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from flask import current_app
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.security import generate_password_hash
 
 engine = create_engine("sqlite:///test.db")
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
@@ -21,17 +22,6 @@ def init_db():
         Base.metadata.drop_all(bind=engine)
 
     Base.metadata.create_all(bind=engine)
-
-    # init User
-    from werkzeug.security import generate_password_hash
-
-    db_session.add(
-        User(
-            name="Saleh",
-            email="user1@test.com",
-            password=generate_password_hash("test"),
-        )
-    )
 
     # init clients
     if current_app.config["FLASK_ENV"] != "production":
@@ -67,6 +57,23 @@ def init_db():
             )
         )
 
+        # init CA categorie
+        db_session.add(SalesCategories(name="Gros"))
+        db_session.add(SalesCategories(name="Magasin"))
+
+        # init CostDef
+        db_session.add(CostsDef(name="LOYER", fixed=True))
+        db_session.add(CostsDef(name="Carburant", fixed=False))
+
+    # init User
+    db_session.add(
+        User(
+            name="Saleh",
+            email="user1@test.com",
+            password=generate_password_hash("test"),
+        )
+    )
+
     # init mode de payment
     db_session.add(PaymentMethod(name="Espèce"))  # 1
     db_session.add(PaymentMethod(name="Chèque"))  # 2
@@ -75,14 +82,6 @@ def init_db():
     db_session.add(PaymentMethod(name="TPE"))  # 5
     db_session.add(PaymentMethod(name="Ticket Resto"))  # 6
     db_session.add(PaymentMethod(name="Virement Banquaire"))  # 7
-
-    # init CA categorie
-    db_session.add(SalesCategories(name="Gros"))
-    db_session.add(SalesCategories(name="Magasin"))
-
-    # init CostDef
-    db_session.add(CostsDef(name="LOYER", fixed=True))
-    db_session.add(CostsDef(name="Carburant", fixed=False))
 
     try:
         db_session.commit()
