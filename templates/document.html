@@ -41,17 +41,19 @@
         </div>
       </div>
 
-      <label for="recipient-name" class="col-form-label">Document:</label>
-      <div class="input-group mb-3">
+      <label for="recipient-name" class="col-form-label"> Document: </label>
+
+      <div class="input-group input-group-sm">
         <input
           name="foto"
           type="file"
-          class="form-control form-control-sm"
+          class="form-control"
           id="foto"
           accept="image/jpeg,image/png,image/jpeg,application/pdf"
           onchange="checkSize()"
         />
       </div>
+      <div style="font-size: 0.65rem">(max 2MB)</div>
       <div
         class="alert alert-danger visually-hidden mt-1"
         id="alertsize"
