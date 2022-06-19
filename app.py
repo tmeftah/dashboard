@@ -70,7 +70,7 @@ def upload_file(item):
     # If the user does not select a file, the browser submits an
     # empty file without a filename.
     if file.filename == "":
-        flash("No selected file")
+        # flash("No selected file") # TODO: fix zthsi flash error on empty file
         return redirect(request.url)
     if file and allowed_file(file.filename):
         format = file.filename.split(".")[-1:]
