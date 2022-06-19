@@ -6,7 +6,7 @@
     <button
       class="btn btn-success float-end"
       data-bs-toggle="modal"
-      data-bs-target="#addSalesModal"
+      data-bs-target="#addCompanyModal"
     >
       + Ajouter
     </button>
@@ -15,7 +15,7 @@
 <!--  -->
 
 <div class="row mb-2">
-  <div class="col">
+  <div class="col-6">
     <div class="card">
       <div class="card-header">
         <h5 class="card-title">Clients</h5>
@@ -27,7 +27,6 @@
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Nom</th>
-                <th scope="col">Type ( Hotel /Grossiste etc..)</th>
                 <th scope="col">Contact</th>
                 <th scope="col">Chiffre d'affaire</th>
                 <th scope="col">Ajouté le</th>
@@ -36,18 +35,11 @@
             </thead>
 
             <tbody>
-              {% for company in companies %}
+              {% for company in companies | selectattr('customer',
+              "equalto",True) %}
               <tr>
                 <th scope="row">1</th>
                 <td>{{company.name}}</td>
-                <td>
-                  Client: {% if company.is_customer %}
-                  <i class="bi bi-check"></i> {%else%}
-                  <i class="bi bi-x"></i> {% endif %} <br />
-                  Fournisseur: {% if company.is_supplier %}
-                  <i class="bi bi-check"></i> {% else %}
-                  <i class="bi bi-x"></i> {% endif %}
-                </td>
                 <td>
                   Email: {{company.email|default("...", true)}}
                   <br />Phone: {{company.phone|default("...", true)}}
@@ -87,6 +79,165 @@
           </table>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">Fournisseurs</h5>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive mb-0">
+          <table class="table table-sm table-striped">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nom</th>
+
+                <th scope="col">Contact</th>
+                <th scope="col">Chiffre d'affaire</th>
+                <th scope="col">Ajouté le</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for company in companies | selectattr('supplier',
+              "equalto",True) %}
+              <tr>
+                <th scope="row">1</th>
+                <td>{{company.name}}</td>
+
+                <td>
+                  Email: {{company.email|default("...", true)}}
+                  <br />Phone: {{company.phone|default("...", true)}}
+                </td>
+                <td>{{ company.sales | sum(attribute='amount') }} TND</td>
+                <td>{{company.createdAt}}</td>
+                <td>
+                  <div class="dropdown" style="position: static; z-index: 2000">
+                    <button
+                      class="btn btn-primary dropdown btn-sm"
+                      type="button"
+                      id="dropdownMenuButton1"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      ...
+                    </button>
+                    <ul
+                      class="dropdown-menu"
+                      aria-labelledby="dropdownMenuButton1"
+                    >
+                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li>
+                        <a class="dropdown-item" href="#">Another action</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#"
+                          >Something else here</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="addCompanyModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form action="/companies" method="post">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            Ajouter un nouveau Tiers
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <div class="row">
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label">Nom:</label>
+                <input
+                  name="name"
+                  id="name"
+                  type="text"
+                  class="form-control form-control-sm border-primary"
+                  required
+                />
+              </div>
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label">Type:</label>
+                <select
+                  name="company_type"
+                  id="company_type"
+                  class="form-select form-select-sm"
+                  aria-label="Default select example"
+                >
+                  <option value="0">Client</option>
+                  <option value="1">Fournisseur</option>
+                  <option value="2">Client+Fournisseur</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label">Email</label>
+                <div class="input-group mb-3">
+                  <input
+                    name="email"
+                    type="email"
+                    class="form-control form-control-sm"
+                    id="email"
+                  />
+                </div>
+              </div>
+              <div class="col-6">
+                <label for="amount" class="col-form-label">Phone:</label>
+                <div class="input-group mb-3">
+                  <input
+                    name="phone"
+                    type="text"
+                    class="form-control form-control-sm"
+                    id="phone"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Fermer
+          </button>
+          <button type="submit" class="btn btn-primary">Sauvegarder</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

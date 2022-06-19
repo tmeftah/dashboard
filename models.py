@@ -58,7 +58,7 @@ class Companies(Base, DictMixIn):
     __tablename__ = "companies"
 
     name = Column(String(50), unique=True)
-    email = Column(String(120), unique=True)
+    email = Column(String(120), nullable=True)  # TODO: unique=True,
     customer = Column(Boolean, default=True)
     supplier = Column(Boolean, default=False)
     phone = Column(String(120))
@@ -69,11 +69,12 @@ class Companies(Base, DictMixIn):
     payments = relationship("Payments", back_populates="company")
     reconciliations = relationship("Reconciliations", back_populates="company")
 
-    def __init__(self, name=None, email=None, customer=True, supplier=False):
+    def __init__(self, name=None, email=None, phone=None, customer=True, supplier=False):
         self.name = name
         self.email = email
         self.customer = customer
         self.supplier = supplier
+        self.phone = phone
 
     @property
     def is_customer(self):
