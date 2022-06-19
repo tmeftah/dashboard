@@ -48,8 +48,17 @@
                   <small class="text-end" style="font-size: 10px"
                     >Échéance le: <b> {{purchasing.due_date}}</b>
                   </small>
+                  ,
+                  <!--  -->
+                  {% if purchasing.document_filename != "" %}
 
-                  {% endif %}
+                  <a
+                    href="/uploads/{{purchasing.document_filename}}"
+                    target="_blank"
+                  >
+                    <i class="bi bi-file-earmark-arrow-down"></i
+                  ></a>
+                  {% endif %} {% endif %}
                 </td>
                 <td>{{purchasing.amount}} <small>TND</small></td>
                 <td>{{purchasing.date}}</td>
@@ -101,7 +110,7 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action="/purchasings" method="post">
+      <form action="/purchasings" method="post" enctype="multipart/form-data">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
             Ajouter un nouveau Achat

@@ -1,4 +1,5 @@
 import os
+
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -55,7 +56,31 @@ login_manager.init_app(app)
 
 #
 def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    return (
+        "." in filename and filename.rsplit(".", 1)[1].lower() in app.config["ALLOWED_EXTENSIONS"]
+    )
+
+
+def upload_file(item):
+    # check if the post request has the file part
+    if "foto" not in request.files:
+        flash("No file part")
+        return redirect(request.url)
+    file = request.files["foto"]
+    # If the user does not select a file, the browser submits an
+    # empty file without a filename.
+    if file.filename == "":
+        flash("No selected file")
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        format = file.filename.split(".")[-1:]
+        file_name = (
+            f"{'_'.join(file.filename.split('.')[:-1])}_{datetime.datetime.utcnow()}.{format}"
+        )
+        filename = secure_filename(file_name)
+        file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+        item.document_filename = filename
+        db_session.commit()
 
 
 @app.route("/uploads/<name>")
@@ -241,21 +266,7 @@ def add_sales():
     try:
         db_session.add(new_sale)
         db_session.commit()
-        # check if the post request has the file part
-        if "foto" not in request.files:
-            flash("No file part")
-            return redirect(request.url)
-        file = request.files["foto"]
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
-        if file.filename == "":
-            flash("No selected file")
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-            new_sale.document_filename = filename
-            db_session.commit()
+        upload_file(new_sale)
 
     except SQLAlchemyError as e:
         print(e)
@@ -317,6 +328,7 @@ def add_costs():
     try:
         db_session.add(new_cost)
         db_session.commit()
+        upload_file(new_cost)
     except SQLAlchemyError as e:
         print(e)
         db_session.rollback()
@@ -354,6 +366,7 @@ def add_costs_type():
 @app.route("/purchasings", methods=["GET"])
 @login_required
 def purchasings():
+    print(app.config["ENV"])
     companies = db_session.query(Companies).filter_by(supplier=True).all()
     purchasings = db_session.query(Purchasing).order_by(desc(Purchasing.date)).all()
     paymentmethod = db_session.query(PaymentMethod).all()
@@ -394,6 +407,7 @@ def add_purchasings():
     try:
         db_session.add(new_purchasing)
         db_session.commit()
+        upload_file(new_purchasing)
     except SQLAlchemyError as e:
         print(e)
         db_session.rollback()
@@ -453,6 +467,7 @@ def add_recovers():
     try:
         db_session.add(new_recover)
         db_session.commit()
+        upload_file(new_recover)
     except SQLAlchemyError as e:
         print(e)
         db_session.rollback()
@@ -517,6 +532,7 @@ def add_payments():
     try:
         db_session.add(new_payment)
         db_session.commit()
+        upload_file(new_payment)
     except SQLAlchemyError as e:
         print(e)
         db_session.rollback()
@@ -567,6 +583,7 @@ def add_reconciliations():
     try:
         db_session.add(new_reconciliation)
         db_session.commit()
+
     except SQLAlchemyError as e:
         print(e)
         db_session.rollback()

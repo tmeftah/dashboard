@@ -189,6 +189,7 @@ class CostsMapping(Base, DictMixIn):
 
     document_number = Column(String(50), nullable=False)
     due_date = Column(Date, default=datetime.datetime.now)
+    document_filename = Column(String(50))
 
     costsdef = relationship("CostsDef", back_populates="costsmappings")
     paymentmethod = relationship("PaymentMethod", back_populates="costsmappings")
@@ -228,6 +229,7 @@ class Purchasing(Base, DictMixIn):
 
     document_number = Column(String(50), nullable=False)
     due_date = Column(Date, default=datetime.datetime.now)
+    document_filename = Column(String(50))
 
     paymentmethod = relationship("PaymentMethod", back_populates="purchasings")
     company = relationship("Companies", back_populates="purchasings")
@@ -266,6 +268,7 @@ class Recovers(Base, DictMixIn):
 
     document_number = Column(String(50), nullable=False)
     due_date = Column(Date, default=datetime.datetime.now)
+    document_filename = Column(String(50))
 
     # categorie = relationship("SalesCategories", back_populates="sales")
     paymentmethod = relationship("PaymentMethod", back_populates="recovers")
@@ -372,6 +375,7 @@ class Payments(Base, DictMixIn):
 
     document_number = Column(String(50), nullable=False)
     due_date = Column(Date, default=datetime.datetime.now)
+    document_filename = Column(String(50))
 
     # categorie = relationship("SalesCategories", back_populates="sales")
     paymentmethod = relationship("PaymentMethod", back_populates="payments")
@@ -410,30 +414,3 @@ class Payments(Base, DictMixIn):
 
     def __repr__(self):
         return f"<Recovers {self.company.name!r}>"
-
-
-class PaymentsDocs(Base, DictMixIn):
-    __tablename__ = "paymentsDocs"
-
-    title = Column(String(50), nullable=False)
-    due_date = Column(Date, default=datetime.datetime.now)
-
-    def __init__(
-        self,
-        # categorie_id=None,
-        company_id=None,
-        paymentmethod_id=None,
-        date=None,
-        amount=0.0,
-        comment=None,
-    ):
-
-        # self.categorie_id = categorie_id
-        self.company_id = company_id
-        self.paymentmethod_id = paymentmethod_id
-        self.date = date
-        self.amount = amount
-        self.comment = comment
-
-    def __repr__(self):
-        return f"<PaymentsDocs {self.company.name!r}>"

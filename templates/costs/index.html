@@ -80,6 +80,15 @@
                   <small class="text-end" style="font-size: 10px"
                     >Échéance le: <b> {{cost.due_date}}</b>
                   </small>
+                  ,
+                  <!--  -->
+                  {% if cost.document_filename != "" %}
+
+                  <a href="/uploads/{{cost.document_filename}}" target="_blank">
+                    <i class="bi bi-file-earmark-arrow-down"></i
+                  ></a>
+                  {% endif %}
+                  <!--  -->
 
                   {% endif %}
                 </td>
@@ -133,7 +142,7 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action="/costs" method="post">
+      <form action="/costs" method="post" enctype="multipart/form-data">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
             Ajouter une nouvelle Charge

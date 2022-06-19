@@ -56,6 +56,15 @@
                   <small class="text-end" style="font-size: 10px"
                     >Échéance le: <b> {{payment.due_date}}</b>
                   </small>
+                  ,
+                  <!--  -->
+                  {% if payment.document_filename != "" %}
+
+                  <a href="/uploads/{{payment.document_filename}}" target="_blank"
+                    <i class="bi bi-file-earmark-arrow-down"></i
+                  ></a>
+                  {% endif %}
+                  <!--  -->
 
                   {% endif %}
                 </td>
@@ -132,6 +141,16 @@
                     >Échéance le: <b> {{payment.due_date}}</b>
                   </small>
 
+                   ,
+                  <!--  -->
+                  {% if payment.document_filename != "" %}
+
+                  <a href="/uploads/{{payment.document_filename}}" target="_blank">
+                    <i class="bi bi-file-earmark-arrow-down"></i
+                  ></a>
+                  {% endif %}
+                  <!--  -->
+
                   {% endif %}
                 </td>
                 <td>{{payment.amount}} <small>TND</small></td>
@@ -184,7 +203,7 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action="/payments" method="post">
+      <form action="/payments" method="post"  enctype="multipart/form-data">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
             Ajouter un nouveau Paiement Fournisseur
@@ -299,7 +318,7 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action="/payments" method="post">
+      <form action="/payments" method="post" enctype="multipart/form-data">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
             Ajouter un nouveau Paiement Charge
