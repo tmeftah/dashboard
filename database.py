@@ -1,6 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from flask import current_app
+from sqlalchemy.exc import SQLAlchemyError
 
 engine = create_engine("sqlite:///test.db")
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
@@ -15,7 +17,8 @@ def init_db():
     from models import PaymentMethod, SalesCategories, Companies, CostsDef, User
 
     # Recreate database each time for demo
-    Base.metadata.drop_all(bind=engine)
+    if current_app.config["FLASK_ENV"] != "production":
+        Base.metadata.drop_all(bind=engine)
 
     Base.metadata.create_all(bind=engine)
 
@@ -74,4 +77,8 @@ def init_db():
     db_session.add(CostsDef(name="LOYER", fixed=True))
     db_session.add(CostsDef(name="Carburant", fixed=False))
 
-    db_session.commit()
+    try:
+        db_session.commit()
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
