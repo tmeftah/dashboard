@@ -125,7 +125,7 @@ def get_caisse():
 
     sum_encaissements_especes = (
         db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
-        .filter(Reconciliations.cashing == False, Reconciliations.paymentmethod_id == 4)
+        .filter(Reconciliations.cashing == True, Reconciliations.paymentmethod_id == 4)
         .scalar()
     )
 
