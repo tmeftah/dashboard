@@ -29,9 +29,9 @@ def get_sum_recovers(company_id=0, pay_methode_id=0):
     return query.scalar()
 
 
-def get_sum_reconciliations(company_id=0, pay_methode_id=0):
+def get_sum_reconciliations(company_id=0, pay_methode_id=0, cashing=True):
     query = db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0)).filter(
-        Reconciliations.cashing == True
+        Reconciliations.cashing == cashing
     )
 
     if company_id:
@@ -57,7 +57,7 @@ def get_sold_portefeuille(company=0, pay_methode=0):
 
     sum_recovers = get_sum_recovers(company, pay_methode)
 
-    sum_encaissements = get_sum_reconciliations(company, pay_methode)
+    sum_encaissements = get_sum_reconciliations(company, pay_methode, cashing=True)
 
     cost_and_purchasing = 0
 
@@ -143,22 +143,51 @@ def get_costs(pay_methode=0):
 
     sum_cost = query.scalar()
 
+    # sum_decaissements = get_sum_reconciliations(pay_methode_id=pay_methode, cashing=False)
+
     return sum_cost
 
 
-def get_purchasing(company_id=0, pay_methode=0):
+def get_purchasing(company=0, pay_methode=0):
 
     query = db_session.query(func.coalesce(func.sum(Purchasing.amount), 0))
 
-    if company_id:
-        query = query.filter(Purchasing.company_id == company_id)
+    if company:
+        query = query.filter(Purchasing.company_id == company)
 
     if pay_methode:
         query = query.filter(Purchasing.paymentmethod_id == pay_methode)
 
     sum_purchasing = query.scalar()
 
-    return sum_purchasing
+    sum_decaissements = get_sum_reconciliations(
+        company_id=company, pay_methode_id=pay_methode, cashing=False
+    )
+
+    return sum_purchasing - sum_decaissements
+
+
+def get_liabilites(company=0, pay_methode=0):
+    sum_purchasing = 0
+    sum_cost = 0
+
+    sum_purchasing = get_purchasing(company_id=company, pay_methode=pay_methode)
+
+    sum_cost = get_costs(pay_methode=pay_methode)
+
+    sum_decaissements = get_sum_reconciliations(
+        company_id=company, pay_methode_id=pay_methode, cashing=False
+    )
+    return sum_purchasing + sum_cost - sum_decaissements
+
+
+def get_debt(company=0):
+
+    sum_purchasing = get_purchasing(company_id=company, pay_methode=4)
+    sum_cost = get_costs(pay_methode=4)
+
+    sum_decaissements = get_sum_reconciliations(company_id=company, pay_methode_id=7, cashing=False)
+    return sum_purchasing + sum_cost - sum_decaissements
 
 
 def get_all_liabilities():  # tout les engagements/dettes

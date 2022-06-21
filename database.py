@@ -5,26 +5,31 @@ from flask import current_app
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
 
-engine = create_engine("sqlite:///test.db")
-db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+
+sessionmaker = sessionmaker(autocommit=False, autoflush=False)
+db_session = scoped_session(sessionmaker)
 Base = declarative_base()
-Base.query = db_session.query_property()
+# Base.query = db_session.query_property()
 
 
-def init_db():
+def init_db(app):
     # import all modules here that might define models so that
     # they will be registered properly on the metadata.  Otherwise
     # you will have to import them first before calling init_db()
+
+    engine = create_engine(app.config["DATABASE_URI"])
+    sessionmaker.configure(bind=engine)
+
     from models import PaymentMethod, SalesCategories, Companies, CostsDef, User
 
     # Recreate database each time for demo
-    if current_app.config["FLASK_ENV"] != "production":
+    if app.config["ENV"] != "production":
         Base.metadata.drop_all(bind=engine)
 
     Base.metadata.create_all(bind=engine)
 
     # init clients
-    if current_app.config["FLASK_ENV"] != "production":
+    if app.config["ENV"] != "production":
         db_session.add(
             Companies(name="Client n°1", email="client1@client.com", customer=True, supplier=False)
         )

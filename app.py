@@ -1,14 +1,16 @@
 import os
+import datetime
+from dotenv import load_dotenv
 
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from werkzeug import exceptions
 
 from sqlalchemy import desc
-from sqlalchemy.orm import scoped_session
 from sqlalchemy.exc import SQLAlchemyError
-from database import db_session, engine, init_db
+from database import db_session, init_db
 from models import (
     User,
     Recovers,
@@ -32,22 +34,28 @@ from utils import (
     get_stock,
     get_costs,
     get_purchasing,
+    get_liabilites,
+    get_debt,
     get_chiffre_affaire,
     get_economic_situation,
     get_financial_capacity,
 )
-import datetime
 
-# models.Base.metadata.create_all(bind=engine)
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, ".env"))
 
 
 app = Flask(__name__)
 
-environment_configuration = os.getenv("APPENV")
-if environment_configuration == "dev":
+
+if "development" == os.getenv("ENV"):
     app.config.from_object("config.DevConfig")
 else:
     app.config.from_object("config.ProdConfig")
+
+
+init_db(app)
 
 login_manager = LoginManager()
 login_manager.login_view = "login"
@@ -83,6 +91,12 @@ def upload_file(item):
         db_session.commit()
 
 
+@app.errorhandler(exceptions.NotFound)
+def handle_NotFound(e):
+    flash("Page not found !!!")
+    return redirect(url_for(".dashboard"))
+
+
 @app.route("/uploads/<name>")
 @login_required
 def download_file(name):
@@ -96,9 +110,14 @@ def load_user(user_id):
     return user
 
 
+@login_manager.unauthorized_handler
+def unauthorized_handler():
+    return redirect(url_for(".login"))
+
+
 @app.before_first_request
 def setup():
-    init_db()
+    pass
 
 
 @app.route("/sw.js")
@@ -162,6 +181,8 @@ def dashboard():
         get_stock=get_stock,
         get_costs=get_costs,
         get_purchasing=get_purchasing,
+        get_liabilites=get_liabilites,
+        get_debt=get_debt,
         get_economic_situation=get_economic_situation,
         get_financial_capacity=get_financial_capacity,
         companies=companies,
