@@ -76,15 +76,20 @@
                       class="dropdown-menu dropdown-menu-end"
                       aria-labelledby="dropdownMenuButton2"
                     >
-                      <li><a class="dropdown-item" href="#">Afficher</a></li>
                       <li>
-                        <a class="dropdown-item" href="#">My Companie 2</a>
-                      </li>
-                      <li><hr class="dropdown-divider" /></li>
-                      <li>
-                        <a class="dropdown-item" href="#"
-                          >Ajouter une société</a
+                        <a class="dropdown-item" href="/sales/{{sale.id}}"
+                          ><i class="bi bi-pencil-square"></i> Modiffier</a
                         >
+                      </li>
+
+                      <li>
+                        <a
+                          class="dropdown-item"
+                          onclick="sendMailClicked('{{sale.id}}')"
+                        >
+                          <i class="bi bi-trash text-danger"></i>
+                          Supprimer
+                        </a>
                       </li>
                     </ul>
                   </div>
@@ -217,5 +222,20 @@
     </div>
   </div>
 </div>
+
+<!-- remove modal -->
+{% with url="/sales/remove" %} {% include 'remove_modal.html' %} {% endwith %}
+
+<script>
+  function sendMailClicked(e) {
+    var theValue = e;
+    var modalContainer = document.getElementById("removeSale");
+    var form = document.getElementById("removeSaleForm");
+    var myModal = new bootstrap.Modal(modalContainer, { backdrop: "static" });
+    form.action = form.action + "/" + e;
+
+    myModal.show();
+  }
+</script>
 
 {% endblock %}

@@ -274,6 +274,9 @@ def add_companies():
     return redirect(url_for("companies"))
 
 
+# *****************************************    Sales    ****************************************************
+
+
 @app.route("/sales", methods=["GET"])
 @login_required
 def sales():
@@ -344,10 +347,103 @@ def add_sales():
     return redirect(url_for("sales"))
 
 
+@app.route("/sales/<int:id>", methods=["GET"])
+@login_required
+def get_sale_by_id(id):
+
+    sale = db_session.query(Sales).filter(Sales.id == id).first()
+
+    if not sale:
+        flash("Chiffre d'affaire n'exist pas !!!")
+        return redirect(url_for("sales"))
+
+    companies = db_session.query(Companies).filter_by(customer=True).all()
+    salescategories = db_session.query(SalesCategories).all()
+    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+
+    return render_template(
+        "/sales/_id.html",
+        sale=sale,
+        companies=companies,
+        salescategories=salescategories,
+        paymentmethod=paymentmethod,
+    )
+
+
+@app.route("/sales/<int:id>", methods=["POST"])
+@login_required
+def update_sales(id):
+
+    sale = db_session.query(Sales).filter(Sales.id == id).first()
+
+    if not sale:
+        flash("Chiffre d'affaire n'exist pas !!!")
+        return redirect(url_for("sales"))
+
+    company_id = request.form.get("company_id", type=int)
+    payment_id = request.form.get("payment_id", type=int)
+    date = request.form.get("date")
+    amount = request.form.get("amount")
+    comment = request.form.get("comment")
+
+    document_number = request.form.get("document_number")
+    due_date = request.form.get("due_date")
+
+    sale.company_id = company_id
+    sale.paymentmethod_id = payment_id
+    sale.date = datetime.datetime.strptime(date, "%Y-%m-%d")
+    sale.amount = amount
+    sale.comment = comment
+
+    sale.due_date = datetime.datetime.strptime(due_date, "%Y-%m-%d")
+    sale.document_number = document_number or "NOP"
+
+    try:
+
+        db_session.commit()
+        upload_file(sale)
+
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
+        flash("db error", category="error")
+
+    else:
+        flash("Chiffre d'affaire modiffier", category="success")
+
+    return redirect(url_for("sales"))
+
+
+@app.route("/sales/remove/<int:id>", methods=["POST"])
+@login_required
+def remove_sales(id):
+
+    sale = db_session.query(Sales).filter(Sales.id == id).first()
+
+    if not sale:
+        flash("Chiffre d'affaire n'exist pas !!!")
+        return redirect(url_for("sales"))
+    db_session.delete(sale)
+    try:
+
+        db_session.commit()
+        flash("Chiffre d'affaire supprimer !!!", category="error")
+
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
+        flash("db error", category="error")
+
+    return redirect(url_for("sales"))
+
+
 @app.route("/salescategories")
 @login_required
 def salescategories():
     return render_template("sales/categories.html")
+
+
+# *****************************************    CostsMapping    *******************************************
 
 
 @app.route("/costs", methods=["GET"])

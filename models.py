@@ -94,10 +94,10 @@ class Sales(Base, DictMixIn):
     # categorie_id = Column(Integer, ForeignKey("salescategories.id"), nullable=False)
     paymentmethod_id = Column(Integer, ForeignKey("paymentmethod.id"), nullable=False)
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
-    date = Column(Date, default=datetime.datetime.now)
+    date = Column(Date, default=datetime.datetime.now())
 
-    document_number = Column(String(50), nullable=False)
-    due_date = Column(Date, default=datetime.datetime.now)
+    document_number = Column(String(50))
+    due_date = Column(Date, default=datetime.datetime.now())
 
     amount = Column(Float, default=0.0)
     comment = Column(String(50), nullable=False)

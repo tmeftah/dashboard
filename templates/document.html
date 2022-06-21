@@ -12,7 +12,7 @@
               class="form-control form-control-sm border-primary"
               id="document_number"
               required
-              value=""
+              value="{{document_number}}"
               onkeypress="return onlyNumberKey(event)"
             />
           </div>
@@ -35,6 +35,7 @@
               class="form-control form-control-sm border-primary"
               id="due_date"
               min="{{today()}}"
+              value="{{due_date}}"
               required
             />
           </div>
