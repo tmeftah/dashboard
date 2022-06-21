@@ -117,7 +117,19 @@ def get_caisse():
         .scalar()
     )
 
-    return sum_sales + sum_reconciliations - sum_cost - sum_purchasing
+    sum_decaissements = (
+        db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
+        .filter(Reconciliations.cashing == False)
+        .scalar()
+    )
+
+    sum_encaissements_especes = (
+        db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
+        .filter(Reconciliations.cashing == False, Reconciliations.paymentmethod_id == 4)
+        .scalar()
+    )
+
+    return sum_sales + sum_reconciliations - sum_cost - sum_purchasing - sum_encaissements_especes
 
 
 def get_stock():
