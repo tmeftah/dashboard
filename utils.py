@@ -202,7 +202,10 @@ def get_all_liabilities():  # tout les engagements/dettes
         .filter(Purchasing.paymentmethod_id.notin_([1, 6]))  # TODO: to be verified
         .scalar()
     )
-    return sum_cost + sum_purchasing
+
+    sum_decaissements = get_sum_reconciliations(cashing=False)
+
+    return sum_cost + sum_purchasing - sum_decaissements
 
 
 def get_economic_situation():
