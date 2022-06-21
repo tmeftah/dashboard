@@ -105,7 +105,16 @@ a {
     min-width: 60px;
     max-width: 60px;
   }
+  .sidebar:hover {
+    width: var(--nav-width);
+    min-width: var(--nav-width);
+    max-width: var(--nav-width);
+    transition: ease-in 0.1s;
+  }
   .side span {
     display: none !important;
+  }
+  .sidebar:hover .side span {
+    display: inline !important;
   }
 }
