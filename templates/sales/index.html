@@ -99,7 +99,9 @@
               <tr>
                 <td colspan="2"></td>
                 <td>Somme:</td>
-                <td colspan="2">{{sales| sum(attribute='amount')}}</td>
+                <td colspan="2">
+                  {{sales| sum(attribute='amount') | round(3)}}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -229,8 +231,8 @@
 <script>
   function sendMailClicked(e) {
     var theValue = e;
-    var modalContainer = document.getElementById("removeSale");
-    var form = document.getElementById("removeSaleForm");
+    var modalContainer = document.getElementById("removeModal");
+    var form = document.getElementById("removeForm");
     var myModal = new bootstrap.Modal(modalContainer, { backdrop: "static" });
     form.action = form.action + "/" + e;
 

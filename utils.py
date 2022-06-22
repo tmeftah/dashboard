@@ -14,7 +14,7 @@ def get_sum_sales(company_id=0, pay_methode_id=0):
     if pay_methode_id:
         query = query.filter(Sales.paymentmethod_id == pay_methode_id)
 
-    return query.scalar()
+    return round(query.scalar(), 3)
 
 
 def get_sum_recovers(company_id=0, pay_methode_id=0):
@@ -26,7 +26,7 @@ def get_sum_recovers(company_id=0, pay_methode_id=0):
     if pay_methode_id:
         query = query.filter(Recovers.paymentmethod_id == pay_methode_id)
 
-    return query.scalar()
+    return round(query.scalar(), 3)
 
 
 def get_sum_reconciliations(company_id=0, pay_methode_id=0, cashing=True):
@@ -40,7 +40,7 @@ def get_sum_reconciliations(company_id=0, pay_methode_id=0, cashing=True):
     if pay_methode_id:
         query = query.filter(Reconciliations.paymentmethod_id == pay_methode_id)
 
-    return query.scalar()
+    return round(query.scalar(), 3)
 
 
 def get_sold_clients(company=0):
@@ -48,7 +48,7 @@ def get_sold_clients(company=0):
     sum_credits = get_sum_sales(company_id=company, pay_methode_id=4)  # credit
     sum_recovers = get_sum_recovers(company_id=company)  # all recovers
 
-    return sum_credits - sum_recovers
+    return round(sum_credits - sum_recovers, 3)
 
 
 def get_sold_portefeuille(company=0, pay_methode=0):
@@ -64,11 +64,11 @@ def get_sold_portefeuille(company=0, pay_methode=0):
     if pay_methode == 6:
         cost_and_purchasing = get_costs(6) + get_purchasing(pay_methode=6)
 
-    return sum_sales + sum_recovers - sum_encaissements - cost_and_purchasing
+    return round(sum_sales + sum_recovers - sum_encaissements - cost_and_purchasing, 3)
 
 
 def get_impayees(pay_methode=1):
-    return 0
+    return round(0, 3)
 
 
 def get_banque():
@@ -82,7 +82,7 @@ def get_banque():
         .filter(Reconciliations.cashing == False)
         .scalar()
     )
-    return sum_encaissements - sum_decaissements
+    return round(sum_encaissements - sum_decaissements, 3)
 
 
 def get_caisse():
@@ -129,7 +129,9 @@ def get_caisse():
         .scalar()
     )
 
-    return sum_sales + sum_reconciliations - sum_cost - sum_purchasing - sum_encaissements_especes
+    return round(
+        sum_sales + sum_reconciliations - sum_cost - sum_purchasing - sum_encaissements_especes, 3
+    )
 
 
 def get_stock():
@@ -142,9 +144,9 @@ def get_stock():
         .all()
     )
     if len(res) > 0:
-        return res[0][0]
+        return round(res[0][0], 3)
     else:
-        return 0
+        return round(0, 3)
 
 
 def get_costs(pay_methode=0):
@@ -157,7 +159,7 @@ def get_costs(pay_methode=0):
 
     # sum_decaissements = get_sum_reconciliations(pay_methode_id=pay_methode, cashing=False)
 
-    return sum_cost
+    return round(sum_cost, 3)
 
 
 def get_purchasing(company=0, pay_methode=0):
@@ -176,7 +178,7 @@ def get_purchasing(company=0, pay_methode=0):
         company_id=company, pay_methode_id=pay_methode, cashing=False
     )
 
-    return sum_purchasing - sum_decaissements
+    return round(sum_purchasing - sum_decaissements, 3)
 
 
 def get_liabilites(company=0, pay_methode=0):
@@ -190,7 +192,7 @@ def get_liabilites(company=0, pay_methode=0):
     sum_decaissements = get_sum_reconciliations(
         company_id=company, pay_methode_id=pay_methode, cashing=False
     )
-    return sum_purchasing + sum_cost - sum_decaissements
+    return round(sum_purchasing + sum_cost - sum_decaissements, 3)
 
 
 def get_debt(company=0):
@@ -199,7 +201,7 @@ def get_debt(company=0):
     sum_cost = get_costs(pay_methode=4)
 
     sum_decaissements = get_sum_reconciliations(company_id=company, pay_methode_id=7, cashing=False)
-    return sum_purchasing + sum_cost - sum_decaissements
+    return round(sum_purchasing + sum_cost - sum_decaissements, 2)
 
 
 def get_all_liabilities():  # tout les engagements/dettes
@@ -217,7 +219,7 @@ def get_all_liabilities():  # tout les engagements/dettes
 
     sum_decaissements = get_sum_reconciliations(cashing=False)
 
-    return sum_cost + sum_purchasing - sum_decaissements
+    return round(sum_cost + sum_purchasing - sum_decaissements, 3)
 
 
 def get_economic_situation():
@@ -233,12 +235,12 @@ def get_economic_situation():
         - get_all_liabilities()
     )
 
-    return res
+    return round(res, 3)
 
 
 def get_financial_capacity():
 
-    return get_banque() + get_caisse() - get_all_liabilities()
+    return round(get_banque() + get_caisse() - get_all_liabilities(), 3)
 
 
 def get_chiffre_affaire(cum=False, pay_methode=0):
@@ -259,4 +261,4 @@ def get_chiffre_affaire(cum=False, pay_methode=0):
 
     sum_sales = sale_query.scalar()
 
-    return sum_sales
+    return round(sum_sales, 3)
