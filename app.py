@@ -36,7 +36,6 @@ from utils import (
     get_purchasing,
     get_liabilites,
     get_debt,
-    get_chiffre_affaire,
     get_economic_situation,
     get_financial_capacity,
     get_sales_on_date,
