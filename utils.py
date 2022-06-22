@@ -377,5 +377,9 @@ def get_tax_gross_operating_income(cum=0, today=0):
 
 def get_net_operating_income(cum=0, today=0):
     amorti = 0
-    res = get_tax_gross_operating_income(cum=cum, today=today) - amorti
+    res = (
+        get_gross_operating_income(cum=cum, today=today)
+        - get_tax_gross_operating_income(cum=cum, today=today)
+        - amorti
+    )
     return round(res, 3)
