@@ -1,7 +1,7 @@
 from database import db_session
 from sqlalchemy.sql import func
 from sqlalchemy import extract
-from models import Sales, Recovers, CostsMapping, Purchasing, Reconciliations, Stocks
+from models import Sales, Recovers, CostsMapping, Purchasing, Reconciliations, Stocks, CostsDef
 import datetime
 
 
@@ -262,3 +262,120 @@ def get_chiffre_affaire(cum=False, pay_methode=0):
     sum_sales = sale_query.scalar()
 
     return round(sum_sales, 3)
+
+
+# ********************************** exploitation ********************************
+
+
+def get_sales_on_date(start=None, end=None, cum=0, today=0):
+    query = db_session.query(func.coalesce(func.sum(Sales.amount), 0))
+
+    if cum:
+        start = datetime.datetime.today().replace(day=1).date()
+        query = query.filter(Sales.date >= start)
+    else:
+        if today:
+            start = datetime.date.today()
+            query = query.filter(Sales.date == start)
+        else:
+            if start:
+                query = query.filter(Sales.date >= start)
+
+            if end:
+                query = query.filter(Sales.date <= end)
+
+    return round(query.scalar(), 3)
+
+
+def get_stock_on_date(initial=0):
+
+    today = datetime.date.today()
+    if initial:
+        today = today - datetime.timedelta(days=1)
+
+    res = (
+        db_session.query(func.coalesce(func.sum(Stocks.amount), 0))
+        .filter(Stocks.date <= today)
+        .order_by(Stocks.date.desc())
+        .group_by(Stocks.date)
+        .all()
+    )
+    if len(res) > 0:
+        return round(res[0][0], 3)
+    else:
+        return round(0, 3)
+
+
+def get_purchasing_on_date(start=None, end=None, cum=0, today=0):
+
+    query = db_session.query(func.coalesce(func.sum(Purchasing.amount), 0))
+
+    if cum:
+        start = datetime.datetime.today().replace(day=1).date()
+        query = query.filter(Purchasing.date >= start)
+    else:
+        if today:
+            start = datetime.date.today()
+            query = query.filter(Purchasing.date == start)
+        else:
+            if start:
+                query = query.filter(Purchasing.date >= start)
+            if end:
+                query = query.filter(Purchasing.date <= end)
+
+    return round(query.scalar(), 3)
+
+
+def get_costo_goods_sold(cum=0, today=0):
+    res = (get_stock_on_date(initial=True) - get_stock_on_date()) + get_purchasing_on_date(
+        cum=cum, today=today
+    )
+    return round(res, 3)
+
+
+def get_gross_margin(cum=0, today=0):
+    res = get_sales_on_date(cum=cum, today=today) - get_costo_goods_sold(cum=cum, today=today)
+    return round(res, 3)
+
+
+def get_costs_on_date(start=None, end=None, cum=0, today=0, fixed=0):
+
+    query = (
+        db_session.query(func.coalesce(func.sum(CostsMapping.amount), 0))
+        .join(CostsDef)
+        .filter(CostsDef.fixed == fixed)
+    )
+
+    if cum:
+        start = datetime.datetime.today().replace(day=1).date()
+        query = query.filter(CostsMapping.date >= start)
+    else:
+        if today:
+            start = datetime.date.today()
+            query = query.filter(CostsMapping.date == start)
+        else:
+            if start:
+                query = query.filter(CostsMapping.date >= start)
+            if end:
+                query = query.filter(CostsMapping.date <= end)
+
+    return round(query.scalar(), 3)
+
+
+def get_gross_operating_income(cum=0, today=0):
+    res = get_gross_margin(cum=cum, today=today) - (
+        get_costs_on_date(cum=cum, today=today)
+        + get_costs_on_date(cum=cum, today=today, fixed=True)
+    )
+    return round(res, 3)
+
+
+def get_tax_gross_operating_income(cum=0, today=0):
+    res = 0.25 * get_gross_operating_income(cum=cum, today=today)
+    return round(res, 3)
+
+
+def get_net_operating_income(cum=0, today=0):
+    amorti = 0
+    res = get_tax_gross_operating_income(cum=cum, today=today) - amorti
+    return round(res, 3)

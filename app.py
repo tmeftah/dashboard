@@ -39,6 +39,15 @@ from utils import (
     get_chiffre_affaire,
     get_economic_situation,
     get_financial_capacity,
+    get_sales_on_date,
+    get_stock_on_date,
+    get_purchasing_on_date,
+    get_costo_goods_sold,
+    get_gross_margin,
+    get_costs_on_date,
+    get_gross_operating_income,
+    get_tax_gross_operating_income,
+    get_net_operating_income,
 )
 
 
@@ -197,7 +206,15 @@ def exploit():
     return render_template(
         "dashboard/exploit.html",
         salesCategories=salesCategories,
-        get_chiffre_affaire=get_chiffre_affaire,
+        get_sales_on_date=get_sales_on_date,
+        get_stock_on_date=get_stock_on_date,
+        get_purchasing_on_date=get_purchasing_on_date,
+        get_costo_goods_sold=get_costo_goods_sold,
+        get_gross_margin=get_gross_margin,
+        get_costs_on_date=get_costs_on_date,
+        get_gross_operating_income=get_gross_operating_income,
+        get_tax_gross_operating_income=get_tax_gross_operating_income,
+        get_net_operating_income=get_net_operating_income,
     )
 
 
