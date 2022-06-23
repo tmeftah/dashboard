@@ -60,6 +60,10 @@ a {
   z-index: var(--z-fixed);
 }
 
+.sidebar-show-btn {
+  display: none;
+}
+
 .separator {
   margin: 15px 0px;
   border-bottom: 1px solid #cfcfcfa9;
@@ -105,7 +109,12 @@ a {
     min-width: 60px;
     max-width: 60px;
   }
-  .sidebar:hover {
+
+  .sidebar-show-btn {
+    display: inline !important;
+  }
+
+  .show-sidebar {
     width: var(--nav-width);
     min-width: var(--nav-width);
     max-width: var(--nav-width);
@@ -114,7 +123,7 @@ a {
   .side span {
     display: none !important;
   }
-  .sidebar:hover .side span {
+  .show-sidebar .side span {
     display: inline !important;
   }
 }
