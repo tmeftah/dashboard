@@ -47,8 +47,11 @@ def get_sold_clients(company=0):
 
     sum_credits = get_sum_sales(company_id=company, pay_methode_id=4)  # credit
     sum_recovers = get_sum_recovers(company_id=company)  # all recovers
+    sum_reconciliations = get_sum_reconciliations(
+        company_id=company, cashing=True, pay_methode_id=7
+    )
 
-    return round(sum_credits - sum_recovers, 3)
+    return round(sum_credits - sum_recovers - sum_reconciliations, 3)
 
 
 def get_sold_portefeuille(company=0, pay_methode=0):
