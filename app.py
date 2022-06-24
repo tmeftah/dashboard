@@ -228,7 +228,10 @@ def tresor():
 
     first_day = datetime.date.today() - datetime.timedelta(days=datetime.date.today().weekday())
     if week and "-W" in week:
-        first_day = datetime.strptime(week + "-1", "%G-W%V-%u")
+        first_day = datetime.datetime.strptime(week + "-1", "%G-W%V-%u").date()
+    else:
+        iso = first_day.isocalendar()
+        week = f"{iso[0]}-W{iso[1]}"
 
     init_sold = []
     end_sold = []
@@ -286,6 +289,7 @@ def tresor():
         debt=debt,
         init_sold=init_sold,
         end_sold=end_sold,
+        week=week,
     )
 
 
