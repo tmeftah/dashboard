@@ -9,6 +9,7 @@ from werkzeug.utils import secure_filename
 from werkzeug import exceptions
 
 from sqlalchemy import desc
+from sqlalchemy.sql import func
 from sqlalchemy.exc import SQLAlchemyError
 from database import db_session, init_db
 from models import (
@@ -25,6 +26,8 @@ from models import (
     Stocks,
     Payments,
 )
+
+
 from utils import (
     get_sold_clients,
     get_sold_portefeuille,
@@ -540,6 +543,9 @@ def add_costs_type():
     return redirect(url_for("costs"))
 
 
+# *****************************************    Purchasing    *******************************************
+
+
 @app.route("/purchasings", methods=["GET"])
 @login_required
 def purchasings():
@@ -549,7 +555,7 @@ def purchasings():
     paymentmethod = db_session.query(PaymentMethod).all()
 
     return render_template(
-        "/purchasing/index.html",
+        "/purchasings/index.html",
         purchasings=purchasings,
         paymentmethod=paymentmethod,
         companies=companies,
@@ -684,6 +690,9 @@ def remove_purchasings(id):
         flash("db error", category="danger")
 
     return redirect(url_for("purchasings"))
+
+
+# *****************************************    Recovers    *******************************************
 
 
 @app.route("/recovers", methods=["GET"])
