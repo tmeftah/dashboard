@@ -2,7 +2,21 @@
 <!--  -->
 
 <div class="card">
+  <div class="card-header">Tableau de bord de la trésorerie</div>
   <div class="card-body">
+    <div class="mb-3 col col-md-3">
+      <form action="/">
+        <input
+          type="week"
+          name="week"
+          id="camp-week"
+          class="form-control"
+          value="{{isocalendar()[0]}}-W{{isocalendar()[1]}}"
+          required
+        />
+      </form>
+    </div>
+
     <div class="table-responsive">
       <table class="table table-bordered">
         <thead>
@@ -17,13 +31,9 @@
         <tbody>
           <tr class="table-success">
             <th scope="row">Sold Initial de la Tresorerie</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            {% for sold in init_sold %}
+            <td>{{sold}}</td>
+            {% endfor %}
           </tr>
           <tr class="table-success">
             <th scope="row">
@@ -38,24 +48,17 @@
               </span>
               Encaissement
             </th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            {% for item in caching %}
+            <td>{{ item |sum }}</td>
+            {% endfor %}
           </tr>
-          {% for paymentmethod in paymentmethods%}
+          {% for i in [("Espèce",0),("Chèque",1),("Traite",2),("Virement
+          Banquaire",5),("TPE",3),("Ticket Resto",4) ]%}
           <tr class="collapse" id="encaisse">
-            <th scope="row">{{paymentmethod.name}}</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <th scope="row">{{i[0]}}</th>
+            {% for item in caching %}
+            <td>{{ item[i[1]] }}</td>
+            {% endfor %}
           </tr>
           {% endfor %}
           <tr class="table-secondary">
@@ -71,34 +74,24 @@
               </span>
               Decaissement
             </th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            {% for item in debt %}
+            <td>{{ item |sum }}</td>
+            {% endfor %}
           </tr>
-          {% for paymentmethod in paymentmethods%}
+          {% for i in [("Espèce",0),("Chèque",1),("Traite",2),("Virement
+          Banquaire",5),("TPE",3),("Ticket Resto",4) ]%}
           <tr class="collapse" id="decaisse">
-            <th scope="row">{{paymentmethod.name}}</th>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <th scope="row">{{i[0]}}</th>
+            {% for item in debt %}
+            <td>{{ item[i[1]] }}</td>
+            {% endfor %}
           </tr>
           {% endfor %}
           <tr class="table-secondary">
             <th scope="row">Solde final de Tresorerie</th>
-            <td colspan="2"></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            {% for sold in end_sold %}
+            <td>{{sold}}</td>
+            {% endfor %}
           </tr>
         </tbody>
       </table>

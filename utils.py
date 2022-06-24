@@ -386,3 +386,24 @@ def get_net_operating_income(cum=0, today=0):
         - amorti
     )
     return round(res, 3)
+
+
+# ********************************** Tresorerie ********************************
+
+
+def get_banque_on_date(start=None, end=None, today=0):
+    query = db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
+
+    if today:
+        start = datetime.date.today()
+        query = query.filter(Reconciliations.date == start)
+    else:
+        if start:
+            query = query.filter(Reconciliations.date >= start)
+        if end:
+            query = query.filter(Reconciliations.date <= end)
+
+    sum_encaissements = query.filter(Reconciliations.cashing == True).scalar()
+    sum_decaissements = query.filter(Reconciliations.cashing == False).scalar()
+
+    return round(sum_encaissements - sum_decaissements, 3)

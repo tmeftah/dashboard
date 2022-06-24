@@ -50,6 +50,7 @@ from utils import (
     get_gross_operating_income,
     get_tax_gross_operating_income,
     get_net_operating_income,
+    get_banque_on_date,
 )
 
 
@@ -222,6 +223,45 @@ def exploit():
 
 @app.route("/tresor")
 def tresor():
+
+    week = request.args.get("week")
+
+    first_day = datetime.date.today() - datetime.timedelta(days=datetime.date.today().weekday())
+    if week and "-W" in week:
+        first_day = datetime.strptime(week + "-1", "%G-W%V-%u")
+
+    init_sold = []
+    end_sold = []
+
+    caching = []
+
+    debt = []
+
+    for daynumber in range(7):
+        day = first_day + datetime.timedelta(days=daynumber)
+        day_befor = first_day + datetime.timedelta(days=daynumber - 1)
+
+        query = db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
+        query = query.filter(Reconciliations.date == day)
+
+        init_sold.append(get_banque_on_date(end=day_befor))
+        end_sold.append(get_banque_on_date(end=day))
+
+        res_caching = []
+        res_debt = []
+        for payment_id in [1, 2, 3, 5, 6, 7]:
+            query_caching = query.filter(
+                Reconciliations.cashing == True, Reconciliations.paymentmethod_id == payment_id
+            )
+            query_debit = query.filter(
+                Reconciliations.cashing == False, Reconciliations.paymentmethod_id == payment_id
+            )
+            res_caching.append(round(query_caching.scalar(), 3))
+            res_debt.append(round(query_debit.scalar(), 3))
+
+        caching.append(res_caching)
+        debt.append(res_debt)
+
     paymentmethods = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     encaiss = (
@@ -238,7 +278,14 @@ def tresor():
     )
 
     return render_template(
-        "dashboard/tresor.html", encaiss=encaiss, decaiss=decaiss, paymentmethods=paymentmethods
+        "dashboard/tresor.html",
+        encaiss=encaiss,
+        decaiss=decaiss,
+        paymentmethods=paymentmethods,
+        caching=caching,
+        debt=debt,
+        init_sold=init_sold,
+        end_sold=end_sold,
     )
 
 
@@ -1005,13 +1052,19 @@ def add_stocks():
 def utility_processor():
     import calendar
     from calendar import Calendar, monthrange
-    from datetime import datetime, date
+    from datetime import datetime, date, timedelta
 
     def today():
         return date.today()
 
+    def dayDelta(delta):
+        return date.today() + timedelta(days=delta)
+
     def toDate(year, month, day):
         return datetime.strptime(f"{year}-{month}-{day}", "%Y-%m-%d").date()
+
+    def isocalendar():
+        return date.today().isocalendar()
 
     def format_price(amount, currency="€"):
         return "{0:.2f}{1}".format(amount, currency)
@@ -1043,6 +1096,8 @@ def utility_processor():
         get_monthdays_with_name=get_monthdays_with_name,
         toDate=toDate,
         today=today,
+        dayDelta=dayDelta,
+        isocalendar=isocalendar,
     )
 
 
