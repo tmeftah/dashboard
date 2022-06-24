@@ -520,6 +520,97 @@ def add_costs():
     return redirect(url_for("costs"))
 
 
+@app.route("/costs/<int:id>", methods=["GET"])
+@login_required
+def get_costs_by_id(id):
+
+    cost = db_session.query(CostsMapping).filter(CostsMapping.id == id).first()
+
+    if not cost:
+        flash("Charge n'exist pas !!!")
+        return redirect(url_for("costs"))
+
+    costsdefs = db_session.query(CostsDef).all()
+    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+
+    return render_template(
+        "/costs/_id.html",
+        cost=cost,
+        costsdefs=costsdefs,
+        paymentmethod=paymentmethod,
+    )
+
+
+@app.route("/costs/<int:id>", methods=["POST"])
+@login_required
+def update_costs(id):
+
+    cost = db_session.query(CostsMapping).filter(CostsMapping.id == id).first()
+
+    if not cost:
+        flash("La cahrge n'exist pas !!!", category="warning")
+        return redirect(url_for("costs"))
+
+    cost_id = request.form.get("cost_id", type=int)
+    payment_id = request.form.get("payment_id", type=int)
+    date = request.form.get("date")
+    amount = request.form.get("amount")
+    comment = request.form.get("comment")
+
+    document_number = request.form.get("document_number")
+    due_date = request.form.get("due_date")
+
+    cost.cost_id = cost_id
+    cost.paymentmethod_id = payment_id
+    cost.date = datetime.datetime.strptime(date, "%Y-%m-%d")
+    cost.amount = amount
+    cost.comment = comment
+
+    cost.due_date = datetime.datetime.strptime(due_date, "%Y-%m-%d")
+    cost.document_number = document_number or "NOP"
+
+    try:
+
+        db_session.commit()
+        upload_file(cost)
+
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
+        flash("db error", category="danger")
+
+    else:
+        flash("Charge modiffier", category="success")
+
+    return redirect(url_for("costs"))
+
+
+@app.route("/costs/remove/<int:id>", methods=["POST"])
+@login_required
+def remove_costs(id):
+
+    cost = db_session.query(CostsMapping).filter(CostsMapping.id == id).first()
+
+    if not cost:
+        flash("La charge n'exist pas !!!", category="warning")
+        return redirect(url_for("costs"))
+    db_session.delete(cost)
+    try:
+
+        db_session.commit()
+        flash("Charge supprimer !!!", category="success")
+
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
+        flash("db error", category="danger")
+
+    return redirect(url_for("costs"))
+
+
+# *****************************************    CostsDef    *******************************************
+
+
 @app.route("/costs_type", methods=["POST"])
 @login_required
 def add_costs_type():
