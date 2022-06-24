@@ -226,18 +226,5 @@
 </div>
 
 <!-- remove modal -->
-{% with url="/sales/remove" %} {% include 'remove_modal.html' %} {% endwith %}
-
-<script>
-  function sendMailClicked(e) {
-    var theValue = e;
-    var modalContainer = document.getElementById("removeModal");
-    var form = document.getElementById("removeForm");
-    var myModal = new bootstrap.Modal(modalContainer, { backdrop: "static" });
-    form.action = form.action + "/" + e;
-
-    myModal.show();
-  }
-</script>
-
-{% endblock %}
+{% with url="/sales/remove", header="le chiffre d'affaire" %} {% include
+'remove_modal.html' %} {% endwith %} {% endblock %}

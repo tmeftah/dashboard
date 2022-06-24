@@ -396,7 +396,7 @@ def update_sales(id):
     sale = db_session.query(Sales).filter(Sales.id == id).first()
 
     if not sale:
-        flash("Chiffre d'affaire n'exist pas !!!")
+        flash("Chiffre d'affaire n'exist pas !!!", category="warning")
         return redirect(url_for("sales"))
 
     company_id = request.form.get("company_id", type=int)
@@ -425,7 +425,7 @@ def update_sales(id):
     except SQLAlchemyError as e:
         print(e)
         db_session.rollback()
-        flash("db error", category="error")
+        flash("db error", category="danger")
 
     else:
         flash("Chiffre d'affaire modiffier", category="success")
@@ -440,18 +440,18 @@ def remove_sales(id):
     sale = db_session.query(Sales).filter(Sales.id == id).first()
 
     if not sale:
-        flash("Chiffre d'affaire n'exist pas !!!")
+        flash("Chiffre d'affaire n'exist pas !!!", category="warning")
         return redirect(url_for("sales"))
     db_session.delete(sale)
     try:
 
         db_session.commit()
-        flash("Chiffre d'affaire supprimer !!!", category="error")
+        flash("Chiffre d'affaire supprimer !!!", category="success")
 
     except SQLAlchemyError as e:
         print(e)
         db_session.rollback()
-        flash("db error", category="error")
+        flash("db error", category="danger")
 
     return redirect(url_for("sales"))
 
