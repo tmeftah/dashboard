@@ -20,7 +20,7 @@
       </div>
 
       <div class="card-body">
-        <div class="table-responsive">
+        <div class="table-responsive" style="min-height: 300px">
           <table class="table table-sm table-striped">
             <thead>
               <tr>
@@ -77,15 +77,22 @@
                       class="dropdown-menu dropdown-menu-end"
                       aria-labelledby="dropdownMenuButton2"
                     >
-                      <li><a class="dropdown-item" href="#">Afficher</a></li>
                       <li>
-                        <a class="dropdown-item" href="#">My Companie 2</a>
-                      </li>
-                      <li><hr class="dropdown-divider" /></li>
-                      <li>
-                        <a class="dropdown-item" href="#"
-                          >Ajouter une société</a
+                        <a
+                          class="dropdown-item"
+                          href="/purchasings/{{purchasing.id}}"
+                          ><i class="bi bi-pencil-square"></i> Modiffier</a
                         >
+                      </li>
+
+                      <li>
+                        <a
+                          class="dropdown-item"
+                          onclick="sendMailClicked('{{purchasing.id}}')"
+                        >
+                          <i class="bi bi-trash text-danger"></i>
+                          Supprimer
+                        </a>
                       </li>
                     </ul>
                   </div>
@@ -216,5 +223,6 @@
     </div>
   </div>
 </div>
-
-{% endblock %}
+<!-- remove modal -->
+{% with url="/purchasings/remove", header="l'Achat" %} {% include
+'remove_modal.html' %} {% endwith %} {% endblock %}
