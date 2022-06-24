@@ -290,6 +290,7 @@ def tresor():
         init_sold=init_sold,
         end_sold=end_sold,
         week=week,
+        first_day=first_day,
     )
 
 
@@ -1061,8 +1062,11 @@ def utility_processor():
     def today():
         return date.today()
 
-    def dayDelta(delta):
-        return date.today() + timedelta(days=delta)
+    def dayDelta(dt, delta):
+        return dt + timedelta(days=delta)
+
+    def strftime(value, format):
+        return value.strftime(format)
 
     def toDate(year, month, day):
         return datetime.strptime(f"{year}-{month}-{day}", "%Y-%m-%d").date()
@@ -1102,6 +1106,7 @@ def utility_processor():
         today=today,
         dayDelta=dayDelta,
         isocalendar=isocalendar,
+        strftime=strftime,
     )
 
 

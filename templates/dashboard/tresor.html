@@ -23,9 +23,15 @@
         <thead>
           <tr>
             <th scope="col"></th>
-            {% for i in
-            ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]%}
-            <th scope="col">{{i}}</th>
+            {% for dayname in
+            ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"]
+            %}
+            <th scope="col">
+              {{dayname}}
+              <div style="font-size: 0.5rem">
+                {{strftime(dayDelta(first_day,loop.index0),"%d-%m-%Y")}}
+              </div>
+            </th>
             {% endfor %}
           </tr>
         </thead>
