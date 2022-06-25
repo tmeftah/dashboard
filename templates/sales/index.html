@@ -37,38 +37,40 @@
               {% for sale in sales %}
               <tr>
                 <td data-title="Client">
-                  {{sale.company.name}}
-                  <div class="d-block d-sm-none">
-                    <div class="dropdown">
-                      <a
-                        class="btn btn-link dropdown float-end text-decoration-none"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        <i class="bi bi-sliders"></i>
-                      </a>
+                  <div class="d-flex justify-content-between w-100">
+                    {{sale.company.name}}
+                    <div class="d-block d-sm-none">
+                      <div class="dropdown">
+                        <a
+                          class="btn btn-link dropdown text-decoration-none"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i class="bi bi-sliders"></i>
+                        </a>
 
-                      <ul
-                        class="dropdown-menu dropdown-menu-end"
-                        aria-labelledby="dropdownMenuButton2"
-                      >
-                        <li>
-                          <a class="dropdown-item" href="/sales/{{sale.id}}"
-                            ><i class="bi bi-pencil-square"></i> Modiffier</a
-                          >
-                        </li>
+                        <ul
+                          class="dropdown-menu dropdown-menu-end"
+                          aria-labelledby="dropdownMenuButton2"
+                        >
+                          <li>
+                            <a class="dropdown-item" href="/sales/{{sale.id}}"
+                              ><i class="bi bi-pencil-square"></i> Modiffier</a
+                            >
+                          </li>
 
-                        <li>
-                          <a
-                            class="dropdown-item"
-                            onclick="sendMailClicked('{{sale.id}}')"
-                          >
-                            <i class="bi bi-trash text-danger"></i>
-                            Supprimer
-                          </a>
-                        </li>
-                      </ul>
+                          <li>
+                            <a
+                              class="dropdown-item"
+                              onclick="sendMailClicked('{{sale.id}}')"
+                            >
+                              <i class="bi bi-trash text-danger"></i>
+                              Supprimer
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </td>

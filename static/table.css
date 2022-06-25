@@ -40,14 +40,6 @@
     text-align: left;
   }
 
-  .no-more-tables td .dropdown {
-    /* Behave like a "row" */
-    position: absolute;
-    top: -2px;
-    right: 0;
-    margin-top: 0;
-  }
-
   .no-more-tables td:before {
     /* Now like a table header */
     position: absolute;
