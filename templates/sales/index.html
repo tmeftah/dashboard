@@ -20,27 +20,64 @@
       </div>
 
       <div class="card-body">
-        <div class="table-responsive" style="min-height: 300px">
-          <table class="table table-sm table-striped">
+        <div class="no-more-tables" style="min-height: 300px">
+          <table class="table table-sm">
             <thead>
               <tr>
                 <!-- <th scope="col">Categorie (a suprimee)</th> -->
-                <th scope="col">Client</th>
-                <th scope="col">Mode de Payment</th>
-                <th scope="col">Montant</th>
-                <th scope="col">Ajouté le</th>
-                <th scope="col"></th>
+                <th scope="col" class="col-3">Client</th>
+                <th scope="col" class="col-2">Mode de Payment</th>
+                <th scope="col" class="col-3">Montant</th>
+
+                <th scope="col" class="col-2">Ajouté le</th>
+                <th scope="col" class="col-2">Action</th>
               </tr>
             </thead>
             <tbody>
               {% for sale in sales %}
               <tr>
-                <td>{{sale.company.name}}</td>
-                <td>
+                <td data-title="Client">
+                  {{sale.company.name}}
+                  <div class="d-block d-sm-none">
+                    <div class="dropdown">
+                      <a
+                        class="btn btn-link dropdown float-end text-decoration-none"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sliders"></i>
+                      </a>
+
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuButton2"
+                      >
+                        <li>
+                          <a class="dropdown-item" href="/sales/{{sale.id}}"
+                            ><i class="bi bi-pencil-square"></i> Modiffier</a
+                          >
+                        </li>
+
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            onclick="sendMailClicked('{{sale.id}}')"
+                          >
+                            <i class="bi bi-trash text-danger"></i>
+                            Supprimer
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </td>
+                <td data-title="Mode de Payment">
                   {{sale.paymentmethod.name}}
                   <!--  -->
+
                   {% if sale.paymentmethod_id in [2,3] %}
-                  <br />
+
                   <small style="font-size: 10px"
                     >Nummero: <b> {{sale.document_number | upper}}</b>
                   </small>
@@ -59,47 +96,57 @@
                   <!--  -->
                   {% endif %}
                 </td>
-                <td>{{sale.amount}} <small>TND</small></td>
-                <td>{{sale.date}}</td>
+
+                <td data-title="Montant">{{sale.amount}} <small>TND</small></td>
+
+                <td data-title="Ajouté le">{{sale.date}}</td>
                 <td>
-                  <div class="dropdown me-2">
-                    <a
-                      class="btn btn-link dropdown float-end text-decoration-none"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      ...
-                    </a>
+                  <div class="d-none d-sm-inline">
+                    <div class="dropdown">
+                      <a
+                        class="btn btn-link dropdown float-end text-decoration-none"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sliders"></i>
+                      </a>
 
-                    <ul
-                      class="dropdown-menu dropdown-menu-end"
-                      aria-labelledby="dropdownMenuButton2"
-                    >
-                      <li>
-                        <a class="dropdown-item" href="/sales/{{sale.id}}"
-                          ><i class="bi bi-pencil-square"></i> Modiffier</a
-                        >
-                      </li>
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuButton2"
+                      >
+                        <li>
+                          <a class="dropdown-item" href="/sales/{{sale.id}}"
+                            ><i class="bi bi-pencil-square"></i> Modiffier</a
+                          >
+                        </li>
 
-                      <li>
-                        <a
-                          class="dropdown-item"
-                          onclick="sendMailClicked('{{sale.id}}')"
-                        >
-                          <i class="bi bi-trash text-danger"></i>
-                          Supprimer
-                        </a>
-                      </li>
-                    </ul>
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            onclick="sendMailClicked('{{sale.id}}')"
+                          >
+                            <i class="bi bi-trash text-danger"></i>
+                            Supprimer
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </td>
               </tr>
               {% endfor %}
               <tr>
-                <td colspan="2"></td>
-                <td>Somme:</td>
-                <td colspan="2">
+                <td colspan="2" data-title="Somme">
+                  <span class="d-none d-sm-block me-3 text-end"
+                    ><b>Somme:</b></span
+                  >
+                  <span class="d-block d-sm-none">
+                    {{sales| sum(attribute='amount') | round(3)}}
+                  </span>
+                </td>
+                <td class="d-none d-sm-block">
                   {{sales| sum(attribute='amount') | round(3)}}
                 </td>
               </tr>

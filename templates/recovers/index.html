@@ -3,39 +3,6 @@
 <!--  -->
 <div class="row mb-2">
   <div class="col">
-    <div class="card mb-2">
-      <div class="card-header">Sold Clients</div>
-      <div class="card-body">
-        <div class="me-auto">
-          Calendrier de recouvrement (c'est seullemt un calandrier) par semainne
-        </div>
-
-        <ul class="list-group">
-          <li class="list-group-item">Client n°1 : Crediit j-1 (1500TND)</li>
-          <li class="list-group-item">Client n°2 : Crediit j-1 (5000TND)</li>
-        </ul>
-      </div>
-    </div>
-    <button
-      class="btn btn-success float-end"
-      data-bs-toggle="modal"
-      data-bs-target="#addSalesModal"
-    >
-      + Ajouter
-    </button>
-  </div>
-  <div class="col">
-    <div class="card mb-2">
-      <div class="card-header">Sold Clients</div>
-      <div class="card-body">
-        <div class="me-auto">List des Impayees (Cheque et Traite)</div>
-
-        <ul class="list-group">
-          <li class="list-group-item">Client n°1 : Cheque n°1</li>
-          <li class="list-group-item">Client n°2 : Traite n°2</li>
-        </ul>
-      </div>
-    </div>
     <button
       class="btn btn-success float-end"
       data-bs-toggle="modal"
@@ -51,11 +18,11 @@
       <div class="card-header"><h5 class="card-title">Recouvremnets</h5></div>
 
       <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-sm table-striped">
+        <div class="no-more-tables" style="min-height: 300px">
+          <table class="table table-sm">
             <thead>
               <tr>
-                <th scope="col">Nom</th>
+                <th scope="col" class="col-3">Client</th>
                 <th scope="col">Mode de Payment</th>
                 <th scope="col">Montant</th>
                 <th scope="col">Ajouté le</th>
@@ -65,8 +32,45 @@
             <tbody>
               {% for recover in recovers %}
               <tr>
-                <td>{{recover.company.name}}</td>
-                <td>
+                <td data-title="Client">
+                  {{recover.company.name}}
+                  <div class="d-block d-sm-none">
+                    <div class="dropdown">
+                      <a
+                        class="btn btn-link dropdown float-end text-decoration-none"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sliders"></i>
+                      </a>
+
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuButton2"
+                      >
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            href="/recovers/{{recover.id}}"
+                            ><i class="bi bi-pencil-square"></i> Modiffier</a
+                          >
+                        </li>
+
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            onclick="sendMailClicked('{{recover.id}}')"
+                          >
+                            <i class="bi bi-trash text-danger"></i>
+                            Supprimer
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </td>
+                <td data-title="Mode de Payment">
                   {{recover.paymentmethod.name}}
                   <!--  -->
                   {% if recover.paymentmethod_id in [2,3] %}
@@ -78,37 +82,57 @@
                   <small class="text-end" style="font-size: 10px"
                     >Échéance le: <b> {{recover.due_date}}</b>
                   </small>
+                  ,
+                  <!--  -->
+                  {% if recover.document_filename != "" %}
 
-                  {% endif %}
+                  <a
+                    href="/uploads/{{recover.document_filename}}"
+                    target="_blank"
+                  >
+                    <i class="bi bi-file-earmark-arrow-down"></i
+                  ></a>
+                  {% endif %} {% endif %}
                 </td>
-                <td>{{recover.amount}} <small>TND</small></td>
-                <td>{{recover.date}}</td>
-                <td>
-                  <div class="dropdown me-2">
-                    <a
-                      class="btn btn-link dropdown float-end text-decoration-none"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      ...
-                    </a>
+                <td data-title="Montant">
+                  {{recover.amount}} <small>TND</small>
+                </td>
+                <td data-title="Ajouté le">{{recover.date}}</td>
+                <td data-title="">
+                  <div class="d-none d-sm-block">
+                    <div class="dropdown">
+                      <a
+                        class="btn btn-link dropdown float-end text-decoration-none"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sliders"></i>
+                      </a>
 
-                    <ul
-                      class="dropdown-menu dropdown-menu-end"
-                      aria-labelledby="dropdownMenuButton2"
-                    >
-                      <li><a class="dropdown-item" href="#">Afficher</a></li>
-                      <li>
-                        <a class="dropdown-item" href="#">My Companie 2</a>
-                      </li>
-                      <li><hr class="dropdown-divider" /></li>
-                      <li>
-                        <a class="dropdown-item" href="#"
-                          >Ajouter une société</a
-                        >
-                      </li>
-                    </ul>
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuButton2"
+                      >
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            href="/recovers/{{recover.id}}"
+                            ><i class="bi bi-pencil-square"></i> Modiffier</a
+                          >
+                        </li>
+
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            onclick="sendMailClicked('{{recover.id}}')"
+                          >
+                            <i class="bi bi-trash text-danger"></i>
+                            Supprimer
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </td>
               </tr>

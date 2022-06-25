@@ -20,8 +20,8 @@
       </div>
 
       <div class="card-body">
-        <div class="table-responsive" style="min-height: 300px">
-          <table class="table table-sm table-striped">
+        <div class="no-more-tables" style="min-height: 300px">
+          <table class="table table-sm">
             <thead>
               <tr>
                 <th scope="col">Fournisseur</th>
@@ -35,8 +35,45 @@
             <tbody>
               {% for purchasing in purchasings %}
               <tr>
-                <td>{{purchasing.company.name}}</td>
-                <td>
+                <td data-title="Fournisseur">
+                  {{purchasing.company.name}}
+                  <div class="d-block d-sm-none">
+                    <div class="dropdown">
+                      <a
+                        class="btn btn-link dropdown float-end text-decoration-none"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sliders"></i>
+                      </a>
+
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuButton2"
+                      >
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            href="/purchasings/{{purchasing.id}}"
+                            ><i class="bi bi-pencil-square"></i> Modiffier</a
+                          >
+                        </li>
+
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            onclick="sendMailClicked('{{purchasing.id}}')"
+                          >
+                            <i class="bi bi-trash text-danger"></i>
+                            Supprimer
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </td>
+                <td data-title="Mode de Payment">
                   {{purchasing.paymentmethod.name}}
                   <!--  -->
                   {% if purchasing.paymentmethod_id in [2,3] %}
@@ -60,41 +97,45 @@
                   ></a>
                   {% endif %} {% endif %}
                 </td>
-                <td>{{purchasing.amount}} <small>TND</small></td>
-                <td>{{purchasing.date}}</td>
+                <td data-title="Montant">
+                  {{purchasing.amount}} <small>TND</small>
+                </td>
+                <td data-title="Ajouté le">{{purchasing.date}}</td>
                 <td>
-                  <div class="dropdown me-2">
-                    <a
-                      class="btn btn-link dropdown float-end text-decoration-none"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      ...
-                    </a>
+                  <div class="d-none d-sm-block">
+                    <div class="dropdown">
+                      <a
+                        class="btn btn-link dropdown float-end text-decoration-none"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sliders"></i>
+                      </a>
 
-                    <ul
-                      class="dropdown-menu dropdown-menu-end"
-                      aria-labelledby="dropdownMenuButton2"
-                    >
-                      <li>
-                        <a
-                          class="dropdown-item"
-                          href="/purchasings/{{purchasing.id}}"
-                          ><i class="bi bi-pencil-square"></i> Modiffier</a
-                        >
-                      </li>
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuButton2"
+                      >
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            href="/purchasings/{{purchasing.id}}"
+                            ><i class="bi bi-pencil-square"></i> Modiffier</a
+                          >
+                        </li>
 
-                      <li>
-                        <a
-                          class="dropdown-item"
-                          onclick="sendMailClicked('{{purchasing.id}}')"
-                        >
-                          <i class="bi bi-trash text-danger"></i>
-                          Supprimer
-                        </a>
-                      </li>
-                    </ul>
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            onclick="sendMailClicked('{{purchasing.id}}')"
+                          >
+                            <i class="bi bi-trash text-danger"></i>
+                            Supprimer
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </td>
               </tr>

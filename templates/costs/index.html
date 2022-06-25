@@ -52,13 +52,13 @@
       <div class="card-header"><h5 class="card-title">Charges</h5></div>
 
       <div class="card-body">
-        <div class="table-responsive" style="min-height: 300px">
-          <table class="table table-sm table-striped">
+        <div class="no-more-tables" style="min-height: 300px">
+          <table class="table table-sm">
             <thead>
               <tr>
-                <th scope="col">Nom</th>
+                <th scope="col" class="col-2">Nom</th>
 
-                <th scope="col">Mode de Payment</th>
+                <th scope="col" class="col-2">Mode de Payment</th>
                 <th scope="col">Montant</th>
                 <th scope="col">Ajouté le</th>
                 <th scope="col"></th>
@@ -67,8 +67,43 @@
             <tbody>
               {% for cost in costsmappings %}
               <tr>
-                <td>{{cost.costsdef.name}}</td>
-                <td>
+                <td data-title="Nom">
+                  {{cost.costsdef.name}}
+                  <div class="d-block d-sm-none">
+                    <div class="dropdown">
+                      <a
+                        class="btn btn-link dropdown float-end text-decoration-none"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sliders"></i>
+                      </a>
+
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuButton2"
+                      >
+                        <li>
+                          <a class="dropdown-item" href="/costs/{{cost.id}}"
+                            ><i class="bi bi-pencil-square"></i> Modiffier</a
+                          >
+                        </li>
+
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            onclick="sendMailClicked('{{cost.id}}')"
+                          >
+                            <i class="bi bi-trash text-danger"></i>
+                            Supprimer
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </td>
+                <td data-title="Mode de Payment">
                   {{cost.paymentmethod.name}}
                   <!--  -->
                   {% if cost.paymentmethod_id in [2,3] %}
@@ -92,39 +127,41 @@
 
                   {% endif %}
                 </td>
-                <td>{{cost.amount}} <small>TND</small></td>
-                <td>{{cost.date}}</td>
+                <td data-title="Montant">{{cost.amount}} <small>TND</small></td>
+                <td data-title="Ajouté le">{{cost.date}}</td>
                 <td>
-                  <div class="dropdown me-2">
-                    <a
-                      class="btn btn-link dropdown float-end text-decoration-none"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      ...
-                    </a>
+                  <div class="d-none d-sm-block">
+                    <div class="dropdown me-2">
+                      <a
+                        class="btn btn-link dropdown float-end text-decoration-none"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        ...
+                      </a>
 
-                    <ul
-                      class="dropdown-menu dropdown-menu-end"
-                      aria-labelledby="dropdownMenuButton2"
-                    >
-                      <li>
-                        <a class="dropdown-item" href="/costs/{{cost.id}}"
-                          ><i class="bi bi-pencil-square"></i> Modiffier</a
-                        >
-                      </li>
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuButton2"
+                      >
+                        <li>
+                          <a class="dropdown-item" href="/costs/{{cost.id}}"
+                            ><i class="bi bi-pencil-square"></i> Modiffier</a
+                          >
+                        </li>
 
-                      <li>
-                        <a
-                          class="dropdown-item"
-                          onclick="sendMailClicked('{{cost.id}}')"
-                        >
-                          <i class="bi bi-trash text-danger"></i>
-                          Supprimer
-                        </a>
-                      </li>
-                    </ul>
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            onclick="sendMailClicked('{{cost.id}}')"
+                          >
+                            <i class="bi bi-trash text-danger"></i>
+                            Supprimer
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </td>
               </tr>

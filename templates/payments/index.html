@@ -1,120 +1,223 @@
 {% extends 'base.html' %} {% block content %}
 
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link active"
+      id="home-tab"
+      data-bs-toggle="tab"
+      data-bs-target="#home"
+      type="button"
+      role="tab"
+      aria-controls="home"
+      aria-selected="true"
+    >
+      Paiements Fournisseur
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      id="profile-tab"
+      data-bs-toggle="tab"
+      data-bs-target="#profile"
+      type="button"
+      role="tab"
+      aria-controls="profile"
+      aria-selected="false"
+    >
+      Paiements Charge
+    </button>
+  </li>
+</ul>
+
 <!--  -->
-<div class="row mb-3">
-  <div class="col">
-    <button
-      class="btn btn-success"
-      data-bs-toggle="modal"
-      data-bs-target="#addPaymentSupplierModal"
-    >
-      + Paiements Fournisseur
-    </button>
-  </div>
-  <div class="col ms-1">
-    <button
-      class="btn btn-success"
-      data-bs-toggle="modal"
-      data-bs-target="#addPaymentCostModal"
-    >
-      + Paiements Charge
-    </button>
-  </div>
-</div>
-<div class="row mb-3">
-  <div class="col mb-3">
-    <div class="card">
-      <div class="card-header">
-        <h5 class="card-title">Paiements Fournisseurs</h5>
+<div class="tab-content">
+  <div
+    class="tab-pane fade show active"
+    id="home"
+    role="tabpanel"
+    aria-labelledby="home-tab"
+  >
+    <div class="row">
+      <div class="col my-2">
+        <button
+          class="btn btn-success float-end"
+          data-bs-toggle="modal"
+          data-bs-target="#addPaymentSupplierModal"
+        >
+          + Ajouter
+        </button>
       </div>
+    </div>
 
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-sm table-striped">
-            <thead>
-              <tr>
-                <th scope="col">Nom</th>
-                <th scope="col">Mode de Payment</th>
-                <th scope="col">Montant</th>
-                <th scope="col">Ajouté le</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for payment in payments | rejectattr('company_id', "none") %}
-              <tr>
-                <td>{{payment.company.name}}</td>
-                <td>
-                  {{payment.paymentmethod.name}}
-                  <!--  -->
-                  {% if payment.paymentmethod_id in [2,3] %}
-                  <br />
-                  <small style="font-size: 10px"
-                    >Nummero: <b> {{payment.document_number | upper}}</b>
-                  </small>
-                  ,
-                  <small class="text-end" style="font-size: 10px"
-                    >Échéance le: <b> {{payment.due_date}}</b>
-                  </small>
-                  ,
-                  <!--  -->
-                  {% if payment.document_filename != "" %}
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title">Fournisseurs</h5>
+          </div>
 
-                  <a href="/uploads/{{payment.document_filename}}" target="_blank"
-                    <i class="bi bi-file-earmark-arrow-down"></i
-                  ></a>
-                  {% endif %}
-                  <!--  -->
+          <div class="card-body">
+            <div class="no-more-tables" style="min-height: 300px">
+              <table class="table table-sm">
+                <thead>
+                  <tr>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Mode de Payment</th>
+                    <th scope="col">Montant</th>
+                    <th scope="col">Ajouté le</th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for payment in payments | rejectattr('company_id', "none")
+                  %}
+                  <tr>
+                    <td data-title="Fournisseur">
+                      {{payment.company.name}}
+                      <div class="d-block d-sm-none">
+                        <div class="dropdown">
+                          <a
+                            class="btn btn-link dropdown float-end text-decoration-none"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            <i class="bi bi-sliders"></i>
+                          </a>
 
-                  {% endif %}
-                </td>
-                <td>{{payment.amount}} <small>TND</small></td>
-                <td>{{payment.date}}</td>
-                <td>
-                  <div class="dropdown me-2">
-                    <a
-                      class="btn btn-link dropdown float-end text-decoration-none"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      ...
-                    </a>
+                          <ul
+                            class="dropdown-menu dropdown-menu-end"
+                            aria-labelledby="dropdownMenuButton2"
+                          >
+                            <li>
+                              <a
+                                class="dropdown-item"
+                                href="/payments/{{payment.id}}"
+                                ><i class="bi bi-pencil-square"></i>
+                                Modiffier</a
+                              >
+                            </li>
 
-                    <ul
-                      class="dropdown-menu dropdown-menu-end"
-                      aria-labelledby="dropdownMenuButton2"
-                    >
-                      <li><a class="dropdown-item" href="#">Afficher</a></li>
-                      <li>
-                        <a class="dropdown-item" href="#">My Companie 2</a>
-                      </li>
-                      <li><hr class="dropdown-divider" /></li>
-                      <li>
-                        <a class="dropdown-item" href="#"
-                          >Ajouter une société</a
-                        >
-                      </li>
-                    </ul>
-                  </div>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+                            <li>
+                              <a
+                                class="dropdown-item"
+                                onclick="sendMailClicked('{{payment.id}}')"
+                              >
+                                <i class="bi bi-trash text-danger"></i>
+                                Supprimer
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-title="Mode de Payment">
+                      {{payment.paymentmethod.name}}
+                      <!--  -->
+                      {% if payment.paymentmethod_id in [2,3] %}
+                      <br />
+                      <small style="font-size: 10px"
+                        >Nummero: <b> {{payment.document_number | upper}}</b>
+                      </small>
+                      ,
+                      <small class="text-end" style="font-size: 10px"
+                        >Échéance le: <b> {{payment.due_date}}</b>
+                      </small>
+                      ,
+                      <!--  -->
+                      {% if payment.document_filename != "" %}
+
+                      <a
+                        href="/uploads/{{payment.document_filename}}"
+                        target="_blank"
+                      >
+                        <i class="bi bi-file-earmark-arrow-down"></i
+                      ></a>
+                      {% endif %}
+                      <!--  -->
+
+                      {% endif %}
+                    </td>
+                    <td data-title="Montant">
+                      {{payment.amount}} <small>TND</small>
+                    </td>
+                    <td data-title="Ajouté le">{{payment.date}}</td>
+                    <td>
+                      <div class="d-none d-sm-block">
+                        <div class="dropdown">
+                          <a
+                            class="btn btn-link dropdown float-end text-decoration-none"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            <i class="bi bi-sliders"></i>
+                          </a>
+
+                          <ul
+                            class="dropdown-menu dropdown-menu-end"
+                            aria-labelledby="dropdownMenuButton2"
+                          >
+                            <li>
+                              <a
+                                class="dropdown-item"
+                                href="/payments/{{payment.id}}"
+                                ><i class="bi bi-pencil-square"></i>
+                                Modiffier</a
+                              >
+                            </li>
+
+                            <li>
+                              <a
+                                class="dropdown-item"
+                                onclick="sendMailClicked('{{payment.id}}')"
+                              >
+                                <i class="bi bi-trash text-danger"></i>
+                                Supprimer
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="col mb-3">
+  <div
+    class="tab-pane fade"
+    id="profile"
+    role="tabpanel"
+    aria-labelledby="profile-tab"
+  >
+    <div class="row">
+      <div class="col my-2">
+        <button
+          class="btn btn-success float-end"
+          data-bs-toggle="modal"
+          data-bs-target="#addPaymentCostModal"
+        >
+          + Ajouter
+        </button>
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-header">
-        <h5 class="card-title">Paiements Charges</h5>
+        <h5 class="card-title">Charges</h5>
       </div>
 
       <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-sm table-striped">
+        <div class="no-more-tables" style="min-height: 300px">
+          <table class="table table-sm">
             <thead>
               <tr>
                 <th scope="col">Nom</th>
@@ -127,8 +230,45 @@
             <tbody>
               {% for payment in payments | rejectattr('cost_id', "none") %}
               <tr>
-                <td>{{payment.costsdef.name}}</td>
-                <td>
+                <td data-title="Charge">
+                  {{payment.costsdef.name}}
+                  <div class="d-block d-sm-none">
+                    <div class="dropdown">
+                      <a
+                        class="btn btn-link dropdown float-end text-decoration-none"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sliders"></i>
+                      </a>
+
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuButton2"
+                      >
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            href="/payments/{{payment.id}}"
+                            ><i class="bi bi-pencil-square"></i> Modiffier</a
+                          >
+                        </li>
+
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            onclick="sendMailClicked('{{payment.id}}')"
+                          >
+                            <i class="bi bi-trash text-danger"></i>
+                            Supprimer
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </td>
+                <td data-title="Mode de Payment">
                   {{payment.paymentmethod.name}}
                   <!--  -->
                   {% if payment.paymentmethod_id in [2,3] %}
@@ -141,11 +281,14 @@
                     >Échéance le: <b> {{payment.due_date}}</b>
                   </small>
 
-                   ,
+                  ,
                   <!--  -->
                   {% if payment.document_filename != "" %}
 
-                  <a href="/uploads/{{payment.document_filename}}" target="_blank">
+                  <a
+                    href="/uploads/{{payment.document_filename}}"
+                    target="_blank"
+                  >
                     <i class="bi bi-file-earmark-arrow-down"></i
                   ></a>
                   {% endif %}
@@ -153,34 +296,45 @@
 
                   {% endif %}
                 </td>
-                <td>{{payment.amount}} <small>TND</small></td>
-                <td>{{payment.date}}</td>
+                <td data-title="Montant">
+                  {{payment.amount}} <small>TND</small>
+                </td>
+                <td data-title="Ajouté le">{{payment.date}}</td>
                 <td>
-                  <div class="dropdown me-2">
-                    <a
-                      class="btn btn-link dropdown float-end text-decoration-none"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      ...
-                    </a>
+                  <div class="d-none d-sm-inline">
+                    <div class="dropdown">
+                      <a
+                        class="btn btn-link dropdown float-end text-decoration-none"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sliders"></i>
+                      </a>
 
-                    <ul
-                      class="dropdown-menu dropdown-menu-end"
-                      aria-labelledby="dropdownMenuButton2"
-                    >
-                      <li><a class="dropdown-item" href="#">Afficher</a></li>
-                      <li>
-                        <a class="dropdown-item" href="#">My Companie 2</a>
-                      </li>
-                      <li><hr class="dropdown-divider" /></li>
-                      <li>
-                        <a class="dropdown-item" href="#"
-                          >Ajouter une société</a
-                        >
-                      </li>
-                    </ul>
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuButton2"
+                      >
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            href="/payments/{{payment.id}}"
+                            ><i class="bi bi-pencil-square"></i> Modiffier</a
+                          >
+                        </li>
+
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            onclick="sendMailClicked('{{payment.id}}')"
+                          >
+                            <i class="bi bi-trash text-danger"></i>
+                            Supprimer
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -203,7 +357,7 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action="/payments" method="post"  enctype="multipart/form-data">
+      <form action="/payments" method="post" enctype="multipart/form-data">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
             Ajouter un nouveau Paiement Fournisseur

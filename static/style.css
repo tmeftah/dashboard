@@ -84,7 +84,7 @@ a {
   border-bottom: 1px solid #cfcfcfa9;
 }
 
-.nav {
+#nav {
   display: grid;
   flex-direction: column;
   word-wrap: normal;
