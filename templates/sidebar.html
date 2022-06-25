@@ -71,6 +71,18 @@
 
     <li class="nav-item">
       <a
+        href="/recovers"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/recovers' %} link-active {% endif %}"
+      >
+        <i class="nav_icon bi bi-shuffle"></i>
+        <span class="ms-2">Recouvrements</span>
+      </a>
+    </li>
+
+    <span class="separator"></span>
+
+    <li class="nav-item">
+      <a
         href="/costs"
         class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/costs' %} link-active {% endif %}"
       >
@@ -101,26 +113,14 @@
 
     <li class="nav-item">
       <a
-        href="/recovers"
-        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/recovers' %} link-active {% endif %}"
-      >
-        <i class="nav_icon bi bi-shuffle"></i>
-        <span class="ms-2">Recouvrements</span>
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a
         href="/payments"
         class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/payments' %} link-active {% endif %}"
       >
         <i class="nav_icon bi bi-credit-card-2-back"></i>
-        <span class="ms-2"
-          >Payment des Dettes (<small>Fournisseur/Charge</small>)</span
-        >
+        <span class="ms-2">Paiement des Dettes</span>
       </a>
     </li>
-
+    <span class="separator"></span>
     <li class="nav-item">
       <a
         href="/reconciliations"

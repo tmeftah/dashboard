@@ -80,7 +80,7 @@ a {
 }
 
 .separator {
-  margin: 15px 0px;
+  margin: 10px 0px;
   border-bottom: 1px solid #cfcfcfa9;
 }
 
@@ -93,7 +93,7 @@ a {
 
 .side {
   color: var(--first-color-light) !important;
-  margin-bottom: 0.75rem;
+
   transition: 0.3s;
 }
 .side:hover {
