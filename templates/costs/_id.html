@@ -88,8 +88,9 @@
         </div>
 
         <!-- document -->
-        {% with document_number=cost.document_number, due_date=cost.due_date %}
-        {% include 'document.html' %} {% endwith %}
+        {% with document_number=cost.document_number,
+        due_date=cost.due_date,min_date=cost.date %} {% include 'document.html'
+        %} {% endwith %}
       </div>
 
       <div class="mb-3">
