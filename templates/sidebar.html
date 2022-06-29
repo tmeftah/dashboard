@@ -62,7 +62,7 @@
     <li class="nav-item">
       <a
         href="/sales"
-        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/sales' %} link-active {% endif %}"
+        class="nav-link side ms-3 px-0 align-middle {% if request.path.split('/')[1] == 'sales' %} link-active {% endif %}"
       >
         <i class="nav_icon bi bi-currency-exchange"></i>
         <span class="ms-2">Chiffre d'affaires</span>
@@ -72,7 +72,7 @@
     <li class="nav-item">
       <a
         href="/recovers"
-        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/recovers' %} link-active {% endif %}"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path.split('/')[1] == '/recovers' %} link-active {% endif %}"
       >
         <i class="nav_icon bi bi-shuffle"></i>
         <span class="ms-2">Recouvrements</span>
@@ -84,7 +84,7 @@
     <li class="nav-item">
       <a
         href="/costs"
-        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/costs' %} link-active {% endif %}"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path.split('/')[1] == '/costs' %} link-active {% endif %}"
       >
         <i class="nav_icon bi bi-bag"></i>
         <span class="ms-2">Charges</span>
@@ -94,7 +94,7 @@
     <li class="nav-item">
       <a
         href="/purchasings"
-        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/purchasings' %} link-active {% endif %}"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path.split('/')[1] == '/purchasings' %} link-active {% endif %}"
       >
         <i class="nav_icon bi bi-cart"></i>
         <span class="ms-2">Achats</span>
@@ -104,7 +104,7 @@
     <li class="nav-item">
       <a
         href="/stocks"
-        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/stocks' %} link-active {% endif %}"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path.split('/')[1] == '/stocks' %} link-active {% endif %}"
       >
         <i class="nav_icon bi bi-boxes"></i>
         <span class="ms-2">Stock</span>
@@ -114,7 +114,7 @@
     <li class="nav-item">
       <a
         href="/payments"
-        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/payments' %} link-active {% endif %}"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path.split('/')[1] == '/payments' %} link-active {% endif %}"
       >
         <i class="nav_icon bi bi-credit-card-2-back"></i>
         <span class="ms-2">Paiement des Dettes</span>
@@ -124,7 +124,7 @@
     <li class="nav-item">
       <a
         href="/reconciliations"
-        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/reconciliations' %} link-active {% endif %}"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path.split('/')[1] == '/reconciliations' %} link-active {% endif %}"
       >
         <i class="nav_icon bi bi-bank"></i>
         <span class="ms-2">Rapprochement</span>
@@ -143,7 +143,7 @@
     <li class="nav-item">
       <a
         href="/companies"
-        class="nav-link side ms-3 px-0 align-middle {%- if request.path == '/companies' %} link-active {% endif %}"
+        class="nav-link side ms-3 px-0 align-middle {%- if request.path.split('/')[1] == '/companies' %} link-active {% endif %}"
       >
         <i class="nav_icon bi bi-journal"></i>
         <span class="ms-2">Clients / Fournisseurs</span>
