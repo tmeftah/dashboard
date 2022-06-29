@@ -1059,6 +1059,15 @@ def utility_processor():
     from calendar import Calendar, monthrange
     from datetime import datetime, date, timedelta
 
+    def get_workings_days():
+        n = 0
+        num_days = monthrange(today().year, today().month)[1]
+        for i in range(num_days):
+            d = today() + timedelta(days=i)
+            if d.isoweekday() not in [6, 7]:
+                n += 1
+        return n
+
     def today():
         return date.today()
 
