@@ -1116,6 +1116,7 @@ def utility_processor():
         dayDelta=dayDelta,
         isocalendar=isocalendar,
         strftime=strftime,
+        get_workings_days=get_workings_days,
     )
 
 
