@@ -19,6 +19,8 @@ class Config:
     ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg"}
     MAX_CONTENT_LENGTH = 2 * 1000 * 1000
 
+    CLIENT_NAME = environ.get("CLIENT_NAME")
+
 
 class ProdConfig(Config):
     DEBUG = False
