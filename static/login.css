@@ -9,14 +9,14 @@
 .login-dark form {
   max-width: 420px;
   width: 90%;
-  background-color: #1e2833;
+  background-color: #ffffff;
   padding: 40px;
   border-radius: 4px;
   transform: translate(-50%, -50%);
   position: absolute;
   top: 50%;
   left: 50%;
-  color: #fff;
+  color: #5e5e5e;
   box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -30,7 +30,7 @@
 .login-dark form .form-control {
   background: none;
   border: none;
-  border-bottom: 1px solid #434a52;
+  border-bottom: 1px solid #5e5e5e;
   border-radius: 0;
   box-shadow: none;
   outline: none;
