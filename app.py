@@ -105,7 +105,7 @@ def upload_file(item):
 
 @app.errorhandler(exceptions.NotFound)
 def handle_NotFound(e):
-    flash("Page not found !!!")
+    flash(f"{request.path}: Page not found !!!")
     return redirect(url_for(".dashboard"))
 
 
