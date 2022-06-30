@@ -248,9 +248,7 @@
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
-            <div class="me-auto">
-              Stock en cours <small>(dernier sesaisie du Stock)</small>
-            </div>
+            <div class="me-auto">Stock en cours</div>
             <span class="badge bg-primary rounded-pill">
               {{get_stock()}}
               <small>TND</small>
@@ -464,10 +462,7 @@
           <li
             class="list-group-item d-flex justify-content-between align-items-start"
           >
-            <div class="me-auto">
-              Capacite financiere
-              <small>"Caisse+Banque - Engagemen/Dette"</small>
-            </div>
+            <div class="me-auto">Capacite financiere</div>
             {% if get_financial_capacity() < 0 %}
             <i class="bi bi-exclamation-triangle text-danger me-1"></i>
             {% endif %}

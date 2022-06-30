@@ -1,6 +1,6 @@
 /*  */
 
-@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&display=swap");
+@import "https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,600,700";
 
 :root {
   --header-height: 3rem;
@@ -9,8 +9,8 @@
   --second-color: #3681f0;
   --first-color-light: rgba(255, 255, 255, 0.6);
   --white-color: #fff;
-  --body-font: "Sora", sans-serif;
-  --normal-font-size: 0.9rem;
+  --body-font: "Ubuntu", sans-serif;
+  --normal-font-size: 0.95rem;
   --z-fixed: 100;
 }
 *,
@@ -23,7 +23,7 @@ html {
   height: -webkit-fill-available;
 }
 body {
-  font-family: var(--body-font);
+  font-family: var(--body-font) !important;
   font-size: var(--normal-font-size);
   transition: 0.5s;
   min-height: 100vh;
@@ -50,6 +50,13 @@ a {
 }
 
 .sidebar {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  top: 61px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: block;
   width: var(--nav-width);
   min-width: var(--nav-width);
   max-width: var(--nav-width);
@@ -58,6 +65,26 @@ a {
 
   transition: 0.5s;
   z-index: var(--z-fixed);
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  /* full screen */
+  width: 100vw;
+  height: 100vh;
+  /* transparent black */
+  background: rgba(0, 0, 0, 0.7);
+  /* middle layer, i.e. appears below the sidebar */
+  z-index: var(--z-fixed)-1;
+  opacity: 0;
+  /* animate the transition */
+  transition: all 0.5s ease-in-out;
+}
+/* display .overlay when it has the .active class */
+.overlay.active {
+  display: block;
+  opacity: 1;
 }
 
 .sidebar-show-btn {
@@ -77,6 +104,28 @@ a {
   position: absolute;
   margin-left: -7px;
   top: 15px;
+}
+
+#main {
+  position: fixed;
+  left: 250px;
+  bottom: 50px;
+  top: 61px;
+  right: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: block;
+}
+
+#footer {
+  height: 50px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 250px;
+  display: block;
+  border-top: 1px solid #cfcfcff5;
+  z-index: -1;
 }
 
 .separator {
@@ -118,6 +167,11 @@ a {
 }
 
 @media screen and (max-width: 991px) {
+  #main,
+  #footer {
+    left: 0;
+  }
+
   .sidebar {
     display: none !important;
   }
