@@ -36,7 +36,7 @@
       crossorigin="anonymous"
     ></script>
 
-    <title>{% block title %} {% endblock %} MY-Point</title>
+    <title>{% block title %} {% endblock %} إ دارة Darat</title>
   </head>
   <body>
     {% include 'topbar.html' %}
@@ -47,10 +47,8 @@
         fix table overflow with  min-width: 0
       -->
       <div class="flex-grow-1 bg-light p-4" id="main" style="min-width: 0">
-        {% block content %}{% endblock %}
+        {% block content %}{% endblock %} {% include 'messages.html' %}
       </div>
-
-      {% include 'messages.html' %}
 
       <!-- Dark Overlay element -->
       <div class="overlay" id="overlay" onclick="show_sidebar()"></div>
