@@ -87,6 +87,10 @@ a {
   opacity: 1;
 }
 
+.modal {
+  left: 150px;
+}
+
 .sidebar-show-btn {
   display: none;
   position: fixed;
@@ -167,6 +171,9 @@ a {
 }
 
 @media screen and (max-width: 991px) {
+  .modal {
+    left: 0;
+  }
   #main,
   #footer {
     left: 0;
