@@ -150,7 +150,11 @@
   </div>
 </div>
 
+<!--  -->
+{% endblock %}
+
 <!-- Modal -->
+{% block modal %}
 <div
   class="modal fade"
   id="addSalesModal"
@@ -266,6 +270,12 @@
     </div>
   </div>
 </div>
+
 <!-- remove modal -->
-{% with url="/purchasings/remove", header="l'Achat" %} {% include
-'remove_modal.html' %} {% endwith %} {% endblock %}
+{% with url="/purchasings/remove", header="l'Achat" %}
+<!--  -->
+{% include 'remove_modal.html' %}
+<!--  -->
+{% endwith %}
+<!--  -->
+{% endblock %}

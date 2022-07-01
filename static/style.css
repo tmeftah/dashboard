@@ -87,10 +87,6 @@ a {
   opacity: 1;
 }
 
-.modal-backdrop {
-  z-index: -1;
-}
-
 .sidebar-show-btn {
   display: none;
   position: fixed;
