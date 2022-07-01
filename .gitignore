@@ -33,4 +33,4 @@ venv.bak/
 uploads/
 
 # deploy
-deploy.sh
+script/
