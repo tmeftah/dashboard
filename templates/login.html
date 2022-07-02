@@ -71,12 +71,24 @@
 
     <div class="login-dark">
       <form action="/login" method="post" class="border-0">
-        <img
-          src="/static/logo.png"
-          width="100px"
-          alt=""
-          style="position: absolute; top: 12px; right: 12px"
-        />
+        <div style="position: absolute; top: 12px; right: 12px">
+          <img src="/static/logo.png" width="100px" alt="" />
+          <div
+            class="text-muted text-uppercase"
+            style="
+              font-size: 0.7rem;
+              line-height: 0.6;
+              letter-spacing: 0.07rem;
+              font-weight: 500;
+              border-top: 1px solid #b4b4b4;
+              display: table-cell;
+              padding-top: 3px;
+            "
+          >
+            {{config["CLIENT_NAME"]}}
+          </div>
+        </div>
+
         <h2 class="sr-only mt-2">Connexion</h2>
 
         <div class="illustration">
