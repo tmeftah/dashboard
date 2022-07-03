@@ -898,6 +898,98 @@ def add_recovers():
     return redirect(url_for("recovers"))
 
 
+@app.route("/recovers/<int:id>", methods=["GET"])
+@login_required
+def get_recovers_by_id(id):
+
+    recover = db_session.query(Recovers).filter(Recovers.id == id).first()
+
+    if not recover:
+        flash("Recouvrement n'exist pas !!!", category="warning")
+        return redirect(url_for("recovers"))
+
+    companies = db_session.query(Companies).filter_by(customer=True).all()
+    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
+
+    return render_template(
+        "/recovers/_id.html",
+        recover=recover,
+        companies=companies,
+        salescategories=salescategories,
+        paymentmethod=paymentmethod,
+    )
+
+
+@app.route("/recovers/<int:id>", methods=["POST"])
+@login_required
+def update_recovers(id):
+
+    recover = db_session.query(Recovers).filter(Recovers.id == id).first()
+
+    if not recover:
+        flash("Recouvrement n'exist pas !!!")
+        return redirect(url_for("recovers"))
+
+    company_id = request.form.get("company_id", type=int)
+    payment_id = request.form.get("payment_id", type=int)
+    date = request.form.get("date")
+    amount = request.form.get("amount")
+    comment = request.form.get("comment")
+
+    document_number = request.form.get("document_number")
+    due_date = request.form.get("due_date")
+
+    recover.company_id = company_id
+    recover.paymentmethod_id = payment_id
+    recover.date = datetime.datetime.strptime(date, "%Y-%m-%d")
+    recover.amount = amount
+    recover.comment = comment
+
+    recover.due_date = datetime.datetime.strptime(due_date, "%Y-%m-%d")
+    recover.document_number = document_number or "NOP"
+
+    try:
+
+        db_session.commit()
+        upload_file(recover)
+
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
+        flash("db error", category="error")
+
+    else:
+        flash("Recouvrement modiffier", category="success")
+
+    return redirect(url_for("recovers"))
+
+
+@app.route("/recovers/remove/<int:id>", methods=["POST"])
+@login_required
+def remove_recovers(id):
+
+    recover = db_session.query(Recovers).filter(Recovers.id == id).first()
+
+    if not recover:
+        flash("Recouvrement n'exist pas !!!", category="warning")
+        return redirect(url_for("recovers"))
+    db_session.delete(recover)
+    try:
+
+        db_session.commit()
+        flash("Recouvrement supprimer !!!", category="success")
+
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
+        flash("db error", category="danger")
+
+    return redirect(url_for("recovers"))
+
+
+# *****************************************************************************************************
+
+
 @app.route("/payments", methods=["GET"])
 @login_required
 def payments():

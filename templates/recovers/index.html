@@ -278,4 +278,7 @@
     </div>
   </div>
 </div>
-{% endblock %}
+
+<!-- remove modal -->
+{% with url="/recovers/remove", header="le Recouvremnet" %} {% include
+'remove_modal.html' %} {% endwith %} {% endblock %}
