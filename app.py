@@ -1106,6 +1106,89 @@ def add_reconciliations():
     return redirect(url_for("reconciliations"))
 
 
+@app.route("/reconciliations/<int:id>", methods=["GET"])
+@login_required
+def get_reconciliations_by_id(id):
+
+    reconciliation = db_session.query(Reconciliations).filter(Reconciliations.id == id).first()
+
+    if not reconciliation:
+        flash("Rapprochement n'exist pas !!!", category="warning")
+        return redirect(url_for("reconciliations"))
+
+    companies = db_session.query(Companies).filter_by(customer=True).all()
+    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
+
+    return render_template(
+        "/reconciliations/_id.html",
+        reconciliation=reconciliation,
+        companies=companies,
+        salescategories=salescategories,
+        paymentmethod=paymentmethod,
+    )
+
+
+@app.route("/reconciliations/<int:id>", methods=["POST"])
+@login_required
+def update_reconciliations(id):
+
+    reconciliation = db_session.query(Reconciliations).filter(Reconciliations.id == id).first()
+
+    if not reconciliation:
+        flash("Rapprochement n'exist pas !!!")
+        return redirect(url_for("reconciliations"))
+
+    company_id = request.form.get("company_id", type=int)
+    payment_id = request.form.get("payment_id", type=int)
+    date = request.form.get("date")
+    amount = request.form.get("amount")
+    comment = request.form.get("comment")
+
+    reconciliation.company_id = company_id
+    reconciliation.paymentmethod_id = payment_id
+    reconciliation.date = datetime.datetime.strptime(date, "%Y-%m-%d")
+    reconciliation.amount = amount
+    reconciliation.comment = comment
+
+    try:
+
+        db_session.commit()
+        # upload_file(reconciliation)
+
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
+        flash("db error", category="error")
+
+    else:
+        flash("Rapprochement modiffier", category="success")
+
+    return redirect(url_for("reconciliations"))
+
+
+@app.route("/reconciliations/remove/<int:id>", methods=["POST"])
+@login_required
+def remove_reconciliations(id):
+
+    reconciliation = db_session.query(Reconciliations).filter(Reconciliations.id == id).first()
+
+    if not reconciliation:
+        flash("Rapprochement n'exist pas !!!", category="warning")
+        return redirect(url_for("reconciliations"))
+    db_session.delete(reconciliation)
+    try:
+
+        db_session.commit()
+        flash("Rapprochement supprimer !!!", category="success")
+
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
+        flash("db error", category="danger")
+
+    return redirect(url_for("reconciliations"))
+
+
 # *****************************************  Stock  **************************************************
 
 

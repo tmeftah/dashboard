@@ -287,4 +287,6 @@
   </div>
 </div>
 
-{% endblock %}
+<!-- remove modal -->
+{% with url="/reconciliations/remove", header="le Rapprochement" %} {% include
+'remove_modal.html' %} {% endwith %} {% endblock %}
