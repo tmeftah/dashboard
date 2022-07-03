@@ -43,21 +43,26 @@
     <title>{% block title %} {% endblock %} إ دارة Darat</title>
   </head>
   <body>
-    {% include 'topbar.html' %} {% include 'sidebar.html' %}
-    <div class="container-fuild d-flex">
-      <!-- 
-        fix table overflow with  min-width: 0
-      -->
+    {% block modal %}{% endblock %}
+    <div class="container-fuild">
       <div class="flex-grow-1 bg-light p-4" id="main" style="min-width: 0">
-        {% block content %}{% endblock %} {% include 'messages.html' %}
+        {% include 'topbar.html' %}
+        <!--  -->
+        {% include 'sidebar.html' %}
+        <!--  -->
+
+        {% block content %}{% endblock %}
+
+        <!--  -->
+
+        {% include 'messages.html' %}
+        <!--  -->
+
+        <!-- Dark Overlay element -->
+        <div class="overlay" id="overlay" onclick="show_sidebar()"></div>
+        <!--  -->
+        {% include 'footer.html' %}
       </div>
-
-      {% block modal %}{% endblock %}
-
-      <!-- Dark Overlay element -->
-      <div class="overlay" id="overlay" onclick="show_sidebar()"></div>
-      <!--  -->
-      {% include 'footer.html' %}
     </div>
 
     <script
