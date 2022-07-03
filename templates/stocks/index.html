@@ -201,4 +201,7 @@
     </div>
   </div>
 </div>
-{% endblock %}
+
+<!-- remove modal -->
+{% with url="/stocks/remove", header="le Stock" %} {% include
+'remove_modal.html' %} {% endwith %} {% endblock %}
