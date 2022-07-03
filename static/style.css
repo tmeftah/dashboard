@@ -7,7 +7,7 @@
   --nav-width: 250px !important;
   --first-color: #224b97;
   --second-color: #3681f0;
-  --first-color-light: rgba(255, 255, 255, 0.6);
+  --first-color-light: #ffffff99;
   --white-color: #fff;
   --body-font: "Ubuntu", sans-serif;
   --normal-font-size: 0.95rem;
@@ -30,6 +30,18 @@ body {
   min-height: -webkit-fill-available;
 }
 
+.navbar-toggler:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+#user-info .dropdown-menu {
+  right: -3px;
+}
+#user-info .dropdown-menu[data-bs-popper] {
+  left: auto;
+}
+
 .avatar {
   vertical-align: middle;
   width: 30px;
@@ -42,17 +54,13 @@ a {
 }
 
 #top-bar {
+  background-color: #fff;
   border-bottom: 1px solid #cacaca;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1004;
-
-  background-color: #fff;
-}
-.navbar-collapse {
-  background-color: #fff;
 }
 
 .navbar {
@@ -63,7 +71,7 @@ a {
   position: fixed;
   left: 0;
   bottom: 0;
-  top: 61px;
+  top: 68px;
   overflow-y: auto;
   overflow-x: hidden;
   display: block;
@@ -142,7 +150,7 @@ a {
   left: 250px;
   display: block;
   border-top: 1px solid #cfcfcff5;
-  z-index: 2;
+  z-index: 1003;
 }
 
 .separator {
@@ -192,11 +200,17 @@ a {
     left: 0;
   }
 
+  #user-info {
+    top: auto;
+    bottom: 10px;
+  }
+
   .sidebar {
     display: none !important;
   }
 
   .sidebar-show-btn {
+    top: 60px;
     display: inline !important;
     left: 0;
   }
