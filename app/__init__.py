@@ -26,7 +26,7 @@ def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
-    engine = create_engine(app.config["DATABASE_URI"])
+    engine = create_engine(app.config["DATABASE_URI"], connect_args={"check_same_thread": False})
     sessionmaker.configure(bind=engine)
 
     from .database import init_db
