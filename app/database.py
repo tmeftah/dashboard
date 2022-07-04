@@ -1,35 +1,24 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from flask import current_app
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
 
-
-sessionmaker = sessionmaker(autocommit=False, autoflush=False)
-db_session = scoped_session(sessionmaker)
-Base = declarative_base()
-# Base.query = db_session.query_property()
+from . import Base, db_session
 
 
-def init_db(app):
+def init_db(config, engine):
     # import all modules here that might define models so that
     # they will be registered properly on the metadata.  Otherwise
     # you will have to import them first before calling init_db()
 
-    engine = create_engine(app.config["DATABASE_URI"])
-    sessionmaker.configure(bind=engine)
-
-    from models import PaymentMethod, SalesCategories, Companies, CostsDef, User
+    from .models import PaymentMethod, SalesCategories, Companies, CostsDef, User
 
     # Recreate database each time for demo
-    if app.config["ENV"] != "production":
+    if config != "production":
         Base.metadata.drop_all(bind=engine)
 
     Base.metadata.create_all(bind=engine)
 
     # init clients
-    if app.config["ENV"] != "production":
+    if config != "production":
         db_session.add(
             Companies(name="Client n°1", email="client1@client.com", customer=True, supplier=False)
         )

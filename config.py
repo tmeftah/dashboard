@@ -1,5 +1,11 @@
 """Flask configuration."""
-from os import environ
+from os import environ, path
+from dotenv import load_dotenv
+
+basedir = path.abspath(path.dirname(__file__))
+dotenv_path = path.join(basedir, ".env")
+if path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
 
 
 class Config:
@@ -12,7 +18,7 @@ class Config:
     TEMPLATES_FOLDER = "templates"
 
     SESSION_COOKIE_SAMESITE = "Strict"
-    SESSION_COOKIE_HTTPONLY = False
+    SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SECURE = True
 
     UPLOAD_FOLDER = environ.get("UPLOAD_FOLDER")
@@ -21,14 +27,25 @@ class Config:
 
     CLIENT_NAME = environ.get("CLIENT_NAME")
 
+    @staticmethod
+    def init_app(app):
+        pass
 
-class ProdConfig(Config):
+
+class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
-    DATABASE_URI = environ.get("PROD_DATABASE_URI")
+    DATABASE_URI = environ.get("PROD_DATABASE_URI") or "sqlite:///test.db"
 
 
-class DevConfig(Config):
+class DevelopmentConfig(Config):
     DEBUG = True
     TESTING = True
-    DATABASE_URI = environ.get("DEV_DATABASE_URI")
+    DATABASE_URI = environ.get("DEV_DATABASE_URI") or "sqlite:///test.db"
+
+
+config = {
+    "development": DevelopmentConfig,
+    "production": ProductionConfig,
+    "default": DevelopmentConfig,
+}

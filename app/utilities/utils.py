@@ -1,8 +1,9 @@
-from database import db_session
+import datetime
 from sqlalchemy.sql import func
 from sqlalchemy import extract
-from models import Sales, Recovers, CostsMapping, Purchasing, Reconciliations, Stocks, CostsDef
-import datetime
+
+from .. import db_session
+from ..models import Sales, Recovers, CostsMapping, Purchasing, Reconciliations, Stocks, CostsDef
 
 
 def get_sum_sales(company_id=0, pay_methode_id=0):

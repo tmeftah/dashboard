@@ -2,8 +2,10 @@ from sqlalchemy import Column, Float, Integer, String, ForeignKey, Boolean, Chec
 from sqlalchemy.types import Date
 
 from sqlalchemy.orm import relationship
-from database import Base
+
 import datetime
+
+from . import Base, db_session, login_manager
 
 
 class DictMixIn:
@@ -52,6 +54,13 @@ class User(Base, DictMixIn):
 
     def __repr__(self):
         return f"<User {self.name!r}>"
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    # since the user_id is just the primary key of our user table, use it in the query for the user
+    user = db_session.query(User).get(int(user_id))
+    return user
 
 
 class Companies(Base, DictMixIn):

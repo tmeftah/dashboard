@@ -28,7 +28,7 @@ from models import (
 )
 
 
-from utils import (
+from app.utilities.utils import (
     get_sold_clients,
     get_sold_portefeuille,
     get_impayees,
