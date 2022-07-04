@@ -156,7 +156,7 @@ class SalesCategories(Base, DictMixIn):
 class PaymentMethod(Base, DictMixIn):
     __tablename__ = "paymentmethod"
 
-    name = Column(String(50), nullable=False)
+    name = Column(String(50), nullable=False, unique=True)
     sales = relationship("Sales", back_populates="paymentmethod")
     costsmappings = relationship("CostsMapping", back_populates="paymentmethod")
     purchasings = relationship("Purchasing", back_populates="paymentmethod")
