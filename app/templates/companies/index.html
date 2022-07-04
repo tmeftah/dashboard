@@ -15,14 +15,14 @@
 <!--  -->
 
 <div class="row mb-2">
-  <div class="col-6">
+  <div class="col-12 col-lg-6 mb-3">
     <div class="card">
       <div class="card-header">
         <h5 class="card-title">Clients</h5>
       </div>
       <div class="card-body">
-        <div class="table-responsive mb-0">
-          <table class="table table-sm table-striped">
+        <div class="no-more-tables" style="min-height: 300px">
+          <table class="table table-sm">
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -38,39 +38,88 @@
               {% for company in companies | selectattr('customer',
               "equalto",True) %}
               <tr>
-                <th scope="row">1</th>
-                <td>{{company.name}}</td>
-                <td>
+                <th scope="row">{{loop.index}}</th>
+                <td data-title="Nom">
+                  {{company.name}}
+                  <div class="d-block d-sm-none">
+                    <div class="dropdown">
+                      <a
+                        class="btn btn-link dropdown float-end text-decoration-none"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sliders"></i>
+                      </a>
+
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuButton2"
+                      >
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            href="/companies/{{company.id}}"
+                            ><i class="bi bi-pencil-square"></i> Modiffier</a
+                          >
+                        </li>
+
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            onclick="sendMailClicked('{{company.id}}')"
+                          >
+                            <i class="bi bi-trash text-danger"></i>
+                            Supprimer
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </td>
+                <td data-title="Contact">
                   Email: {{company.email|default("...", true)}}
                   <br />Phone: {{company.phone|default("...", true)}}
                 </td>
-                <td>{{ company.sales | sum(attribute='amount') }} TND</td>
-                <td>{{company.createdAt}}</td>
+                <td data-title="Chiffre d'affaire">
+                  {{ company.sales | sum(attribute='amount') }} TND
+                </td>
+                <td data-title="Ajouté l">{{company.createdAt}}</td>
                 <td>
-                  <div class="dropdown" style="position: static; z-index: 2000">
-                    <button
-                      class="btn btn-primary dropdown btn-sm"
-                      type="button"
-                      id="dropdownMenuButton1"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      ...
-                    </button>
-                    <ul
-                      class="dropdown-menu"
-                      aria-labelledby="dropdownMenuButton1"
-                    >
-                      <li><a class="dropdown-item" href="#">Action</a></li>
-                      <li>
-                        <a class="dropdown-item" href="#">Another action</a>
-                      </li>
-                      <li>
-                        <a class="dropdown-item" href="#"
-                          >Something else here</a
-                        >
-                      </li>
-                    </ul>
+                  <div class="d-none d-sm-block">
+                    <div class="dropdown">
+                      <a
+                        class="btn btn-link dropdown float-end text-decoration-none"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sliders"></i>
+                      </a>
+
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuButton2"
+                      >
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            href="/companies/{{company.id}}"
+                            ><i class="bi bi-pencil-square"></i> Modiffier</a
+                          >
+                        </li>
+
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            onclick="sendMailClicked('{{company.id}}')"
+                          >
+                            <i class="bi bi-trash text-danger"></i>
+                            Supprimer
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -81,14 +130,14 @@
       </div>
     </div>
   </div>
-  <div class="col-6">
+  <div class="col-12 col-lg-6">
     <div class="card">
       <div class="card-header">
         <h5 class="card-title">Fournisseurs</h5>
       </div>
       <div class="card-body">
-        <div class="table-responsive mb-0">
-          <table class="table table-sm table-striped">
+        <div class="no-more-tables" style="min-height: 300px">
+          <table class="table table-sm">
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -105,40 +154,52 @@
               {% for company in companies | selectattr('supplier',
               "equalto",True) %}
               <tr>
-                <th scope="row">1</th>
-                <td>{{company.name}}</td>
+                <th scope="row">{{loop.index}}</th>
+                <td data-title="Nom">{{company.name}}</td>
 
-                <td>
+                <td data-title="Contact">
                   Email: {{company.email|default("...", true)}}
                   <br />Phone: {{company.phone|default("...", true)}}
                 </td>
-                <td>{{ company.sales | sum(attribute='amount') }} TND</td>
-                <td>{{company.createdAt}}</td>
+                <td data-title="Chiffre d'affaire">
+                  {{ company.sales | sum(attribute='amount') }} TND
+                </td>
+                <td data-title="Ajouté le">{{company.createdAt}}</td>
                 <td>
-                  <div class="dropdown" style="position: static; z-index: 2000">
-                    <button
-                      class="btn btn-primary dropdown btn-sm"
-                      type="button"
-                      id="dropdownMenuButton1"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      ...
-                    </button>
-                    <ul
-                      class="dropdown-menu"
-                      aria-labelledby="dropdownMenuButton1"
-                    >
-                      <li><a class="dropdown-item" href="#">Action</a></li>
-                      <li>
-                        <a class="dropdown-item" href="#">Another action</a>
-                      </li>
-                      <li>
-                        <a class="dropdown-item" href="#"
-                          >Something else here</a
-                        >
-                      </li>
-                    </ul>
+                  <div class="d-none d-sm-block">
+                    <div class="dropdown">
+                      <a
+                        class="btn btn-link dropdown float-end text-decoration-none"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-sliders"></i>
+                      </a>
+
+                      <ul
+                        class="dropdown-menu dropdown-menu-end"
+                        aria-labelledby="dropdownMenuButton2"
+                      >
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            href="/companies/{{company.id}}"
+                            ><i class="bi bi-pencil-square"></i> Modiffier</a
+                          >
+                        </li>
+
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            onclick="sendMailClicked('{{company.id}}')"
+                          >
+                            <i class="bi bi-trash text-danger"></i>
+                            Supprimer
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -244,4 +305,10 @@
     </div>
   </div>
 </div>
-{% endblock %}
+
+<!-- remove modal -->
+{% with url="/companies/remove", header="le Client/Fournisseur" %}
+<!--  -->
+{% include 'remove_modal.html' %}
+<!--  -->
+{% endwith %} {% endblock %}

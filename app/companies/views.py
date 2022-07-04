@@ -23,6 +23,12 @@ def add_companies():
     company_type = request.form.get("company_type", type=int)
     phone = request.form.get("phone")
 
+    company = db_session.query(Companies).filter(Companies.name == name).first()
+
+    if company:
+        flash("Le Fournissuer/Client exist deja. Le nom doit être unique!!!", category="warning")
+        return redirect(url_for(".index"))
+
     if company_type == 0:
         customer = True
         supplier = False
@@ -50,9 +56,93 @@ def add_companies():
     except SQLAlchemyError as e:
         print(e)
         db_session.rollback()
-        flash("db error", category="error")
+        flash("db error", category="danger")
 
     else:
         flash("Un nouveau Tier ajouter", category="success")
+
+    return redirect(url_for(".index"))
+
+
+@bp.route("/<int:id>", methods=["GET"])
+@login_required
+def get_sale_by_id(id):
+
+    company = db_session.query(Companies).filter(Companies.id == id).first()
+
+    if not company:
+        flash("Le Fournissuer/Client n'exist pas !!!")
+        return redirect(url_for(".index"))
+
+    return render_template("/companies/_id.html", company=company)
+
+
+@bp.route("/<int:id>", methods=["POST"])
+@login_required
+def update_companies(id):
+
+    company = db_session.query(Companies).filter(Companies.id == id).first()
+
+    if not company:
+        flash("Le Fournissuer/Client n'exist pas !!!", category="warning")
+        return redirect(url_for(".index"))
+
+    name = request.form.get("name")
+    email = request.form.get("email")
+    company_type = request.form.get("company_type", type=int)
+    phone = request.form.get("phone")
+
+    if company_type == 0:
+        customer = True
+        supplier = False
+
+    if company_type == 1:
+        customer = False
+        supplier = True
+
+    if company_type == 2:
+        customer = True
+        supplier = True
+
+    company.name = name
+    company.email = email
+    company.customer = customer
+    company.supplier = supplier
+    company.phone = phone
+
+    try:
+
+        db_session.commit()
+
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
+        flash("db error", category="danger")
+
+    else:
+        flash("Le Fournissuer/Client modiffier", category="success")
+
+    return redirect(url_for(".index"))
+
+
+@bp.route("/remove/<int:id>", methods=["POST"])
+@login_required
+def remove_companies(id):
+
+    company = db_session.query(Companies).filter(Companies.id == id).first()
+
+    if not company:
+        flash("Le Fournissuer/Client n'exist pas !!!", category="warning")
+        return redirect(url_for(".index"))
+    db_session.delete(company)
+    try:
+
+        db_session.commit()
+        flash("Le Fournissuer/Client supprimer !!!", category="success")
+
+    except SQLAlchemyError as e:
+        print(e)
+        db_session.rollback()
+        flash("db error", category="danger")
 
     return redirect(url_for(".index"))

@@ -1,0 +1,72 @@
+{% extends 'base.html' %} {% block content %}
+
+<div class="card">
+  <div class="card-header">Modiffier le Client/Fournisseur</div>
+  <form action="/companies/{{company.id}}" method="post">
+    <div class="card-body">
+      <div class="mb-3">
+        <div class="row">
+          <div class="col-6">
+            <label for="recipient-name" class="col-form-label">Nom:</label>
+            <input
+              name="name"
+              id="name"
+              type="text"
+              class="form-control form-control-sm border-primary"
+              value="{{company.name}}"
+              required
+            />
+          </div>
+          <div class="col-6">
+            <label for="recipient-name" class="col-form-label">Type:</label>
+            <select
+              name="company_type"
+              id="company_type"
+              class="form-select form-select-sm"
+              aria-label="Default select example"
+            >
+              <option value="0" {% if company.customer == 1 and   company.supplier == 0 %} selected {% endif %}>Client</option>
+              <option value="1" {% if company.customer == 0 and   company.supplier == 1 %} selected {% endif %}>Fournisseur</option>
+              <option value="2" {% if company.customer == 1 and   company.supplier == 1 %} selected {% endif %}>Client+Fournisseur</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6 col-sm-6">
+            <label for="recipient-name" class="col-form-label">Email</label>
+            <div class="input-group mb-3">
+              <input
+                name="email"
+                type="email"
+                class="form-control form-control-sm"
+                id="email"
+                value="{{company.email}}"
+              />
+            </div>
+          </div>
+
+          <div class="col-6 col-sm-6">
+            <label for="amount" class="col-form-label">Phone:</label>
+            <div class="input-group mb-3">
+              <input
+                name="phone"
+                type="text"
+                class="form-control form-control-sm"
+                id="phone"
+                value="{{company.phone | default('',True)}}"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mb-2">
+        <a class="btn btn-secondary" href="/companies">Fermer</a>
+        <button type="submit" class="btn btn-primary">Sauvegarder</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
