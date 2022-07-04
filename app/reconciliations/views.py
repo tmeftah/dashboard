@@ -5,7 +5,7 @@ from sqlalchemy import desc
 from sqlalchemy.exc import SQLAlchemyError
 from . import reconciliations as bp
 from .. import db_session
-from ..models import Reconciliations, Companies, PaymentMethod
+from ..models import CostsDef, Reconciliations, Companies, PaymentMethod
 
 
 @bp.route("/", methods=["GET"])
@@ -14,20 +14,23 @@ def index():
     reconciliations = db_session.query(Reconciliations).order_by(desc(Reconciliations.date)).all()
     companies = db_session.query(Companies).all()
     paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
+    cosdefs = db_session.query(CostsDef).all()
 
     return render_template(
         "/reconciliations/index.html",
         reconciliations=reconciliations,
         paymentmethod=paymentmethod,
         companies=companies,
+        cosdefs=cosdefs,
     )
 
 
 @bp.route("/", methods=["POST"])
 @login_required
 def add_reconciliations():
-    categorie_id = request.form.get("categorie_id", type=int)
+
     company_id = request.form.get("company_id", type=int)
+    cost_id = request.form.get("cost_id", type=int)
     cashing = request.form.get("cashing", type=int)
     payment_id = request.form.get("payment_id")
     date = request.form.get("date")
@@ -35,7 +38,7 @@ def add_reconciliations():
     comment = request.form.get("comment")
 
     new_reconciliation = Reconciliations(
-        # categorie_id=categorie_id,
+        cost_id=cost_id,
         cashing=cashing,
         company_id=company_id,
         paymentmethod_id=payment_id,

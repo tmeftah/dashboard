@@ -179,6 +179,8 @@ class CostsDef(Base, DictMixIn):
     costsmappings = relationship("CostsMapping", back_populates="costsdef")
     payments = relationship("Payments", back_populates="costsdef")
 
+    reconciliations = relationship("Reconciliations", back_populates="cost")
+
     def __init__(self, name=None, fixed=False):
         self.name = name
         self.fixed = fixed
@@ -312,7 +314,8 @@ class Reconciliations(Base, DictMixIn):
 
     # categorie_id = Column(Integer, ForeignKey("salescategories.id"), nullable=False)
     paymentmethod_id = Column(Integer, ForeignKey("paymentmethod.id"), nullable=False)
-    company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
+    company_id = Column(Integer, ForeignKey("companies.id"))
+    cost_id = Column(Integer, ForeignKey("costsdef.id"))
 
     cashing = Column(Boolean, default=True)
 
@@ -324,10 +327,20 @@ class Reconciliations(Base, DictMixIn):
     # categorie = relationship("SalesCategories", back_populates="sales")
     paymentmethod = relationship("PaymentMethod", back_populates="reconciliations")
     company = relationship("Companies", back_populates="reconciliations")
+    cost = relationship("CostsDef", back_populates="reconciliations")
+
+    # table level CHECK constraint.  'name' is optional.
+
+    __table_args__ = (
+        CheckConstraint(
+            "(company_id  is null or cost_id is null) and not (company_id is null and cost_id is null)",
+            name="only_one_value",
+        ),
+    )
 
     def __init__(
         self,
-        # categorie_id=None,
+        cost_id=None,
         cashing=None,
         company_id=None,
         paymentmethod_id=None,
@@ -336,7 +349,7 @@ class Reconciliations(Base, DictMixIn):
         comment=None,
     ):
 
-        # self.categorie_id = categorie_id
+        self.cost_id = cost_id
         self.company_id = company_id
         self.paymentmethod_id = paymentmethod_id
         self.cashing = cashing

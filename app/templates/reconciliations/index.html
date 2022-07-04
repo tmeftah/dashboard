@@ -37,7 +37,9 @@
               <tr>
                 <td data-title="Nom">
                   <div class="d-flex justify-content-between w-100">
-                    {{reconciliation.company.name}}
+                    {% if reconciliation.company_id %}
+                    {{reconciliation.company.name}} {% else %}
+                    {{reconciliation.cost.name}} {% endif %}
                     <div class="d-block d-sm-none">
                       <div class="dropdown">
                         <a
@@ -168,7 +170,7 @@
   aria-labelledby="exampleModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <form action="/reconciliations" method="post">
         <div class="modal-header">
@@ -184,17 +186,67 @@
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label for="recipient-name" class="col-form-label"
-              >Type de Rapprochement:</label
-            >
-            <select
-              name="cashing"
-              class="form-select form-select-sm"
-              aria-label="Default select example"
-            >
-              <option value="1">Encaissement</option>
-              <option value="0">Decaissement</option>
-            </select>
+            <div class="row">
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label"
+                  >Type de Rapprochement:</label
+                >
+
+                <select
+                  name="cashing"
+                  class="form-select form-select-sm"
+                  aria-label="Default select example"
+                >
+                  <option value="1">Encaissement</option>
+                  <option value="0">Decaissement</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="recipient-name" class="col-form-label">Pour:</label>
+                <div>
+                  <div class="form-check form-check-inline">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="categorie"
+                      id="customer_rb"
+                      value="1"
+                      onclick="handleClick(this.value);"
+                      checked
+                    />
+                    <label class="form-check-label" for="customer_rb">
+                      Client
+                    </label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="categorie"
+                      id="supplier_rb"
+                      value="2"
+                      onclick="handleClick(this.value);"
+                    />
+                    <label class="form-check-label" for="supplier_rb">
+                      Fournisseur
+                    </label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input
+                      class="form-check-input"
+                      type="radio"
+                      name="categorie"
+                      id="cost_rb"
+                      value="3"
+                      onclick="handleClick(this.value);"
+                    />
+                    <label class="form-check-label" for="cost_rb">
+                      Charge
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             <div class="row">
               <div class="col-6">
@@ -213,17 +265,49 @@
                   {% endfor %}
                 </select>
               </div>
+
               <div class="col-6">
-                <label for="recipient-name" class="col-form-label"
-                  >Client/Fournisseur:</label
-                >
+                <label for="recipient-name" class="col-form-label">Nom:</label>
                 <select
                   name="company_id"
-                  class="form-select form-select-sm"
+                  id="customer"
+                  class="form-select form-select-sm select-nom"
                   aria-label="Default select example"
                 >
-                  {% for companie in companies %}
+                  {% for companie in companies |
+                  selectattr("customer","equalto",True) %}
                   <option value="{{companie.id}}">{{companie.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="col-6" hidden>
+                <label for="recipient-name" class="col-form-label">Nom:</label>
+                <select
+                  name="company_id"
+                  id="supplier"
+                  class="form-select form-select-sm select-nom"
+                  aria-label="Default select example"
+                  disabled
+                >
+                  {% for companie in companies |
+                  selectattr("supplier","equalto",True) %}
+                  <option value="{{companie.id}}">{{companie.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="col-6" hidden>
+                <label for="recipient-name" class="col-form-label">Nom:</label>
+                <select
+                  name="cost_id"
+                  id="cost"
+                  class="form-select form-select-sm select-nom"
+                  aria-label="Default select example"
+                  disabled
+                >
+                  {% for cosdef in cosdefs %}
+                  <option value="{{cosdef.id}}">{{cosdef.name}}</option>
                   {% endfor %}
                 </select>
               </div>
@@ -289,4 +373,58 @@
 
 <!-- remove modal -->
 {% with url="/reconciliations/remove", header="le Rapprochement" %} {% include
-'remove_modal.html' %} {% endwith %} {% endblock %}
+'remove_modal.html' %} {% endwith %} {% endblock %} {% block scripts %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function (event) {
+    document.getElementById("customer_rb").checked = true;
+    document.getElementById("supplier_rb").checked = false;
+    document.getElementById("cost_rb").checked = false;
+    handleClick("1");
+  });
+
+  function handleClick(value) {
+    var customer = document.getElementById("customer");
+    var supplier = document.getElementById("supplier");
+    var cost = document.getElementById("cost");
+
+    switch (value) {
+      case "1":
+        customer.disabled = false;
+        customer.parentElement.hidden = false;
+
+        supplier.disabled = true;
+        supplier.parentElement.hidden = true;
+
+        cost.disabled = true;
+        cost.parentElement.hidden = true;
+
+        break;
+
+      case "2":
+        customer.disabled = true;
+        customer.parentElement.hidden = true;
+
+        supplier.disabled = false;
+        supplier.parentElement.hidden = false;
+
+        cost.disabled = true;
+        cost.parentElement.hidden = true;
+
+        break;
+
+      case "3":
+        customer.disabled = true;
+        customer.parentElement.hidden = true;
+
+        supplier.disabled = true;
+        supplier.parentElement.hidden = true;
+
+        cost.disabled = false;
+        cost.parentElement.hidden = false;
+        break;
+    }
+  }
+</script>
+
+{% endblock %}
