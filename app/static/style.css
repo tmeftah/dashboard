@@ -20,14 +20,13 @@
 }
 
 html {
-  height: -webkit-fill-available;
+  height: 100%;
 }
 body {
   font-family: var(--body-font) !important;
   font-size: var(--normal-font-size);
   transition: 0.5s;
   min-height: 100vh;
-  min-height: -webkit-fill-available;
 }
 
 .navbar-toggler:focus {

@@ -38,7 +38,7 @@ def create_app(config_name):
     login_manager.init_app(app)
     login_manager.login_view = "login"
 
-    csrf.init_app(app)
+    # csrf.init_app(app)
 
     @app.errorhandler(exceptions.NotFound)
     def handle_NotFound(e):
@@ -53,17 +53,17 @@ def create_app(config_name):
     def setup():
         pass
 
-    @app.after_request
-    def add_header(response):
-        response.headers[
-            "Strict-Transport-Security"
-        ] = "max-age=63072000; includeSubDomains; preload"
-        response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["X-Frame-Options"] = "SAMEORIGIN"
-        response.headers[
-            "Content-Security-Policy"
-        ] = "connect-src self;font-src https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/;script-src 'self' https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/;base-uri 'self'"
-        return response
+    # @app.after_request
+    # def add_header(response):
+    #     response.headers[
+    #         "Strict-Transport-Security"
+    #     ] = "max-age=63072000; includeSubDomains; preload"
+    #     response.headers["X-Content-Type-Options"] = "nosniff"
+    #     response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    #     response.headers[
+    #         "Content-Security-Policy"
+    #     ] = "connect-src self;font-src https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/;script-src 'self' https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/;base-uri 'self'"
+    #     return response
 
     @app.errorhandler(CSRFError)
     def handle_csrf_error(e):
