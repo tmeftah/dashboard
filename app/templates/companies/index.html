@@ -40,40 +40,42 @@
               <tr>
                 <th scope="row">{{loop.index}}</th>
                 <td data-title="Nom">
-                  {{company.name}}
-                  <div class="d-block d-sm-none">
-                    <div class="dropdown">
-                      <a
-                        class="btn btn-link dropdown float-end text-decoration-none"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        <i class="bi bi-sliders"></i>
-                      </a>
+                  <div class="d-flex justify-content-between w-100">
+                    {{company.name}}
+                    <div class="d-block d-sm-none">
+                      <div class="dropdown">
+                        <a
+                          class="btn btn-link dropdown float-end text-decoration-none"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i class="bi bi-sliders"></i>
+                        </a>
 
-                      <ul
-                        class="dropdown-menu dropdown-menu-end"
-                        aria-labelledby="dropdownMenuButton2"
-                      >
-                        <li>
-                          <a
-                            class="dropdown-item"
-                            href="/companies/{{company.id}}"
-                            ><i class="bi bi-pencil-square"></i> Modiffier</a
-                          >
-                        </li>
+                        <ul
+                          class="dropdown-menu dropdown-menu-end"
+                          aria-labelledby="dropdownMenuButton2"
+                        >
+                          <li>
+                            <a
+                              class="dropdown-item"
+                              href="/companies/{{company.id}}"
+                              ><i class="bi bi-pencil-square"></i> Modiffier</a
+                            >
+                          </li>
 
-                        <li>
-                          <a
-                            class="dropdown-item"
-                            onclick="sendMailClicked('{{company.id}}')"
-                          >
-                            <i class="bi bi-trash text-danger"></i>
-                            Supprimer
-                          </a>
-                        </li>
-                      </ul>
+                          <li>
+                            <a
+                              class="dropdown-item"
+                              onclick="sendMailClicked('{{company.id}}')"
+                            >
+                              <i class="bi bi-trash text-danger"></i>
+                              Supprimer
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -155,7 +157,46 @@
               "equalto",True) %}
               <tr>
                 <th scope="row">{{loop.index}}</th>
-                <td data-title="Nom">{{company.name}}</td>
+                <td data-title="Nom">
+                  <div class="d-flex justify-content-between w-100">
+                    {{company.name}}
+                    <div class="d-block d-sm-none">
+                      <div class="dropdown">
+                        <a
+                          class="btn btn-link dropdown float-end text-decoration-none"
+                          type="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i class="bi bi-sliders"></i>
+                        </a>
+
+                        <ul
+                          class="dropdown-menu dropdown-menu-end"
+                          aria-labelledby="dropdownMenuButton2"
+                        >
+                          <li>
+                            <a
+                              class="dropdown-item"
+                              href="/companies/{{company.id}}"
+                              ><i class="bi bi-pencil-square"></i> Modiffier</a
+                            >
+                          </li>
+
+                          <li>
+                            <a
+                              class="dropdown-item"
+                              onclick="sendMailClicked('{{company.id}}')"
+                            >
+                              <i class="bi bi-trash text-danger"></i>
+                              Supprimer
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </td>
 
                 <td data-title="Contact">
                   Email: {{company.email|default("...", true)}}
