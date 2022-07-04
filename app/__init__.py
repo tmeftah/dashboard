@@ -1,6 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import LoginManager, login_required
-from flask_wtf.csrf import CSRFProtect, CSRFError
+
 
 from werkzeug import exceptions
 
@@ -18,7 +18,6 @@ Base = declarative_base()
 
 
 login_manager = LoginManager()
-csrf = CSRFProtect()
 
 
 def create_app(config_name):
@@ -65,9 +64,9 @@ def create_app(config_name):
     #     ] = "connect-src self;font-src https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.2/;script-src 'self' https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/;base-uri 'self'"
     #     return response
 
-    @app.errorhandler(CSRFError)
-    def handle_csrf_error(e):
-        return render_template("error.html", reason=e.description), 400
+    # @app.errorhandler(CSRFError)
+    # def handle_csrf_error(e):
+    #     return render_template("error.html", reason=e.description), 400
 
     @app.route("/")
     @login_required
