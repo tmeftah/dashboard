@@ -2,10 +2,11 @@ from sqlalchemy import Column, Float, Integer, String, ForeignKey, Boolean, Chec
 from sqlalchemy.types import Date
 
 from sqlalchemy.orm import relationship
-
+from sqlalchemy.ext.declarative import declarative_base
 import datetime
+from . import db_session, login_manager
 
-from . import Base, db_session, login_manager
+Base = declarative_base()
 
 
 class DictMixIn:

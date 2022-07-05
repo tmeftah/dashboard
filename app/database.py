@@ -1,7 +1,9 @@
+from operator import imod
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import generate_password_hash
 
-from . import Base, db_session
+from .models import Base
+from . import db_session
 
 
 def init_db(config, engine):

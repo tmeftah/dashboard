@@ -9,12 +9,10 @@ from config import config
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 
 
 sessionmaker = sessionmaker(autocommit=False, autoflush=False)
 db_session = scoped_session(sessionmaker)
-Base = declarative_base()
 
 
 login_manager = LoginManager()
