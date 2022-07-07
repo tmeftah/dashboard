@@ -273,7 +273,8 @@
               Engagements (Cheque)
             </div>
             <span class="badge bg-danger rounded-pill">
-              {{get_costs(pay_methode=2) + get_purchasing(pay_methode=2)}}
+              {{get_liabilites_per_cost(pay_methode=2) +
+              get_liabilites_per_company(pay_methode=2)}}
               <small>TND</small>
             </span>
           </li>
@@ -284,7 +285,7 @@
             >
               <div class="me-auto ps-3">Charges en general</div>
               <span class="badge bg-danger rounded-pill">
-                {{ get_costs(pay_methode=2) }}
+                {{ get_liabilites_per_cost(pay_methode=2) }}
                 <small>TND</small>
               </span>
             </li>
@@ -295,7 +296,8 @@
             >
               <div class="me-auto ps-3">{{company.name}}</div>
               <span class="badge bg-danger rounded-pill">
-                {{ get_purchasing(company=company.id,pay_methode=2) }}
+                {{ get_liabilites_per_company(company=company.id,pay_methode=2)
+                }}
                 <small>TND</small>
               </span>
             </li>

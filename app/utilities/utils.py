@@ -37,9 +37,27 @@ def get_sum_reconciliations(company_id=0, pay_methode_id=0, cashing=True):
 
     if company_id:
         query = query.filter(Reconciliations.company_id == company_id)
+    else:
+        query = query.filter(Reconciliations.company_id.isnot(None))
 
     if pay_methode_id:
         query = query.filter(Reconciliations.paymentmethod_id == pay_methode_id)
+
+    return round(query.scalar(), 3)
+
+
+def get_sum_reconciliations_costs(cost_id=0, pay_methode_id=0, cashing=True):
+    query = db.session.query(func.coalesce(func.sum(Reconciliations.amount), 0)).filter(
+        Reconciliations.cashing == cashing
+    )
+
+    if pay_methode_id:
+        query = query.filter(Reconciliations.paymentmethod_id == pay_methode_id)
+
+    if cost_id:
+        query = query.filter(Reconciliations.cost_id == cost_id)
+    else:
+        query = query.filter(Reconciliations.cost_id.isnot(None))
 
     return round(query.scalar(), 3)
 
@@ -77,12 +95,12 @@ def get_impayees(pay_methode=1):
 
 def get_banque():
     sum_encaissements = (
-        db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
+        db.session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
         .filter(Reconciliations.cashing == True)
         .scalar()
     )
     sum_decaissements = (
-        db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
+        db.session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
         .filter(Reconciliations.cashing == False)
         .scalar()
     )
@@ -92,43 +110,43 @@ def get_banque():
 def get_caisse():
 
     sum_sales = (
-        db_session.query(func.coalesce(func.sum(Sales.amount), 0))
+        db.session.query(func.coalesce(func.sum(Sales.amount), 0))
         .filter(Sales.paymentmethod_id == 1)
         .scalar()
     )
 
     sum_reconciliations = (
-        db_session.query(func.coalesce(func.sum(Recovers.amount), 0))
+        db.session.query(func.coalesce(func.sum(Recovers.amount), 0))
         .filter(Recovers.paymentmethod_id == 1)
         .scalar()
     )
 
     sum_cost = (
-        db_session.query(func.coalesce(func.sum(CostsMapping.amount), 0))
+        db.session.query(func.coalesce(func.sum(CostsMapping.amount), 0))
         .filter(CostsMapping.paymentmethod_id == 1)
         .scalar()
     )
 
     sum_purchasing = (
-        db_session.query(func.coalesce(func.sum(Purchasing.amount), 0))
+        db.session.query(func.coalesce(func.sum(Purchasing.amount), 0))
         .filter(Purchasing.paymentmethod_id == 1)
         .scalar()
     )
     # TODO: add decaissement to the sum
     sum_decaissements = (
-        db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
+        db.session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
         .filter(Reconciliations.cashing == False)
         .scalar()
     )
 
     sum_decaissements = (
-        db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
+        db.session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
         .filter(Reconciliations.cashing == False)
         .scalar()
     )
 
     sum_encaissements_especes = (
-        db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
+        db.session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
         .filter(Reconciliations.cashing == True, Reconciliations.paymentmethod_id == 1)
         .scalar()
     )
@@ -141,7 +159,7 @@ def get_caisse():
 def get_stock():
     today = datetime.date.today()
     res = (
-        db_session.query(func.coalesce(func.sum(Stocks.amount), 0))
+        db.session.query(func.coalesce(func.sum(Stocks.amount), 0))
         .filter(Stocks.date <= today)
         .order_by(Stocks.date.desc())
         .group_by(Stocks.date)
@@ -153,11 +171,13 @@ def get_stock():
         return round(0, 3)
 
 
-def get_costs(pay_methode=0):
+def get_costs(cost=0, pay_methode=0):
 
     query = db.session.query(func.coalesce(func.sum(CostsMapping.amount), 0))
     if pay_methode:
         query = query.filter(CostsMapping.paymentmethod_id == pay_methode)
+    if cost:
+        query = query.filter(CostsMapping.cost_id == cost)
 
     sum_cost = query.scalar()
 
@@ -168,7 +188,7 @@ def get_costs(pay_methode=0):
 
 def get_purchasing(company=0, pay_methode=0):
 
-    query = db_session.query(func.coalesce(func.sum(Purchasing.amount), 0))
+    query = db.session.query(func.coalesce(func.sum(Purchasing.amount), 0))
 
     if company:
         query = query.filter(Purchasing.company_id == company)
@@ -178,6 +198,13 @@ def get_purchasing(company=0, pay_methode=0):
 
     sum_purchasing = query.scalar()
 
+    return round(sum_purchasing, 3)
+
+
+def get_liabilites_per_company(company=0, pay_methode=0):
+
+    sum_purchasing = get_purchasing(company=company, pay_methode=pay_methode)
+
     sum_decaissements = get_sum_reconciliations(
         company_id=company, pay_methode_id=pay_methode, cashing=False
     )
@@ -185,18 +212,15 @@ def get_purchasing(company=0, pay_methode=0):
     return round(sum_purchasing - sum_decaissements, 3)
 
 
-def get_liabilites(company=0, pay_methode=0):
-    sum_purchasing = 0
-    sum_cost = 0
+def get_liabilites_per_cost(cost=0, pay_methode=0):
 
-    sum_purchasing = get_purchasing(company_id=company, pay_methode=pay_methode)
+    sum_costs = get_costs(cost == cost, pay_methode=pay_methode)
 
-    sum_cost = get_costs(pay_methode=pay_methode)
-
-    sum_decaissements = get_sum_reconciliations(
-        company_id=company, pay_methode_id=pay_methode, cashing=False
+    sum_decaissements = get_sum_reconciliations_costs(
+        cost_id=cost, pay_methode_id=pay_methode, cashing=False
     )
-    return round(sum_purchasing + sum_cost - sum_decaissements, 3)
+
+    return round(sum_costs - sum_decaissements, 3)
 
 
 def get_debt(company=0):
@@ -211,12 +235,12 @@ def get_debt(company=0):
 def get_all_liabilities():  # tout les engagements/dettes
 
     sum_cost = (
-        db_session.query(func.coalesce(func.sum(CostsMapping.amount), 0))
+        db.session.query(func.coalesce(func.sum(CostsMapping.amount), 0))
         .filter(CostsMapping.paymentmethod_id.notin_([1, 6]))  # TODO: to be verified
         .scalar()
     )
     sum_purchasing = (
-        db_session.query(func.coalesce(func.sum(Purchasing.amount), 0))
+        db.session.query(func.coalesce(func.sum(Purchasing.amount), 0))
         .filter(Purchasing.paymentmethod_id.notin_([1, 6]))  # TODO: to be verified
         .scalar()
     )
@@ -252,7 +276,7 @@ def get_chiffre_affaire(cum=False, pay_methode=0):
     currentMonth = datetime.datetime.now().month
     # if cum:
     #     date_ = [datetime.date.today(),datetime.date.today()]
-    sale_query = db_session.query(func.coalesce(func.sum(Sales.amount), 0))
+    sale_query = db.session.query(func.coalesce(func.sum(Sales.amount), 0))
 
     if cum:
         sale_query = sale_query.filter(extract("month", Sales.date) == currentMonth)
@@ -272,7 +296,7 @@ def get_chiffre_affaire(cum=False, pay_methode=0):
 
 
 def get_sales_on_date(start=None, end=None, cum=0, today=0):
-    query = db_session.query(func.coalesce(func.sum(Sales.amount), 0))
+    query = db.session.query(func.coalesce(func.sum(Sales.amount), 0))
 
     if cum:
         start = datetime.datetime.today().replace(day=1).date()
@@ -298,7 +322,7 @@ def get_stock_on_date(initial=0):
         today = today - datetime.timedelta(days=1)
 
     res = (
-        db_session.query(func.coalesce(func.sum(Stocks.amount), 0))
+        db.session.query(func.coalesce(func.sum(Stocks.amount), 0))
         .filter(Stocks.date <= today)
         .order_by(Stocks.date.desc())
         .group_by(Stocks.date)
@@ -312,7 +336,7 @@ def get_stock_on_date(initial=0):
 
 def get_purchasing_on_date(start=None, end=None, cum=0, today=0):
 
-    query = db_session.query(func.coalesce(func.sum(Purchasing.amount), 0))
+    query = db.session.query(func.coalesce(func.sum(Purchasing.amount), 0))
 
     if cum:
         start = datetime.datetime.today().replace(day=1).date()
