@@ -39,5 +39,5 @@ class SQLITE:
             if response_or_exc is None:
                 self.session.commit()
             self.session.remove()
-            print("!app teardown", self.session)
+
             return response_or_exc
