@@ -6,21 +6,55 @@ from sqlalchemy.exc import SQLAlchemyError
 from . import purchasings as bp
 from .. import db
 from ..models import Purchasing, Companies, PaymentMethod, SalesCategories
+from ..utilities.utils2 import toDate, compare
 
 
 @bp.route("/", methods=["GET"])
 @login_required
 def index():
 
+    s_company = request.args.get("s_company", type=int, default=0)
+    s_paymentmethod = request.args.get("s_paymentmethod", type=int, default=0)
+    s_op = request.args.get("s_op", type=str, default="")
+    s_amount = request.args.get("s_amount", type=float, default=0.0)
+    s_start_date = request.args.get("s_start_date", type=toDate, default="")
+    s_end_date = request.args.get("s_end_date", type=toDate, default="")
+
+    query = db.session.query(Purchasing)
+
+    if s_company > 0:
+        query = query.filter(Purchasing.company_id == s_company)
+
+    if s_paymentmethod > 0:
+        query = query.filter(Purchasing.paymentmethod_id == s_paymentmethod)
+
+    if s_op in ["big", "small", "equal"]:
+        if s_amount >= 0:
+            query = query.filter(compare(Purchasing.amount, s_amount, s_op))
+
+    if s_start_date:
+        query = query.filter(Purchasing.date >= s_start_date)
+    if s_end_date:
+        query = query.filter(Purchasing.date <= s_end_date)
+
+    purchasings = query.order_by(desc(Purchasing.date)).all()
+
     companies = db.session.query(Companies).filter_by(supplier=True).all()
-    purchasings = db.session.query(Purchasing).order_by(desc(Purchasing.date)).all()
-    paymentmethod = db.session.query(PaymentMethod).all()
+    salescategories = db.session.query(SalesCategories).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/purchasings/index.html",
         purchasings=purchasings,
-        paymentmethod=paymentmethod,
         companies=companies,
+        salescategories=salescategories,
+        paymentmethod=paymentmethod,
+        s_company=s_company,
+        s_paymentmethod=s_paymentmethod,
+        s_op=s_op,
+        s_amount=s_amount,
+        s_start_date=s_start_date,
+        s_end_date=s_end_date,
     )
 
 
