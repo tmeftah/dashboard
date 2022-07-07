@@ -1,12 +1,12 @@
+import datetime
+from werkzeug.security import generate_password_hash
 from sqlalchemy import Column, Float, Integer, String, ForeignKey, Boolean, CheckConstraint
 from sqlalchemy.types import Date
-
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-import datetime
-from . import db_session, login_manager
 
-Base = declarative_base()
+
+from . import db, login_manager
 
 
 class DictMixIn:
@@ -23,7 +23,7 @@ class DictMixIn:
         }
 
 
-class User(Base, DictMixIn):
+class User(db.Model, DictMixIn):
     __tablename__ = "users"
 
     name = Column(String(50), unique=True)
@@ -35,6 +35,21 @@ class User(Base, DictMixIn):
         self.name = name
         self.email = email
         self.password = password
+
+    @classmethod
+    def init_data(cls):
+        db.session.add(
+            cls(
+                name="Saleh",
+                email="user1@test.com",
+                password=generate_password_hash("test"),
+            )
+        )
+        try:
+            db.session.commit()
+        except SQLAlchemyError as e:
+            print(e)
+            db.session.rollback()
 
     @property
     def is_active(self):
@@ -60,11 +75,11 @@ class User(Base, DictMixIn):
 @login_manager.user_loader
 def load_user(user_id):
     # since the user_id is just the primary key of our user table, use it in the query for the user
-    user = db_session.query(User).get(int(user_id))
+    user = db.session.query(User).get(int(user_id))
     return user
 
 
-class Companies(Base, DictMixIn):
+class Companies(db.Model, DictMixIn):
     __tablename__ = "companies"
 
     name = Column(String(50), unique=True)
@@ -98,7 +113,7 @@ class Companies(Base, DictMixIn):
         return f"<User {self.name!r}>"
 
 
-class Sales(Base, DictMixIn):
+class Sales(db.Model, DictMixIn):
     __tablename__ = "sales"
 
     # categorie_id = Column(Integer, ForeignKey("salescategories.id"), nullable=False)
@@ -141,7 +156,7 @@ class Sales(Base, DictMixIn):
         return f"<Sales {self.categorie.name!r}>"
 
 
-class SalesCategories(Base, DictMixIn):
+class SalesCategories(db.Model, DictMixIn):
     __tablename__ = "salescategories"
 
     name = Column(String(50), nullable=False)
@@ -154,7 +169,7 @@ class SalesCategories(Base, DictMixIn):
         return f"<Sales {self.name!r}>"
 
 
-class PaymentMethod(Base, DictMixIn):
+class PaymentMethod(db.Model, DictMixIn):
     __tablename__ = "paymentmethod"
 
     name = Column(String(50), nullable=False, unique=True)
@@ -168,11 +183,28 @@ class PaymentMethod(Base, DictMixIn):
     def __init__(self, name=None):
         self.name = name
 
+    @classmethod
+    def init_data(cls):
+
+        db.session.add(cls(name="Espèce"))  # 1
+        db.session.add(cls(name="Chèque"))  # 2
+        db.session.add(cls(name="Traite"))  # 3
+        db.session.add(cls(name="Credit"))  # 4
+        db.session.add(cls(name="TPE"))  # 5
+        db.session.add(cls(name="Ticket Resto"))  # 6
+        db.session.add(cls(name="Virement Banquaire"))  # 7
+
+        try:
+            db.session.commit()
+        except SQLAlchemyError as e:
+            print(e)
+            db.session.rollback()
+
     def __repr__(self):
         return f"<Sales {self.name!r}>"
 
 
-class CostsDef(Base, DictMixIn):
+class CostsDef(db.Model, DictMixIn):
     __tablename__ = "costsdef"
 
     name = Column(String(50), nullable=False)
@@ -190,7 +222,7 @@ class CostsDef(Base, DictMixIn):
         return f"<CostsDef {self.name!r}>"
 
 
-class CostsMapping(Base, DictMixIn):
+class CostsMapping(db.Model, DictMixIn):
     __tablename__ = "costsmapping"
 
     cost_id = Column(Integer, ForeignKey("costsdef.id"), nullable=False)
@@ -228,7 +260,7 @@ class CostsMapping(Base, DictMixIn):
         return f"<CostsMapping {self.id!r}>"
 
 
-class Purchasing(Base, DictMixIn):
+class Purchasing(db.Model, DictMixIn):
     __tablename__ = "purchasing"
 
     paymentmethod_id = Column(Integer, ForeignKey("paymentmethod.id"), nullable=False)
@@ -268,7 +300,7 @@ class Purchasing(Base, DictMixIn):
         return f"<Purchasing {self.id!r}>"
 
 
-class Recovers(Base, DictMixIn):
+class Recovers(db.Model, DictMixIn):
     __tablename__ = "recovers"
 
     # categorie_id = Column(Integer, ForeignKey("salescategories.id"), nullable=False)
@@ -310,7 +342,7 @@ class Recovers(Base, DictMixIn):
         return f"<Recovers {self.company.name!r}>"
 
 
-class Reconciliations(Base, DictMixIn):
+class Reconciliations(db.Model, DictMixIn):
     __tablename__ = "reconciliations"
 
     # categorie_id = Column(Integer, ForeignKey("salescategories.id"), nullable=False)
@@ -362,7 +394,7 @@ class Reconciliations(Base, DictMixIn):
         return f"<Reconciliations {self.id!r}>"
 
 
-class Stocks(Base, DictMixIn):
+class Stocks(db.Model, DictMixIn):
     __tablename__ = "stocks"
 
     amount = Column(Float, default=0.0)
@@ -385,7 +417,7 @@ class Stocks(Base, DictMixIn):
         return f"<Stocks {self.id!r}>"
 
 
-class Payments(Base, DictMixIn):
+class Payments(db.Model, DictMixIn):
     __tablename__ = "payments"
 
     # categorie_id = Column(Integer, ForeignKey("salescategories.id"), nullable=False)

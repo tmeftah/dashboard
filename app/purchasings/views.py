@@ -4,7 +4,7 @@ from flask_login import login_required
 from sqlalchemy import desc
 from sqlalchemy.exc import SQLAlchemyError
 from . import purchasings as bp
-from .. import db_session
+from .. import db
 from ..models import Purchasing, Companies, PaymentMethod, SalesCategories
 
 
@@ -12,9 +12,9 @@ from ..models import Purchasing, Companies, PaymentMethod, SalesCategories
 @login_required
 def index():
 
-    companies = db_session.query(Companies).filter_by(supplier=True).all()
-    purchasings = db_session.query(Purchasing).order_by(desc(Purchasing.date)).all()
-    paymentmethod = db_session.query(PaymentMethod).all()
+    companies = db.session.query(Companies).filter_by(supplier=True).all()
+    purchasings = db.session.query(Purchasing).order_by(desc(Purchasing.date)).all()
+    paymentmethod = db.session.query(PaymentMethod).all()
 
     return render_template(
         "/purchasings/index.html",
@@ -50,12 +50,12 @@ def add_purchasings():
         new_purchasing.document_number = document_number
 
     try:
-        db_session.add(new_purchasing)
-        db_session.commit()
+        db.session.add(new_purchasing)
+        db.session.commit()
         # upload_file(new_purchasing) # TODO: upload
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -68,15 +68,15 @@ def add_purchasings():
 @login_required
 def get_purchasings_by_id(id):
 
-    purchasing = db_session.query(Purchasing).filter(Purchasing.id == id).first()
+    purchasing = db.session.query(Purchasing).filter(Purchasing.id == id).first()
 
     if not purchasing:
         flash("Achat n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
 
-    companies = db_session.query(Companies).filter_by(supplier=True).all()
-    salescategories = db_session.query(SalesCategories).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    companies = db.session.query(Companies).filter_by(supplier=True).all()
+    salescategories = db.session.query(SalesCategories).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/purchasings/_id.html",
@@ -91,7 +91,7 @@ def get_purchasings_by_id(id):
 @login_required
 def update_purchasings(id):
 
-    purchasing = db_session.query(Purchasing).filter(Purchasing.id == id).first()
+    purchasing = db.session.query(Purchasing).filter(Purchasing.id == id).first()
 
     if not purchasing:
         flash("Achat n'exist pas !!!")
@@ -117,12 +117,12 @@ def update_purchasings(id):
 
     try:
 
-        db_session.commit()
+        db.session.commit()
         # upload_file(purchasing)# TODO: upload
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -135,20 +135,20 @@ def update_purchasings(id):
 @login_required
 def remove_purchasings(id):
 
-    purchasing = db_session.query(Purchasing).filter(Purchasing.id == id).first()
+    purchasing = db.session.query(Purchasing).filter(Purchasing.id == id).first()
 
     if not purchasing:
         flash("Achat n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
-    db_session.delete(purchasing)
+    db.session.delete(purchasing)
     try:
 
-        db_session.commit()
+        db.session.commit()
         flash("Achat supprimer !!!", category="success")
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     return redirect(url_for(".index"))

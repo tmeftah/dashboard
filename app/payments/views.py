@@ -4,19 +4,19 @@ from flask_login import login_required
 from sqlalchemy import desc
 from sqlalchemy.exc import SQLAlchemyError
 from . import payments as bp
-from .. import db_session
+from .. import db
 from ..models import Payments, Companies, PaymentMethod, CostsDef
 
 
 @bp.route("/", methods=["GET"])
 @login_required
 def index():
-    payments = db_session.query(Payments).order_by(desc(Payments.date)).all()
-    suppliers = db_session.query(Companies).filter_by(supplier=True).all()
-    cost_defs = db_session.query(CostsDef).all()
+    payments = db.session.query(Payments).order_by(desc(Payments.date)).all()
+    suppliers = db.session.query(Companies).filter_by(supplier=True).all()
+    cost_defs = db.session.query(CostsDef).all()
 
     paymentmethod = (
-        db_session.query(PaymentMethod).filter(PaymentMethod.name.not_like("Credit")).all()
+        db.session.query(PaymentMethod).filter(PaymentMethod.name.not_like("Credit")).all()
     )
 
     return render_template(
@@ -58,12 +58,12 @@ def add_payments():
         new_payment.document_number = document_number
 
     try:
-        db_session.add(new_payment)
-        db_session.commit()
+        db.session.add(new_payment)
+        db.session.commit()
         # upload_file(new_payment) # TODO: upload
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:

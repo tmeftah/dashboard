@@ -1,21 +1,22 @@
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import LoginManager, login_required
-
-
 from werkzeug import exceptions
 
 from config import config
+from .database import SQLITE
 
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-
-
-sessionmaker = sessionmaker(autocommit=False, autoflush=False)
-db_session = scoped_session(sessionmaker)
-
-
+db = SQLITE()
 login_manager = LoginManager()
+
+
+def init_data():
+    from .models import User, PaymentMethod
+
+    admin_exist = db.session.query(User).filter(User.email == "user1@test.com").first()
+    if not admin_exist:
+        User.init_data()
+        PaymentMethod.init_data()
 
 
 def create_app(config_name):
@@ -23,14 +24,7 @@ def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
-    engine = create_engine(app.config["DATABASE_URI"], connect_args={"check_same_thread": False})
-    sessionmaker.configure(bind=engine)
-
-    from .database import init_db
-
-    init_db(app.config["ENV"], engine)
-
-    # Base.metadata.create_all(bind=engine)
+    db.init_app(app)
 
     login_manager.init_app(app)
     login_manager.login_view = "login"
@@ -48,7 +42,8 @@ def create_app(config_name):
 
     @app.before_first_request
     def setup():
-        pass
+        db.create_all()
+        init_data()
 
     # @app.after_request
     # def add_header(response):
@@ -168,9 +163,5 @@ def create_app(config_name):
             strftime=strftime,
             get_workings_days=get_workings_days,
         )
-
-    @app.teardown_appcontext
-    def shutdown_session(exception=None):
-        db_session.remove()
 
     return app

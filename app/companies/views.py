@@ -3,14 +3,14 @@ from flask_login import login_required
 from sqlalchemy.exc import SQLAlchemyError
 
 from . import companies as bp
-from .. import db_session
+from .. import db
 from ..models import Companies
 
 
 @bp.route("/", methods=["GET"])
 @login_required
 def index():
-    companies = db_session.query(Companies).all()
+    companies = db.session.query(Companies).all()
     return render_template("companies/index.html", companies=companies)
 
 
@@ -23,7 +23,7 @@ def add_companies():
     company_type = request.form.get("company_type", type=int)
     phone = request.form.get("phone")
 
-    company = db_session.query(Companies).filter(Companies.name == name).first()
+    company = db.session.query(Companies).filter(Companies.name == name).first()
 
     if company:
         flash("Le Fournissuer/Client exist deja. Le nom doit être unique!!!", category="warning")
@@ -50,12 +50,12 @@ def add_companies():
     )
 
     try:
-        db_session.add(new_company)
-        db_session.commit()
+        db.session.add(new_company)
+        db.session.commit()
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     else:
@@ -68,7 +68,7 @@ def add_companies():
 @login_required
 def get_sale_by_id(id):
 
-    company = db_session.query(Companies).filter(Companies.id == id).first()
+    company = db.session.query(Companies).filter(Companies.id == id).first()
 
     if not company:
         flash("Le Fournissuer/Client n'exist pas !!!")
@@ -81,7 +81,7 @@ def get_sale_by_id(id):
 @login_required
 def update_companies(id):
 
-    company = db_session.query(Companies).filter(Companies.id == id).first()
+    company = db.session.query(Companies).filter(Companies.id == id).first()
 
     if not company:
         flash("Le Fournissuer/Client n'exist pas !!!", category="warning")
@@ -112,11 +112,11 @@ def update_companies(id):
 
     try:
 
-        db_session.commit()
+        db.session.commit()
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     else:
@@ -129,20 +129,20 @@ def update_companies(id):
 @login_required
 def remove_companies(id):
 
-    company = db_session.query(Companies).filter(Companies.id == id).first()
+    company = db.session.query(Companies).filter(Companies.id == id).first()
 
     if not company:
         flash("Le Fournissuer/Client n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
-    db_session.delete(company)
+    db.session.delete(company)
     try:
 
-        db_session.commit()
+        db.session.commit()
         flash("Le Fournissuer/Client supprimer !!!", category="success")
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     return redirect(url_for(".index"))

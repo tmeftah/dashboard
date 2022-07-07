@@ -2,12 +2,12 @@ import datetime
 from sqlalchemy.sql import func
 from sqlalchemy import extract
 
-from .. import db_session
+from .. import db
 from ..models import Sales, Recovers, CostsMapping, Purchasing, Reconciliations, Stocks, CostsDef
 
 
 def get_sum_sales(company_id=0, pay_methode_id=0):
-    query = db_session.query(func.coalesce(func.sum(Sales.amount), 0))
+    query = db.session.query(func.coalesce(func.sum(Sales.amount), 0))
 
     if company_id:
         query = query.filter(Sales.company_id == company_id)
@@ -19,7 +19,7 @@ def get_sum_sales(company_id=0, pay_methode_id=0):
 
 
 def get_sum_recovers(company_id=0, pay_methode_id=0):
-    query = db_session.query(func.coalesce(func.sum(Recovers.amount), 0))
+    query = db.session.query(func.coalesce(func.sum(Recovers.amount), 0))
 
     if company_id:
         query = query.filter(Recovers.company_id == company_id)
@@ -31,7 +31,7 @@ def get_sum_recovers(company_id=0, pay_methode_id=0):
 
 
 def get_sum_reconciliations(company_id=0, pay_methode_id=0, cashing=True):
-    query = db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0)).filter(
+    query = db.session.query(func.coalesce(func.sum(Reconciliations.amount), 0)).filter(
         Reconciliations.cashing == cashing
     )
 
@@ -155,7 +155,7 @@ def get_stock():
 
 def get_costs(pay_methode=0):
 
-    query = db_session.query(func.coalesce(func.sum(CostsMapping.amount), 0))
+    query = db.session.query(func.coalesce(func.sum(CostsMapping.amount), 0))
     if pay_methode:
         query = query.filter(CostsMapping.paymentmethod_id == pay_methode)
 
@@ -345,7 +345,7 @@ def get_gross_margin(cum=0, today=0):
 def get_costs_on_date(start=None, end=None, cum=0, today=0, fixed=0):
 
     query = (
-        db_session.query(func.coalesce(func.sum(CostsMapping.amount), 0))
+        db.session.query(func.coalesce(func.sum(CostsMapping.amount), 0))
         .join(CostsDef)
         .filter(CostsDef.fixed == fixed)
     )
@@ -393,7 +393,7 @@ def get_net_operating_income(cum=0, today=0):
 
 
 def get_banque_on_date(start=None, end=None, today=0):
-    query = db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
+    query = db.session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
 
     if today:
         start = datetime.date.today()

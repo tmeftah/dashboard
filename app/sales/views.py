@@ -4,7 +4,7 @@ from flask_login import login_required
 from sqlalchemy import desc
 from sqlalchemy.exc import SQLAlchemyError
 from . import sales as bp
-from .. import db_session
+from .. import db
 from ..models import Sales, Companies, SalesCategories, PaymentMethod
 
 
@@ -15,7 +15,7 @@ def index():
 
     paymentme = request.args.get("paymentmethod", type=int, default=0)
 
-    query = db_session.query(Sales)
+    query = db.session.query(Sales)
 
     if categorie:
         query = query.filter(Sales.categorie_id == categorie)
@@ -25,9 +25,9 @@ def index():
 
     sales = query.order_by(desc(Sales.date)).all()
 
-    companies = db_session.query(Companies).filter_by(customer=True).all()
-    salescategories = db_session.query(SalesCategories).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    companies = db.session.query(Companies).filter_by(customer=True).all()
+    salescategories = db.session.query(SalesCategories).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/sales/index.html",
@@ -63,13 +63,13 @@ def add_sales():
         new_sale.document_number = document_number
 
     try:
-        db_session.add(new_sale)
-        db_session.commit()
+        db.session.add(new_sale)
+        db.session.commit()
         # upload_file(new_sale) #TODO: uplaod file
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -82,15 +82,15 @@ def add_sales():
 @login_required
 def get_sale_by_id(id):
 
-    sale = db_session.query(Sales).filter(Sales.id == id).first()
+    sale = db.session.query(Sales).filter(Sales.id == id).first()
 
     if not sale:
         flash("Chiffre d'affaire n'exist pas !!!")
         return redirect(url_for(".index"))
 
-    companies = db_session.query(Companies).filter_by(customer=True).all()
-    salescategories = db_session.query(SalesCategories).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    companies = db.session.query(Companies).filter_by(customer=True).all()
+    salescategories = db.session.query(SalesCategories).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/sales/_id.html",
@@ -105,7 +105,7 @@ def get_sale_by_id(id):
 @login_required
 def update_sales(id):
 
-    sale = db_session.query(Sales).filter(Sales.id == id).first()
+    sale = db.session.query(Sales).filter(Sales.id == id).first()
 
     if not sale:
         flash("Chiffre d'affaire n'exist pas !!!", category="warning")
@@ -131,12 +131,12 @@ def update_sales(id):
 
     try:
 
-        db_session.commit()
+        db.session.commit()
         # upload_file(sale) #TODO: uplaod file
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     else:
@@ -149,20 +149,20 @@ def update_sales(id):
 @login_required
 def remove_sales(id):
 
-    sale = db_session.query(Sales).filter(Sales.id == id).first()
+    sale = db.session.query(Sales).filter(Sales.id == id).first()
 
     if not sale:
         flash("Chiffre d'affaire n'exist pas !!!", category="warning")
         return redirect(url_for("sales.index"))
-    db_session.delete(sale)
+    db.session.delete(sale)
     try:
 
-        db_session.commit()
+        db.session.commit()
         flash("Chiffre d'affaire supprimer !!!", category="success")
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     return redirect(url_for(".index"))

@@ -11,7 +11,7 @@ from werkzeug import exceptions
 from sqlalchemy import desc
 from sqlalchemy.sql import func
 from sqlalchemy.exc import SQLAlchemyError
-from database import db_session, init_db
+from database import db.session, init_db
 from models import (
     User,
     Recovers,
@@ -100,7 +100,7 @@ def upload_file(item):
         filename = secure_filename(file_name)
         file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
         item.document_filename = filename
-        db_session.commit()
+        db.session.commit()
 
 
 @app.errorhandler(exceptions.NotFound)
@@ -118,7 +118,7 @@ def download_file(name):
 @login_manager.user_loader
 def load_user(user_id):
     # since the user_id is just the primary key of our user table, use it in the query for the user
-    user = db_session.query(User).get(int(user_id))
+    user = db.session.query(User).get(int(user_id))
     return user
 
 
@@ -149,7 +149,7 @@ def login_post():
     password = request.form.get("password")
     remember = True if request.form.get("remember") else False
 
-    user = db_session.query(User).filter_by(email=email).first()
+    user = db.session.query(User).filter_by(email=email).first()
 
     # check if the user actually exists
     # take the user-supplied password, hash it, and compare it to the hashed password in the database
@@ -181,7 +181,7 @@ def index():
 @login_required
 def dashboard():
 
-    companies = db_session.query(Companies).all()
+    companies = db.session.query(Companies).all()
 
     return render_template(
         "dashboard/dashboard.html",
@@ -204,7 +204,7 @@ def dashboard():
 @app.route("/exploit")
 @login_required
 def exploit():
-    salesCategories = db_session.query(SalesCategories).all()
+    salesCategories = db.session.query(SalesCategories).all()
 
     return render_template(
         "dashboard/exploit.html",
@@ -244,7 +244,7 @@ def tresor():
         day = first_day + datetime.timedelta(days=daynumber)
         day_befor = first_day + datetime.timedelta(days=daynumber - 1)
 
-        query = db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
+        query = db.session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
         query = query.filter(Reconciliations.date == day)
 
         init_sold.append(get_banque_on_date(end=day_befor))
@@ -265,16 +265,16 @@ def tresor():
         caching.append(res_caching)
         debt.append(res_debt)
 
-    paymentmethods = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    paymentmethods = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     encaiss = (
-        db_session.query(Reconciliations)
+        db.session.query(Reconciliations)
         .filter(Reconciliations.cashing == True)
         .order_by(desc(Reconciliations.date))
         .all()
     )
     decaiss = (
-        db_session.query(Reconciliations)
+        db.session.query(Reconciliations)
         .filter(Reconciliations.cashing == False)
         .order_by(desc(Reconciliations.date))
         .all()
@@ -297,7 +297,7 @@ def tresor():
 @app.route("/companies", methods=["GET"])
 @login_required
 def companies():
-    companies = db_session.query(Companies).all()
+    companies = db.session.query(Companies).all()
     return render_template("companies/index.html", companies=companies)
 
 
@@ -331,12 +331,12 @@ def add_companies():
     )
 
     try:
-        db_session.add(new_company)
-        db_session.commit()
+        db.session.add(new_company)
+        db.session.commit()
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -355,7 +355,7 @@ def sales():
 
     paymentme = request.args.get("paymentmethod", type=int, default=0)
 
-    query = db_session.query(Sales)
+    query = db.session.query(Sales)
 
     if categorie:
         query = query.filter(Sales.categorie_id == categorie)
@@ -365,9 +365,9 @@ def sales():
 
     sales = query.order_by(desc(Sales.date)).all()
 
-    companies = db_session.query(Companies).filter_by(customer=True).all()
-    salescategories = db_session.query(SalesCategories).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    companies = db.session.query(Companies).filter_by(customer=True).all()
+    salescategories = db.session.query(SalesCategories).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/sales/index.html",
@@ -403,13 +403,13 @@ def add_sales():
         new_sale.document_number = document_number
 
     try:
-        db_session.add(new_sale)
-        db_session.commit()
+        db.session.add(new_sale)
+        db.session.commit()
         upload_file(new_sale)
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -422,15 +422,15 @@ def add_sales():
 @login_required
 def get_sale_by_id(id):
 
-    sale = db_session.query(Sales).filter(Sales.id == id).first()
+    sale = db.session.query(Sales).filter(Sales.id == id).first()
 
     if not sale:
         flash("Chiffre d'affaire n'exist pas !!!")
         return redirect(url_for("sales"))
 
-    companies = db_session.query(Companies).filter_by(customer=True).all()
-    salescategories = db_session.query(SalesCategories).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    companies = db.session.query(Companies).filter_by(customer=True).all()
+    salescategories = db.session.query(SalesCategories).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/sales/_id.html",
@@ -445,7 +445,7 @@ def get_sale_by_id(id):
 @login_required
 def update_sales(id):
 
-    sale = db_session.query(Sales).filter(Sales.id == id).first()
+    sale = db.session.query(Sales).filter(Sales.id == id).first()
 
     if not sale:
         flash("Chiffre d'affaire n'exist pas !!!", category="warning")
@@ -471,12 +471,12 @@ def update_sales(id):
 
     try:
 
-        db_session.commit()
+        db.session.commit()
         upload_file(sale)
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     else:
@@ -489,20 +489,20 @@ def update_sales(id):
 @login_required
 def remove_sales(id):
 
-    sale = db_session.query(Sales).filter(Sales.id == id).first()
+    sale = db.session.query(Sales).filter(Sales.id == id).first()
 
     if not sale:
         flash("Chiffre d'affaire n'exist pas !!!", category="warning")
         return redirect(url_for("sales"))
-    db_session.delete(sale)
+    db.session.delete(sale)
     try:
 
-        db_session.commit()
+        db.session.commit()
         flash("Chiffre d'affaire supprimer !!!", category="success")
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     return redirect(url_for("sales"))
@@ -520,9 +520,9 @@ def salescategories():
 @app.route("/costs", methods=["GET"])
 @login_required
 def costs():
-    costsmappings = db_session.query(CostsMapping).order_by(desc(CostsMapping.date)).all()
-    costsdefs = db_session.query(CostsDef).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    costsmappings = db.session.query(CostsMapping).order_by(desc(CostsMapping.date)).all()
+    costsdefs = db.session.query(CostsDef).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/costs/index.html",
@@ -558,12 +558,12 @@ def add_costs():
         new_cost.document_number = document_number
 
     try:
-        db_session.add(new_cost)
-        db_session.commit()
+        db.session.add(new_cost)
+        db.session.commit()
         upload_file(new_cost)
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -576,14 +576,14 @@ def add_costs():
 @login_required
 def get_costs_by_id(id):
 
-    cost = db_session.query(CostsMapping).filter(CostsMapping.id == id).first()
+    cost = db.session.query(CostsMapping).filter(CostsMapping.id == id).first()
 
     if not cost:
         flash("Charge n'exist pas !!!")
         return redirect(url_for("costs"))
 
-    costsdefs = db_session.query(CostsDef).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    costsdefs = db.session.query(CostsDef).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/costs/_id.html",
@@ -597,7 +597,7 @@ def get_costs_by_id(id):
 @login_required
 def update_costs(id):
 
-    cost = db_session.query(CostsMapping).filter(CostsMapping.id == id).first()
+    cost = db.session.query(CostsMapping).filter(CostsMapping.id == id).first()
 
     if not cost:
         flash("La cahrge n'exist pas !!!", category="warning")
@@ -623,12 +623,12 @@ def update_costs(id):
 
     try:
 
-        db_session.commit()
+        db.session.commit()
         upload_file(cost)
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     else:
@@ -641,20 +641,20 @@ def update_costs(id):
 @login_required
 def remove_costs(id):
 
-    cost = db_session.query(CostsMapping).filter(CostsMapping.id == id).first()
+    cost = db.session.query(CostsMapping).filter(CostsMapping.id == id).first()
 
     if not cost:
         flash("La charge n'exist pas !!!", category="warning")
         return redirect(url_for("costs"))
-    db_session.delete(cost)
+    db.session.delete(cost)
     try:
 
-        db_session.commit()
+        db.session.commit()
         flash("Charge supprimer !!!", category="success")
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     return redirect(url_for("costs"))
@@ -673,11 +673,11 @@ def add_costs_type():
     new_cost_type = CostsDef(fixed=fixed, name=name)
 
     try:
-        db_session.add(new_cost_type)
-        db_session.commit()
+        db.session.add(new_cost_type)
+        db.session.commit()
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -693,9 +693,9 @@ def add_costs_type():
 @login_required
 def purchasings():
     print(app.config["ENV"])
-    companies = db_session.query(Companies).filter_by(supplier=True).all()
-    purchasings = db_session.query(Purchasing).order_by(desc(Purchasing.date)).all()
-    paymentmethod = db_session.query(PaymentMethod).all()
+    companies = db.session.query(Companies).filter_by(supplier=True).all()
+    purchasings = db.session.query(Purchasing).order_by(desc(Purchasing.date)).all()
+    paymentmethod = db.session.query(PaymentMethod).all()
 
     return render_template(
         "/purchasings/index.html",
@@ -731,12 +731,12 @@ def add_purchasings():
         new_purchasing.document_number = document_number
 
     try:
-        db_session.add(new_purchasing)
-        db_session.commit()
+        db.session.add(new_purchasing)
+        db.session.commit()
         upload_file(new_purchasing)
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -749,15 +749,15 @@ def add_purchasings():
 @login_required
 def get_purchasings_by_id(id):
 
-    purchasing = db_session.query(Purchasing).filter(Purchasing.id == id).first()
+    purchasing = db.session.query(Purchasing).filter(Purchasing.id == id).first()
 
     if not purchasing:
         flash("Achat n'exist pas !!!", category="warning")
         return redirect(url_for("purchasings"))
 
-    companies = db_session.query(Companies).filter_by(supplier=True).all()
-    salescategories = db_session.query(SalesCategories).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    companies = db.session.query(Companies).filter_by(supplier=True).all()
+    salescategories = db.session.query(SalesCategories).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/purchasings/_id.html",
@@ -772,7 +772,7 @@ def get_purchasings_by_id(id):
 @login_required
 def update_purchasings(id):
 
-    purchasing = db_session.query(Purchasing).filter(Purchasing.id == id).first()
+    purchasing = db.session.query(Purchasing).filter(Purchasing.id == id).first()
 
     if not purchasing:
         flash("Achat n'exist pas !!!")
@@ -798,12 +798,12 @@ def update_purchasings(id):
 
     try:
 
-        db_session.commit()
+        db.session.commit()
         upload_file(purchasing)
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -816,20 +816,20 @@ def update_purchasings(id):
 @login_required
 def remove_purchasings(id):
 
-    purchasing = db_session.query(Purchasing).filter(Purchasing.id == id).first()
+    purchasing = db.session.query(Purchasing).filter(Purchasing.id == id).first()
 
     if not purchasing:
         flash("Achat n'exist pas !!!", category="warning")
         return redirect(url_for("purchasings"))
-    db_session.delete(purchasing)
+    db.session.delete(purchasing)
     try:
 
-        db_session.commit()
+        db.session.commit()
         flash("Achat supprimer !!!", category="success")
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     return redirect(url_for("purchasings"))
@@ -841,11 +841,11 @@ def remove_purchasings(id):
 @app.route("/recovers", methods=["GET"])
 @login_required
 def recovers():
-    recovers = db_session.query(Recovers).order_by(desc(Recovers.date)).all()
-    companies = db_session.query(Companies).filter_by(customer=True).all()
+    recovers = db.session.query(Recovers).order_by(desc(Recovers.date)).all()
+    companies = db.session.query(Companies).filter_by(customer=True).all()
 
     paymentmethod = (
-        db_session.query(PaymentMethod).filter(PaymentMethod.name.not_like("Credit")).all()
+        db.session.query(PaymentMethod).filter(PaymentMethod.name.not_like("Credit")).all()
     )
 
     return render_template(
@@ -884,12 +884,12 @@ def add_recovers():
         new_recover.document_number = document_number
 
     try:
-        db_session.add(new_recover)
-        db_session.commit()
+        db.session.add(new_recover)
+        db.session.commit()
         upload_file(new_recover)
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -902,14 +902,14 @@ def add_recovers():
 @login_required
 def get_recovers_by_id(id):
 
-    recover = db_session.query(Recovers).filter(Recovers.id == id).first()
+    recover = db.session.query(Recovers).filter(Recovers.id == id).first()
 
     if not recover:
         flash("Recouvrement n'exist pas !!!", category="warning")
         return redirect(url_for("recovers"))
 
-    companies = db_session.query(Companies).filter_by(customer=True).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
+    companies = db.session.query(Companies).filter_by(customer=True).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
 
     return render_template(
         "/recovers/_id.html",
@@ -924,7 +924,7 @@ def get_recovers_by_id(id):
 @login_required
 def update_recovers(id):
 
-    recover = db_session.query(Recovers).filter(Recovers.id == id).first()
+    recover = db.session.query(Recovers).filter(Recovers.id == id).first()
 
     if not recover:
         flash("Recouvrement n'exist pas !!!")
@@ -950,12 +950,12 @@ def update_recovers(id):
 
     try:
 
-        db_session.commit()
+        db.session.commit()
         upload_file(recover)
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -968,20 +968,20 @@ def update_recovers(id):
 @login_required
 def remove_recovers(id):
 
-    recover = db_session.query(Recovers).filter(Recovers.id == id).first()
+    recover = db.session.query(Recovers).filter(Recovers.id == id).first()
 
     if not recover:
         flash("Recouvrement n'exist pas !!!", category="warning")
         return redirect(url_for("recovers"))
-    db_session.delete(recover)
+    db.session.delete(recover)
     try:
 
-        db_session.commit()
+        db.session.commit()
         flash("Recouvrement supprimer !!!", category="success")
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     return redirect(url_for("recovers"))
@@ -993,12 +993,12 @@ def remove_recovers(id):
 @app.route("/payments", methods=["GET"])
 @login_required
 def payments():
-    payments = db_session.query(Payments).order_by(desc(Payments.date)).all()
-    suppliers = db_session.query(Companies).filter_by(supplier=True).all()
-    cost_defs = db_session.query(CostsDef).all()
+    payments = db.session.query(Payments).order_by(desc(Payments.date)).all()
+    suppliers = db.session.query(Companies).filter_by(supplier=True).all()
+    cost_defs = db.session.query(CostsDef).all()
 
     paymentmethod = (
-        db_session.query(PaymentMethod).filter(PaymentMethod.name.not_like("Credit")).all()
+        db.session.query(PaymentMethod).filter(PaymentMethod.name.not_like("Credit")).all()
     )
 
     return render_template(
@@ -1041,12 +1041,12 @@ def add_payments():
         new_payment.document_number = document_number
 
     try:
-        db_session.add(new_payment)
-        db_session.commit()
+        db.session.add(new_payment)
+        db.session.commit()
         upload_file(new_payment)
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -1058,9 +1058,9 @@ def add_payments():
 @app.route("/reconciliations", methods=["GET"])
 @login_required
 def reconciliations():
-    reconciliations = db_session.query(Reconciliations).order_by(desc(Reconciliations.date)).all()
-    companies = db_session.query(Companies).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
+    reconciliations = db.session.query(Reconciliations).order_by(desc(Reconciliations.date)).all()
+    companies = db.session.query(Companies).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
 
     return render_template(
         "/reconciliations/index.html",
@@ -1092,12 +1092,12 @@ def add_reconciliations():
     )
 
     try:
-        db_session.add(new_reconciliation)
-        db_session.commit()
+        db.session.add(new_reconciliation)
+        db.session.commit()
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -1110,14 +1110,14 @@ def add_reconciliations():
 @login_required
 def get_reconciliations_by_id(id):
 
-    reconciliation = db_session.query(Reconciliations).filter(Reconciliations.id == id).first()
+    reconciliation = db.session.query(Reconciliations).filter(Reconciliations.id == id).first()
 
     if not reconciliation:
         flash("Rapprochement n'exist pas !!!", category="warning")
         return redirect(url_for("reconciliations"))
 
-    companies = db_session.query(Companies).filter_by(customer=True).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
+    companies = db.session.query(Companies).filter_by(customer=True).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
 
     return render_template(
         "/reconciliations/_id.html",
@@ -1132,7 +1132,7 @@ def get_reconciliations_by_id(id):
 @login_required
 def update_reconciliations(id):
 
-    reconciliation = db_session.query(Reconciliations).filter(Reconciliations.id == id).first()
+    reconciliation = db.session.query(Reconciliations).filter(Reconciliations.id == id).first()
 
     if not reconciliation:
         flash("Rapprochement n'exist pas !!!")
@@ -1152,12 +1152,12 @@ def update_reconciliations(id):
 
     try:
 
-        db_session.commit()
+        db.session.commit()
         # upload_file(reconciliation)
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -1170,20 +1170,20 @@ def update_reconciliations(id):
 @login_required
 def remove_reconciliations(id):
 
-    reconciliation = db_session.query(Reconciliations).filter(Reconciliations.id == id).first()
+    reconciliation = db.session.query(Reconciliations).filter(Reconciliations.id == id).first()
 
     if not reconciliation:
         flash("Rapprochement n'exist pas !!!", category="warning")
         return redirect(url_for("reconciliations"))
-    db_session.delete(reconciliation)
+    db.session.delete(reconciliation)
     try:
 
-        db_session.commit()
+        db.session.commit()
         flash("Rapprochement supprimer !!!", category="success")
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     return redirect(url_for("reconciliations"))
@@ -1195,7 +1195,7 @@ def remove_reconciliations(id):
 @app.route("/stocks", methods=["GET"])
 @login_required
 def stocks():
-    stocks = db_session.query(Stocks).order_by(desc(Stocks.date)).all()
+    stocks = db.session.query(Stocks).order_by(desc(Stocks.date)).all()
 
     return render_template(
         "/stocks/index.html",
@@ -1218,11 +1218,11 @@ def add_stocks():
     )
 
     try:
-        db_session.add(new_stock)
-        db_session.commit()
+        db.session.add(new_stock)
+        db.session.commit()
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -1235,7 +1235,7 @@ def add_stocks():
 @login_required
 def get_stocks_by_id(id):
 
-    stock = db_session.query(Stocks).filter(Stocks.id == id).first()
+    stock = db.session.query(Stocks).filter(Stocks.id == id).first()
 
     if not stock:
         flash("Stock n'exist pas !!!", category="warning")
@@ -1251,7 +1251,7 @@ def get_stocks_by_id(id):
 @login_required
 def update_stocks(id):
 
-    stock = db_session.query(Stocks).filter(Stocks.id == id).first()
+    stock = db.session.query(Stocks).filter(Stocks.id == id).first()
 
     if not stock:
         flash("Stock n'exist pas !!!")
@@ -1267,11 +1267,11 @@ def update_stocks(id):
 
     try:
 
-        db_session.commit()
+        db.session.commit()
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -1284,20 +1284,20 @@ def update_stocks(id):
 @login_required
 def remove_stocks(id):
 
-    stock = db_session.query(Stocks).filter(Stocks.id == id).first()
+    stock = db.session.query(Stocks).filter(Stocks.id == id).first()
 
     if not stock:
         flash("Stock n'exist pas !!!", category="warning")
         return redirect(url_for("stocks"))
-    db_session.delete(stock)
+    db.session.delete(stock)
     try:
 
-        db_session.commit()
+        db.session.commit()
         flash("Stock supprimer !!!", category="success")
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     return redirect(url_for("stocks"))
@@ -1375,7 +1375,7 @@ def utility_processor():
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
-    db_session.remove()
+    db.session.remove()
 
 
 if __name__ == "__main__":

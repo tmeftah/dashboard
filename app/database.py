@@ -1,86 +1,43 @@
 from operator import imod
 from sqlalchemy.exc import SQLAlchemyError
-from werkzeug.security import generate_password_hash
 
-from .models import Base
-from . import db_session
+from sqlalchemy import create_engine
+from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
 
-def init_db(config, engine):
-    # import all modules here that might define models so that
-    # they will be registered properly on the metadata.  Otherwise
-    # you will have to import them first before calling init_db()
+class SQLITE:
+    def __init__(self, app=None):
 
-    from .models import PaymentMethod, SalesCategories, Companies, CostsDef, User
+        self.session = scoped_session(sessionmaker(autocommit=False, autoflush=False))
+        self.engine = None
+        self.Model = declarative_base(bind=self.engine)
+        self.app = app
 
-    # Recreate database each time for demo
-    if config != "production":
-        Base.metadata.drop_all(bind=engine)
+        if app is not None:
+            self.init_app(app)
 
-    Base.metadata.create_all(bind=engine)
+    def create_all(self):
+        self.Model.metadata.create_all(bind=self.engine)
 
-    # init clients
-    if config != "production":
-        db_session.add(
-            Companies(name="Client n°1", email="client1@client.com", customer=True, supplier=False)
+    @property
+    def metadata(self):
+        """The metadata associated with ``db.Model``."""
+
+        return self.Model.metadata
+
+    def init_app(self, app):
+
+        self.engine = create_engine(
+            app.config["DATABASE_URI"], connect_args={"check_same_thread": False}
         )
-        db_session.add(
-            Companies(name="Client n°2", email="client2@client.com", customer=True, supplier=False)
-        )
-        db_session.add(
-            Companies(
-                name="Fournisseur n°1",
-                email="fournisseur1@client.com",
-                customer=False,
-                supplier=True,
-            )
-        )
-        db_session.add(
-            Companies(
-                name="Fournisseur n°2",
-                email="fournisseur2@client.com",
-                customer=False,
-                supplier=True,
-            )
-        )
+        self.session.configure(bind=self.engine)
 
-        db_session.add(
-            Companies(
-                name="Client/Fournisseur n°2",
-                email="client/fournisseur@client.com",
-                customer=True,
-                supplier=True,
-            )
-        )
+        @app.teardown_appcontext
+        def shutdown_session(response_or_exc):
 
-        # init CA categorie
-        db_session.add(SalesCategories(name="Gros"))
-        db_session.add(SalesCategories(name="Magasin"))
-
-        # init CostDef
-        db_session.add(CostsDef(name="LOYER", fixed=True))
-        db_session.add(CostsDef(name="Carburant", fixed=False))
-
-    # init User
-    db_session.add(
-        User(
-            name="Saleh",
-            email="user1@test.com",
-            password=generate_password_hash("test"),
-        )
-    )
-
-    # init mode de payment
-    db_session.add(PaymentMethod(name="Espèce"))  # 1
-    db_session.add(PaymentMethod(name="Chèque"))  # 2
-    db_session.add(PaymentMethod(name="Traite"))  # 3
-    db_session.add(PaymentMethod(name="Credit"))  # 4
-    db_session.add(PaymentMethod(name="TPE"))  # 5
-    db_session.add(PaymentMethod(name="Ticket Resto"))  # 6
-    db_session.add(PaymentMethod(name="Virement Banquaire"))  # 7
-
-    try:
-        db_session.commit()
-    except SQLAlchemyError as e:
-        print(e)
-        db_session.rollback()
+            if response_or_exc is None:
+                self.session.commit()
+            self.session.remove()
+            print("!app teardown", self.session)
+            return response_or_exc

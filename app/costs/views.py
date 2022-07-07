@@ -4,16 +4,16 @@ from flask_login import login_required
 from sqlalchemy import desc
 from sqlalchemy.exc import SQLAlchemyError
 from . import costs as bp
-from .. import db_session
+from .. import db
 from ..models import CostsMapping, CostsDef, PaymentMethod
 
 
 @bp.route("/", methods=["GET"])
 @login_required
 def index():
-    costsmappings = db_session.query(CostsMapping).order_by(desc(CostsMapping.date)).all()
-    costsdefs = db_session.query(CostsDef).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    costsmappings = db.session.query(CostsMapping).order_by(desc(CostsMapping.date)).all()
+    costsdefs = db.session.query(CostsDef).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/costs/index.html",
@@ -49,12 +49,12 @@ def add_costs():
         new_cost.document_number = document_number
 
     try:
-        db_session.add(new_cost)
-        db_session.commit()
+        db.session.add(new_cost)
+        db.session.commit()
         # upload_file(new_cost) # TODO:upload
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -67,14 +67,14 @@ def add_costs():
 @login_required
 def get_costs_by_id(id):
 
-    cost = db_session.query(CostsMapping).filter(CostsMapping.id == id).first()
+    cost = db.session.query(CostsMapping).filter(CostsMapping.id == id).first()
 
     if not cost:
         flash("Charge n'exist pas !!!")
         return redirect(url_for(".index"))
 
-    costsdefs = db_session.query(CostsDef).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    costsdefs = db.session.query(CostsDef).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/costs/_id.html",
@@ -88,7 +88,7 @@ def get_costs_by_id(id):
 @login_required
 def update_costs(id):
 
-    cost = db_session.query(CostsMapping).filter(CostsMapping.id == id).first()
+    cost = db.session.query(CostsMapping).filter(CostsMapping.id == id).first()
 
     if not cost:
         flash("La cahrge n'exist pas !!!", category="warning")
@@ -114,12 +114,12 @@ def update_costs(id):
 
     try:
 
-        db_session.commit()
+        db.session.commit()
         # upload_file(cost) # TODO:upload
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     else:
@@ -132,20 +132,20 @@ def update_costs(id):
 @login_required
 def remove_costs(id):
 
-    cost = db_session.query(CostsMapping).filter(CostsMapping.id == id).first()
+    cost = db.session.query(CostsMapping).filter(CostsMapping.id == id).first()
 
     if not cost:
         flash("La charge n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
-    db_session.delete(cost)
+    db.session.delete(cost)
     try:
 
-        db_session.commit()
+        db.session.commit()
         flash("Charge supprimer !!!", category="success")
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     return redirect(url_for(".index"))
@@ -164,11 +164,11 @@ def add_costs_type():
     new_cost_type = CostsDef(fixed=fixed, name=name)
 
     try:
-        db_session.add(new_cost_type)
-        db_session.commit()
+        db.session.add(new_cost_type)
+        db.session.commit()
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:

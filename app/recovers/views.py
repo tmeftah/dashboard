@@ -4,7 +4,7 @@ from flask_login import login_required
 from sqlalchemy import desc
 from sqlalchemy.exc import SQLAlchemyError
 from . import recovers as bp
-from .. import db_session
+from .. import db
 from ..models import Recovers, Companies, PaymentMethod, SalesCategories
 from ..utilities.utils import get_sold_clients
 
@@ -12,11 +12,11 @@ from ..utilities.utils import get_sold_clients
 @bp.route("/", methods=["GET"])
 @login_required
 def index():
-    recovers = db_session.query(Recovers).order_by(desc(Recovers.date)).all()
-    companies = db_session.query(Companies).filter_by(customer=True).all()
+    recovers = db.session.query(Recovers).order_by(desc(Recovers.date)).all()
+    companies = db.session.query(Companies).filter_by(customer=True).all()
 
     paymentmethod = (
-        db_session.query(PaymentMethod).filter(PaymentMethod.name.not_like("Credit")).all()
+        db.session.query(PaymentMethod).filter(PaymentMethod.name.not_like("Credit")).all()
     )
 
     return render_template(
@@ -55,12 +55,12 @@ def add_recovers():
         new_recover.document_number = document_number
 
     try:
-        db_session.add(new_recover)
-        db_session.commit()
+        db.session.add(new_recover)
+        db.session.commit()
         # upload_file(new_recover) # TODO: uplaod
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -73,14 +73,14 @@ def add_recovers():
 @login_required
 def get_recovers_by_id(id):
 
-    recover = db_session.query(Recovers).filter(Recovers.id == id).first()
+    recover = db.session.query(Recovers).filter(Recovers.id == id).first()
 
     if not recover:
         flash("Recouvrement n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
 
-    companies = db_session.query(Companies).filter_by(customer=True).all()
-    paymentmethod = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
+    companies = db.session.query(Companies).filter_by(customer=True).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
 
     return render_template(
         "/recovers/_id.html",
@@ -94,7 +94,7 @@ def get_recovers_by_id(id):
 @login_required
 def update_recovers(id):
 
-    recover = db_session.query(Recovers).filter(Recovers.id == id).first()
+    recover = db.session.query(Recovers).filter(Recovers.id == id).first()
 
     if not recover:
         flash("Recouvrement n'exist pas !!!")
@@ -120,12 +120,12 @@ def update_recovers(id):
 
     try:
 
-        db_session.commit()
+        db.session.commit()
         # upload_file(recover) # TODO: upload
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="error")
 
     else:
@@ -138,20 +138,20 @@ def update_recovers(id):
 @login_required
 def remove_recovers(id):
 
-    recover = db_session.query(Recovers).filter(Recovers.id == id).first()
+    recover = db.session.query(Recovers).filter(Recovers.id == id).first()
 
     if not recover:
         flash("Recouvrement n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
-    db_session.delete(recover)
+    db.session.delete(recover)
     try:
 
-        db_session.commit()
+        db.session.commit()
         flash("Recouvrement supprimer !!!", category="success")
 
     except SQLAlchemyError as e:
         print(e)
-        db_session.rollback()
+        db.session.rollback()
         flash("db error", category="danger")
 
     return redirect(url_for(".index"))

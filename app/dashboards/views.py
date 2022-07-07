@@ -3,7 +3,7 @@ from flask import render_template, request
 from flask_login import login_required
 from sqlalchemy import desc
 from . import dash
-from .. import db_session
+from .. import db
 from ..models import Companies, SalesCategories, PaymentMethod, Reconciliations
 from ..utilities.utils import *
 
@@ -17,7 +17,7 @@ def index():
 @login_required
 def dashboard():
 
-    companies = db_session.query(Companies).all()
+    companies = db.session.query(Companies).all()
 
     return render_template(
         "dashboard/dashboard.html",
@@ -29,7 +29,8 @@ def dashboard():
         get_stock=get_stock,
         get_costs=get_costs,
         get_purchasing=get_purchasing,
-        get_liabilites=get_liabilites,
+        get_liabilites_per_company=get_liabilites_per_company,
+        get_liabilites_per_cost=get_liabilites_per_cost,
         get_debt=get_debt,
         get_economic_situation=get_economic_situation,
         get_financial_capacity=get_financial_capacity,
@@ -40,7 +41,7 @@ def dashboard():
 @dash.route("/exploit")
 @login_required
 def exploit():
-    salesCategories = db_session.query(SalesCategories).all()
+    salesCategories = db.session.query(SalesCategories).all()
 
     return render_template(
         "dashboard/exploit.html",
@@ -80,7 +81,7 @@ def tresor():
         day = first_day + datetime.timedelta(days=daynumber)
         day_befor = first_day + datetime.timedelta(days=daynumber - 1)
 
-        query = db_session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
+        query = db.session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
         query = query.filter(Reconciliations.date == day)
 
         init_sold.append(get_banque_on_date(end=day_befor))
@@ -101,16 +102,16 @@ def tresor():
         caching.append(res_caching)
         debt.append(res_debt)
 
-    paymentmethods = db_session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    paymentmethods = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     encaiss = (
-        db_session.query(Reconciliations)
+        db.session.query(Reconciliations)
         .filter(Reconciliations.cashing == True)
         .order_by(desc(Reconciliations.date))
         .all()
     )
     decaiss = (
-        db_session.query(Reconciliations)
+        db.session.query(Reconciliations)
         .filter(Reconciliations.cashing == False)
         .order_by(desc(Reconciliations.date))
         .all()

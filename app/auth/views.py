@@ -2,7 +2,7 @@ from flask import render_template, request, flash, redirect, url_for
 from werkzeug.security import check_password_hash
 from flask_login import login_user, login_required, logout_user
 from . import auth as bp
-from .. import db_session
+from .. import db
 from ..models import User
 
 
@@ -23,7 +23,7 @@ def login_post():
     password = request.form.get("password")
     remember = True if request.form.get("remember") else False
 
-    user = db_session.query(User).filter_by(email=email).first()
+    user = db.session.query(User).filter_by(email=email).first()
 
     # check if the user actually exists
     # take the user-supplied password, hash it, and compare it to the hashed password in the database

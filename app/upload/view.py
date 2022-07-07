@@ -24,7 +24,7 @@ def upload_file(item):
         filename = secure_filename(file_name)
         file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
         item.document_filename = filename
-        db_session.commit()
+        db.session.commit()
 
 
 @app.route("/uploads/<name>")
