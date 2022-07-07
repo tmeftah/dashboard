@@ -417,7 +417,8 @@
               Dettes
             </div>
             <span class="badge bg-danger rounded-pill">
-              {{get_costs(pay_methode=4) + get_purchasing(pay_methode=4)}}
+              {{(get_costs(pay_methode=4) + get_purchasing(pay_methode=4
+              ))|round(3)}}
               <small>TND</small>
             </span>
           </li>
