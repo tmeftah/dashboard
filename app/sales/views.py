@@ -30,8 +30,12 @@ def index():
 
     if s_op in ["big", "small", "equal"]:
         if s_amount >= 0:
-
             query = query.filter(compare(Sales.amount, s_amount, s_op))
+
+    if s_start_date:
+        query = query.filter(Sales.date >= s_start_date)
+    if s_end_date:
+        query = query.filter(Sales.date <= s_end_date)
 
     sales = query.order_by(desc(Sales.date)).all()
 
