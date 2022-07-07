@@ -22,17 +22,131 @@
       <div class="card-body">
         <div class="no-more-tables" style="min-height: 300px">
           <table class="table table-sm">
-            <thead>
+            <thead class="no-border">
               <tr>
                 <!-- <th scope="col">Categorie (a suprimee)</th> -->
                 <th scope="col" class="col-3">Client</th>
                 <th scope="col" class="col-2">Mode de Payment</th>
                 <th scope="col" class="col-3">Montant</th>
 
-                <th scope="col" class="col-2">Ajouté le</th>
-                <th scope="col" class="col-2"></th>
+                <th scope="col" class="col-3">Ajouté le</th>
+                <th scope="col" class="col-1"></th>
               </tr>
             </thead>
+
+            <thead>
+              <form action="{{ url_for('.index') }}" method="get">
+                <tr>
+                  <th>
+                    <select
+                      name="s_company"
+                      id="s_company"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="-1">---</option>
+                      {% for company in companies %}
+                      <!--  -->
+                      {% if company.id == s_company %}
+                      <option value=" {{company.id}} " selected>
+                        {{company.name}}
+                      </option>
+                      {% else%}
+                      <option value=" {{company.id}} ">{{company.name}}</option>
+                      {% endif%} {% endfor %}
+                    </select>
+                  </th>
+                  <th>
+                    <select
+                      name="s_paymentmethod"
+                      id="s_paymentmethod"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="">---</option>
+                      {% for method in paymentmethod %}
+                      <!--  -->
+                      {% if method.id == s_paymentmethod %}
+                      <option value=" {{method.id}} " selected>
+                        {{method.name}}
+                      </option>
+                      {% else%}
+                      <option value=" {{method.id}} ">{{method.name}}</option>
+                      {% endif%} {% endfor %}
+                    </select>
+                  </th>
+                  <th>
+                    <div class="input-group input-group-sm d-none d-md-flex">
+                      <select
+                        name="s_op"
+                        id="s_op"
+                        class="form-select form-select-sm"
+                      >
+                        <option value="">---</option>
+                        {%if s_op == "big" %}
+                        <option value="big" selected>></option>
+                        {% else %}
+                        <option value="big">></option>
+                        {% endif %} {%if s_op == "small" %}
+                        <option value="small" selected><</option>
+                        {% else %}
+                        <option value="small"><</option>
+                        {% endif %} {%if s_op == "equal" %}
+                        <option value="equal" selected>=</option>
+                        {% else %}
+                        <option value="equal">=</option>
+                        {% endif %}
+                      </select>
+                      <input
+                        name="s_amount"
+                        id="s_amount"
+                        type="number"
+                        min="0"
+                        step=".001"
+                        class="form-control"
+                        style="width: 40%"
+                        value="{{s_amount}}"
+                      />
+                      <span class="input-group-text">TND</span>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="row">
+                      <div class="col-6">
+                        <input
+                          name="s_start_date"
+                          id="s_start_date"
+                          placeholder="du"
+                          type="text"
+                          onfocus="(this.type='date')"
+                          onblur="(this.type= this.value ? 'date' : 'text')"
+                          class="form-control form-control-sm"
+                          max="{{today()}}"
+                          placeholder="heute"
+                          value="{{s_start_date}}"
+                        />
+                      </div>
+
+                      <div class="col-6">
+                        <input
+                          name="s_end_date"
+                          id="s_end_date"
+                          placeholder="au"
+                          type="text"
+                          onfocus="(this.type='date')"
+                          onblur="(this.type= this.value ? 'date' : 'text')"
+                          class="form-control form-control-sm"
+                          max="{{today()}}"
+                          value="{{s_end_date}}"
+                        />
+                      </div>
+                    </div>
+                  </th>
+                  <th>
+                    <button class="btn btn-success btn-sm">recherche</button>
+                  </th>
+                </tr>
+              </form>
+            </thead>
+
             <tbody>
               {% for sale in sales %}
               <tr>

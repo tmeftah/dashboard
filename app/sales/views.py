@@ -6,22 +6,32 @@ from sqlalchemy.exc import SQLAlchemyError
 from . import sales as bp
 from .. import db
 from ..models import Sales, Companies, SalesCategories, PaymentMethod
+from ..utilities.utils2 import toDate, compare
 
 
 @bp.route("/", methods=["GET"])
 @login_required
 def index():
-    categorie = request.args.get("categorie", type=int, default=0)
 
-    paymentme = request.args.get("paymentmethod", type=int, default=0)
+    s_company = request.args.get("s_company", type=int, default=0)
+    s_paymentmethod = request.args.get("s_paymentmethod", type=int, default=0)
+    s_op = request.args.get("s_op", type=str, default="")
+    s_amount = request.args.get("s_amount", type=float, default=0.0)
+    s_start_date = request.args.get("s_start_date", type=toDate, default="")
+    s_end_date = request.args.get("s_end_date", type=toDate, default="")
 
     query = db.session.query(Sales)
 
-    if categorie:
-        query = query.filter(Sales.categorie_id == categorie)
+    if s_company > 0:
+        query = query.filter(Sales.company_id == s_company)
 
-    if paymentme:
-        query = query.filter(Sales.paymentmethod_id == paymentme)
+    if s_paymentmethod > 0:
+        query = query.filter(Sales.paymentmethod_id == s_paymentmethod)
+
+    if s_op in ["big", "small", "equal"]:
+        if s_amount >= 0:
+
+            query = query.filter(compare(Sales.amount, s_amount, s_op))
 
     sales = query.order_by(desc(Sales.date)).all()
 
@@ -35,6 +45,12 @@ def index():
         companies=companies,
         salescategories=salescategories,
         paymentmethod=paymentmethod,
+        s_company=s_company,
+        s_paymentmethod=s_paymentmethod,
+        s_op=s_op,
+        s_amount=s_amount,
+        s_start_date=s_start_date,
+        s_end_date=s_end_date,
     )
 
 
