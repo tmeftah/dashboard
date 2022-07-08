@@ -1,7 +1,5 @@
 /*  */
 
-@import "https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,600,700";
-
 :root {
   --header-height: 3rem;
   --nav-width: 250px !important;
@@ -9,7 +7,7 @@
   --second-color: #3681f0;
   --first-color-light: #ffffff99;
   --white-color: #fff;
-  --body-font: "Ubuntu", sans-serif;
+  --body-font: "Ubuntu Mono", monospace;
   --normal-font-size: 0.95rem;
   --z-fixed: 100;
 }
