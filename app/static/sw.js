@@ -1,4 +1,4 @@
-var cacheName = "main_cache_v4";
+var cacheName = "main_cache_v5";
 var filesToCache = [
   "/",
   "/login",
