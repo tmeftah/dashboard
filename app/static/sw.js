@@ -1,7 +1,7 @@
 var cacheName = "main_cache_v4";
 var filesToCache = [
   "/",
-  "/login",
+  "../login",
   "/static/manifest.json",
   "/static/app.js",
   "/static/style.css",
