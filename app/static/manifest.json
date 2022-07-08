@@ -1,7 +1,7 @@
 {
   "name": "Meka-it",
   "short_name": "Meka-it",
-  "start_url": "/login",
+  "start_url": "../login",
   "display": "standalone",
   "scope": "/",
   "background_color": "#214a80",
