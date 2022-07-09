@@ -6,7 +6,7 @@ var cacheFiles = [
   "/",
   "/login",
   "/static/manifest.json",
-  "/static/app.js",
+
   "/static/style.css",
   "/static/login.css",
   "/static/icon-512x512.png",
@@ -46,6 +46,7 @@ self.addEventListener("fetch", (event) => {
       .then((response) => response || fetch(event.request))
       .catch(() => {
         if (event.request.mode == "navigate") {
+          console.log("hhh");
           return caches.match("/offline");
         }
       })
