@@ -25,8 +25,8 @@
             <thead>
               <tr>
                 <th scope="col" class="col-2">Nom</th>
-                <th scope="col" class="col-1">Type</th>
-                <th scope="col" class="col-2">Mode de Payment</th>
+                <th scope="col" class="col-2">Type</th>
+                <th scope="col" class="col-1">Mode de Payment</th>
                 <th scope="col" class="col-3">Montant</th>
                 <th scope="col" class="col-3">Ajouté le</th>
                 <th scope="col" class="col-1"></th>
@@ -35,15 +35,59 @@
 
             <tbody class="search">
               <form action="{{ url_for('.index') }}" method="get">
+                <div class="col-6">
+                  <label for="recipient-name" class="col-form-label"
+                    >Filter par:</label
+                  >
+                  <div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio"
+                      name="s_categorie" id="all_rb" value="0"
+                      onclick="this.form.submit();" {%if s_categorie == 0 %}
+                      checked {% endif %} />
+                      <label class="form-check-label" for="customer_rb">
+                        Tous
+                      </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio"
+                      name="s_categorie" id="customer_rb2" value="1"
+                      onclick="this.form.submit();" {%if s_categorie == 1 %}
+                      checked {% endif %} />
+                      <label class="form-check-label" for="customer_rb">
+                        Client
+                      </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio"
+                      name="s_categorie" id="supplier_rb2" value="2"
+                      onclick="this.form.submit();" {%if s_categorie == 2 %}
+                      checked {% endif %} />
+                      <label class="form-check-label" for="supplier_rb">
+                        Fournisseur
+                      </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio"
+                      name="s_categorie" id="cost_rb2" value="3"
+                      onclick="this.form.submit();" {% if s_categorie == 3 %}
+                      checked {% endif %} />
+                      <label class="form-check-label" for="cost_rb">
+                        Charge
+                      </label>
+                    </div>
+                  </div>
+                </div>
                 <tr>
-                  <td data-title="Client">
+                  <td data-title="Client" id="for_name">
                     <select
                       name="s_company"
-                      id="s_company"
+                      id="customer2"
                       class="form-select form-select-sm"
                     >
                       <option value="-1">---</option>
-                      {% for company in companies %}
+                      {% for company in companies | rejectattr("supplier",
+                      "equalto", True) %}
                       <!--  -->
                       {% if company.id == s_company %}
                       <option value=" {{company.id}} " selected>
@@ -53,13 +97,15 @@
                       <option value=" {{company.id}} ">{{company.name}}</option>
                       {% endif%} {% endfor %}
                     </select>
+
                     <select
                       name="s_company"
-                      id="s_company"
+                      id="supplier2"
                       class="form-select form-select-sm"
                     >
                       <option value="-1">---</option>
-                      {% for company in companies %}
+                      {% for company in companies | rejectattr("customer",
+                      "equalto", True) %}
                       <!--  -->
                       {% if company.id == s_company %}
                       <option value=" {{company.id}} " selected>
@@ -67,17 +113,34 @@
                       </option>
                       {% else%}
                       <option value=" {{company.id}} ">{{company.name}}</option>
+                      {% endif%} {% endfor %}
+                    </select>
+
+                    <select
+                      name="s_cost"
+                      id="cost2"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="-1">---</option>
+                      {% for cosdef in cosdefs %}
+                      <!--  -->
+                      {% if cosdef.id == s_company %}
+                      <option value=" {{cosdef.id}} " selected>
+                        {{cosdef.name}}
+                      </option>
+                      {% else%}
+                      <option value=" {{cosdef.id}} ">{{cosdef.name}}</option>
                       {% endif%} {% endfor %}
                     </select>
                   </td>
-                  <td>
+                  <td data-title="Type">
                     <select
                       name="s_type"
                       id="s_type"
                       class="form-select form-select-sm"
                     >
-                      <option value="0">Encaissement</option>
-                      <option value="1">Decaissement</option>
+                      <option value="1">Encaissement</option>
+                      <option value="2">Decaissement</option>
                     </select>
                   </td>
 
@@ -540,6 +603,7 @@
     document.getElementById("supplier_rb").checked = false;
     document.getElementById("cost_rb").checked = false;
     handleClick("1");
+    handleClick2("{{s_categorie}}");
   });
 
   function handleClick(value) {
@@ -581,6 +645,67 @@
 
         cost.disabled = false;
         cost.parentElement.hidden = false;
+        break;
+    }
+  }
+
+  function handleClick2(value) {
+    var customer = document.getElementById("customer2");
+    var supplier = document.getElementById("supplier2");
+    var cost = document.getElementById("cost2");
+    var for_name = document.getElementById("for_name");
+
+    switch (value) {
+      case "0":
+        customer.disabled = true;
+        customer.hidden = true;
+
+        supplier.disabled = true;
+        supplier.hidden = true;
+
+        cost.disabled = true;
+        cost.hidden = true;
+        for_name.dataset.title = "";
+
+        break;
+
+      case "1":
+        customer.disabled = false;
+        customer.hidden = false;
+
+        supplier.disabled = true;
+        supplier.hidden = true;
+
+        cost.disabled = true;
+        cost.hidden = true;
+        for_name.dataset.title = "Client";
+        break;
+
+      case "2":
+        customer.disabled = true;
+        customer.hidden = true;
+
+        supplier.disabled = false;
+        supplier.hidden = false;
+
+        cost.disabled = true;
+        cost.hidden = true;
+
+        for_name.dataset.title = "Fournisseur";
+
+        break;
+
+      case "3":
+        customer.disabled = true;
+        customer.hidden = true;
+
+        supplier.disabled = true;
+        supplier.hidden = true;
+
+        cost.disabled = false;
+        cost.hidden = false;
+
+        for_name.dataset.title = "Charge";
         break;
     }
   }

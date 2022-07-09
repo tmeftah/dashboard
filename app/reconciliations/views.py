@@ -6,12 +6,59 @@ from sqlalchemy.exc import SQLAlchemyError
 from . import reconciliations as bp
 from .. import db
 from ..models import CostsDef, Reconciliations, Companies, PaymentMethod
+from ..utilities.utils2 import toDate, compare
 
 
 @bp.route("/", methods=["GET"])
 @login_required
 def index():
-    reconciliations = db.session.query(Reconciliations).order_by(desc(Reconciliations.date)).all()
+
+    s_categorie = request.args.get("s_categorie", type=int, default=0)
+    s_type = request.args.get("s_type", type=int, default=0)
+
+    s_company = request.args.get("s_company", type=int, default=0)
+    s_costdef = request.args.get("s_costdef", type=int, default=0)
+    s_paymentmethod = request.args.get("s_paymentmethod", type=int, default=0)
+    s_op = request.args.get("s_op", type=str, default="")
+    s_amount = request.args.get("s_amount", type=float, default=0.0)
+    s_start_date = request.args.get("s_start_date", type=toDate, default="")
+    s_end_date = request.args.get("s_end_date", type=toDate, default="")
+
+    query = db.session.query(Reconciliations)
+    if s_categorie == 1:
+        query = query.join(Companies).filter(Companies.customer == True)
+        if s_company > 0:
+            query = query.filter(Reconciliations.company_id == s_company)
+
+    if s_categorie == 2:
+        query = query.join(Companies).filter(Companies.supplier == True)
+        if s_company > 0:
+            query = query.filter(Reconciliations.company_id == s_company)
+
+    if s_categorie == 3:
+        query = query.filter(Reconciliations.company_id == None)
+        if s_costdef > 0:
+            query = query.filter(Reconciliations.cost_id == s_costdef)
+
+    if s_type == 1:
+        query = query.filter(Reconciliations.cashing == True)
+    if s_type == 2:
+        query = query.filter(Reconciliations.cashing == False)
+
+    if s_paymentmethod > 0:
+        query = query.filter(Reconciliations.paymentmethod_id == s_paymentmethod)
+
+    if s_op in ["big", "small", "equal"]:
+        if s_amount >= 0:
+            query = query.filter(compare(Reconciliations.amount, s_amount, s_op))
+
+    if s_start_date:
+        query = query.filter(Reconciliations.date >= s_start_date)
+    if s_end_date:
+        query = query.filter(Reconciliations.date <= s_end_date)
+
+    reconciliations = query.order_by(desc(Reconciliations.date)).all()
+
     companies = db.session.query(Companies).all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
     cosdefs = db.session.query(CostsDef).all()
@@ -22,6 +69,15 @@ def index():
         paymentmethod=paymentmethod,
         companies=companies,
         cosdefs=cosdefs,
+        s_categorie=s_categorie,
+        s_type=s_type,
+        s_company=s_company,
+        s_costdef=s_costdef,
+        s_paymentmethod=s_paymentmethod,
+        s_op=s_op,
+        s_amount=s_amount,
+        s_start_date=s_start_date,
+        s_end_date=s_end_date,
     )
 
 
