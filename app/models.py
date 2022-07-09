@@ -469,4 +469,4 @@ class Payments(db.Model, DictMixIn):
         self.document_number = document_number
 
     def __repr__(self):
-        return f"<Recovers {self.company.name!r}>"
+        return f"<Payments {self.id}>"

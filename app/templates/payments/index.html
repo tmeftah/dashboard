@@ -2,29 +2,29 @@
 
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item" role="presentation">
-    <button
-      class="nav-link"
+    <a
+      class="nav-link active"
       id="home-tab"
-      data-bs-toggle="tab"
       data-bs-target="#home"
       type="button"
       role="tab"
       aria-controls="home"
       aria-selected="true"
+      href="/payments"
     >
       Paiements Fournisseur
-    </button>
+    </a>
   </li>
   <li class="nav-item" role="presentation">
     <a
-      class="nav-link active"
+      class="nav-link"
       id="profile-tab"
       data-bs-target="#profile"
       type="button"
       role="tab"
       aria-controls="profile"
       aria-selected="false"
-      href="/payments"
+      href="/payments/costs"
     >
       Paiements Charge
     </a>
@@ -63,16 +63,142 @@
               <table class="table table-sm">
                 <thead>
                   <tr>
-                    <th scope="col">Nom</th>
-                    <th scope="col">Mode de Payment</th>
-                    <th scope="col">Montant</th>
-                    <th scope="col">Ajouté le</th>
-                    <th scope="col"></th>
+                    <th scope="col" class="col-3">Nom</th>
+                    <th scope="col" class="col-2">Mode de Payment</th>
+                    <th scope="col" class="col-3">Montant</th>
+                    <th scope="col" class="col-3">Ajouté le</th>
+                    <th scope="col" class="col-1"></th>
                   </tr>
                 </thead>
+
+                <tbody class="search">
+                  <form
+                    action="{{ url_for('.index_purchasings') }}"
+                    method="get"
+                  >
+                    <tr>
+                      <td data-title="Fournisseur">
+                        <select
+                          name="s_company"
+                          id="s_company"
+                          class="form-select form-select-sm"
+                        >
+                          <option value="-1">---</option>
+                          {% for company in suppliers %}
+                          <!--  -->
+                          {% if company.id == s_company %}
+                          <option value=" {{company.id}} " selected>
+                            {{company.name}}
+                          </option>
+                          {% else%}
+                          <option value=" {{company.id}} ">
+                            {{company.name}}
+                          </option>
+                          {% endif%} {% endfor %}
+                        </select>
+                      </td>
+
+                      <td data-title="Mode de Payment">
+                        <select
+                          name="s_paymentmethod"
+                          id="s_paymentmethod"
+                          class="form-select form-select-sm"
+                        >
+                          <option value="">---</option>
+                          {% for method in paymentmethod %}
+                          <!--  -->
+                          {% if method.id == s_paymentmethod %}
+                          <option value=" {{method.id}} " selected>
+                            {{method.name}}
+                          </option>
+                          {% else%}
+                          <option value=" {{method.id}} ">
+                            {{method.name}}
+                          </option>
+                          {% endif%} {% endfor %}
+                        </select>
+                      </td>
+
+                      <td data-title="Date">
+                        <div
+                          class="input-group input-group-sm d-none d-md-flex"
+                        >
+                          <select
+                            name="s_op"
+                            id="s_op"
+                            class="form-select form-select-sm"
+                          >
+                            <option value="">---</option>
+                            {%if s_op == "big" %}
+                            <option value="big" selected>></option>
+                            {% else %}
+                            <option value="big">></option>
+                            {% endif %} {%if s_op == "small" %}
+                            <option value="small" selected><</option>
+                            {% else %}
+                            <option value="small"><</option>
+                            {% endif %} {%if s_op == "equal" %}
+                            <option value="equal" selected>=</option>
+                            {% else %}
+                            <option value="equal">=</option>
+                            {% endif %}
+                          </select>
+                          <input
+                            name="s_amount"
+                            id="s_amount"
+                            type="number"
+                            min="0"
+                            step=".001"
+                            class="form-control"
+                            style="width: 40%"
+                            value="{{s_amount}}"
+                          />
+                          <span class="input-group-text">TND</span>
+                        </div>
+                      </td>
+
+                      <td data-title="">
+                        <div class="row">
+                          <div class="col-6">
+                            <input
+                              name="s_start_date"
+                              id="s_start_date"
+                              placeholder="du"
+                              type="text"
+                              onfocus="(this.type='date')"
+                              onblur="(this.type= this.value ? 'date' : 'text')"
+                              class="form-control form-control-sm"
+                              max="{{today()}}"
+                              placeholder="heute"
+                              value="{{s_start_date}}"
+                            />
+                          </div>
+
+                          <div class="col-6">
+                            <input
+                              name="s_end_date"
+                              id="s_end_date"
+                              placeholder="au"
+                              type="text"
+                              onfocus="(this.type='date')"
+                              onblur="(this.type= this.value ? 'date' : 'text')"
+                              class="form-control form-control-sm"
+                              max="{{today()}}"
+                              value="{{s_end_date}}"
+                            />
+                          </div>
+                        </div>
+                      </td>
+
+                      <td>
+                        <button class="btn btn-info btn-sm">recherche</button>
+                      </td>
+                    </tr>
+                  </form>
+                </tbody>
+
                 <tbody>
-                  {% for payment in payments | rejectattr('company_id', "none")
-                  %}
+                  {% for payment in payments %}
                   <tr>
                     <td data-title="Fournisseur">
                       <div class="d-flex justify-content-between w-100">
@@ -95,7 +221,7 @@
                               <li>
                                 <a
                                   class="dropdown-item"
-                                  href="/payments/{{payment.id}}"
+                                  href="/payments/purchasings/{{payment.id}}"
                                   ><i class="bi bi-pencil-square"></i>
                                   Modiffier</a
                                 >
@@ -165,7 +291,7 @@
                             <li>
                               <a
                                 class="dropdown-item"
-                                href="/payments/{{payment.id}}"
+                                href="/payments/purchasings/{{payment.id}}"
                                 ><i class="bi bi-pencil-square"></i>
                                 Modiffier</a
                               >
@@ -186,165 +312,25 @@
                     </td>
                   </tr>
                   {% endfor %}
+                  <tr>
+                    <td colspan="2" data-title="&#8721;">
+                      <span class="d-none d-sm-block me-1 text-end"
+                        ><b>&#8721;:</b></span
+                      >
+                      <span class="d-block d-sm-none">
+                        {{payments| sum(attribute='amount') | round(3)}}
+                        <small>TND</small>
+                      </span>
+                    </td>
+                    <td class="d-none d-sm-block">
+                      {{payments| sum(attribute='amount') | round(3)}}
+                      <small>TND</small>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    class="tab-pane fade"
-    id="profile"
-    role="tabpanel"
-    aria-labelledby="profile-tab"
-  >
-    <div class="row">
-      <div class="col my-2">
-        <button
-          class="btn btn-success float-end"
-          data-bs-toggle="modal"
-          data-bs-target="#addPaymentCostModal"
-        >
-          + Ajouter
-        </button>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header">
-        <h5 class="card-title">Charges</h5>
-      </div>
-
-      <div class="card-body">
-        <div class="no-more-tables" style="min-height: 300px">
-          <table class="table table-sm">
-            <thead>
-              <tr>
-                <th scope="col">Nom</th>
-                <th scope="col">Mode de Payment</th>
-                <th scope="col">Montant</th>
-                <th scope="col">Ajouté le</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for payment in payments | rejectattr('cost_id', "none") %}
-              <tr>
-                <td data-title="Charge">
-                  <div class="d-flex justify-content-between w-100">
-                    {{payment.costsdef.name}}
-                    <div class="d-block d-sm-none">
-                      <div class="dropdown">
-                        <a
-                          class="btn btn-link dropdown float-end text-decoration-none"
-                          type="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          <i class="bi bi-sliders"></i>
-                        </a>
-
-                        <ul
-                          class="dropdown-menu dropdown-menu-end"
-                          aria-labelledby="dropdownMenuButton2"
-                        >
-                          <li>
-                            <a
-                              class="dropdown-item"
-                              href="/payments/{{payment.id}}"
-                              ><i class="bi bi-pencil-square"></i> Modiffier</a
-                            >
-                          </li>
-
-                          <li>
-                            <a
-                              class="dropdown-item"
-                              onclick="sendMailClicked('{{payment.id}}')"
-                            >
-                              <i class="bi bi-trash text-danger"></i>
-                              Supprimer
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td data-title="Mode de Payment">
-                  {{payment.paymentmethod.name}}
-                  <!--  -->
-                  {% if payment.paymentmethod_id in [2,3] %}
-                  <br />
-                  <small style="font-size: 10px"
-                    >Nummero: <b> {{payment.document_number | upper}}</b>
-                  </small>
-                  ,
-                  <small class="text-end" style="font-size: 10px"
-                    >Échéance le: <b> {{payment.due_date}}</b>
-                  </small>
-
-                  ,
-                  <!--  -->
-                  {% if payment.document_filename != "" %}
-
-                  <a
-                    href="/uploads/{{payment.document_filename}}"
-                    target="_blank"
-                  >
-                    <i class="bi bi-file-earmark-arrow-down"></i
-                  ></a>
-                  {% endif %}
-                  <!--  -->
-
-                  {% endif %}
-                </td>
-                <td data-title="Montant">
-                  {{payment.amount}} <small>TND</small>
-                </td>
-                <td data-title="Ajouté le">{{payment.date}}</td>
-                <td>
-                  <div class="d-none d-sm-inline">
-                    <div class="dropdown">
-                      <a
-                        class="btn btn-link dropdown float-end text-decoration-none"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        <i class="bi bi-sliders"></i>
-                      </a>
-
-                      <ul
-                        class="dropdown-menu dropdown-menu-end"
-                        aria-labelledby="dropdownMenuButton2"
-                      >
-                        <li>
-                          <a
-                            class="dropdown-item"
-                            href="/payments/{{payment.id}}"
-                            ><i class="bi bi-pencil-square"></i> Modiffier</a
-                          >
-                        </li>
-
-                        <li>
-                          <a
-                            class="dropdown-item"
-                            onclick="sendMailClicked('{{payment.id}}')"
-                          >
-                            <i class="bi bi-trash text-danger"></i>
-                            Supprimer
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
@@ -470,175 +456,6 @@
   </div>
 </div>
 
-<div
-  class="modal fade"
-  id="addPaymentCostModal"
-  tabindex="-1"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <form action="/payments" method="post" enctype="multipart/form-data">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">
-            Ajouter un nouveau Paiement Charge
-          </h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-3">
-            <div class="row">
-              <div class="col-6">
-                <label for="recipient-name" class="col-form-label"
-                  >Charge:</label
-                >
-                <select
-                  name="cost_id"
-                  class="form-select form-select-sm"
-                  aria-label="Default select example"
-                >
-                  {% for cost_def in cost_defs %}
-                  <option value="{{cost_def.id}}">{{cost_def.name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-              <div class="col-6">
-                <label for="recipient-name" class="col-form-label"
-                  >Mode de payment:</label
-                >
-                <select
-                  name="payment_id"
-                  id="payment_id1"
-                  class="form-select form-select-sm"
-                  aria-label="Default select example"
-                  onchange="ChangePaymentmethod1()"
-                >
-                  {% for payment in paymentmethod %}
-                  <option value="{{payment.id}}">{{payment.name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-6">
-                <label for="recipient-name" class="col-form-label">Date:</label>
-                <div class="input-group mb-3">
-                  <input
-                    name="date"
-                    type="date"
-                    class="form-control form-control-sm"
-                    id="date"
-                    max="{{today()}}"
-                    value="{{today()}}"
-                    required
-                  />
-                </div>
-              </div>
-              <div class="col-6">
-                <label for="amount" class="col-form-label">Montant:</label>
-                <div class="input-group input-group-sm mb-3">
-                  <input
-                    name="amount"
-                    type="number"
-                    min="0"
-                    step="0.001"
-                    class="form-control border-primary"
-                    id="amount1"
-                    required
-                  />
-                  <span class="input-group-text">TND</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- document1 -->
-            <div id="document1">
-              <div class="card">
-                <div class="card-header bg-warning">Cheque/Traite</div>
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-6">
-                      <label for="recipient-name" class="col-form-label"
-                        >Nummero:</label
-                      >
-                      <div class="input-group mb-3">
-                        <input
-                          name="document_number"
-                          type="text"
-                          class="form-control form-control-sm border-primary"
-                          id="document_number1"
-                          required
-                          value=""
-                          onkeypress="return onlyNumberKey1(event)"
-                        />
-                      </div>
-                      <div
-                        class="alert alert-danger visually-hidden mt-1"
-                        id="alert1"
-                        role="alert"
-                      >
-                        <small>Veuillez saisir uniquement des chiffres</small>
-                      </div>
-                    </div>
-                    <div class="col-6">
-                      <label for="recipient-name" class="col-form-label"
-                        >Date d'échéance:</label
-                      >
-                      <div class="input-group mb-3">
-                        <input
-                          name="due_date"
-                          type="date"
-                          class="form-control form-control-sm border-primary"
-                          id="due_date1"
-                          min="{{today()}}"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <label for="recipient-name" class="col-form-label"
-                      >Document:</label
-                    >
-                    <div class="input-group mb-3">
-                      <input
-                        name="foto"
-                        type="file"
-                        class="form-control form-control-sm"
-                        id="foto"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <label for="message-text" class="col-form-label">Message:</label>
-            <textarea
-              name="comment"
-              class="form-control"
-              id="message-text"
-            ></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-          >
-            Fermer
-          </button>
-          <button type="submit" class="btn btn-primary">Sauvegarder</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-{% endblock %}
+<!-- remove modal -->
+{% with url="/payments/purchasings/remove", header="Le Paiement" %} {% include
+'remove_modal.html' %} {% endwith %} {% endblock %}
