@@ -11,6 +11,11 @@ def index():
     return "ok"
 
 
+@bp.route("/offline")
+def offline():
+    return render_template("offline.html")
+
+
 @bp.route("/login", methods=["GET"])
 def login():
     return render_template("login.html")
