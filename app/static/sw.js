@@ -1,5 +1,5 @@
 // the cache version gets updated every time there is a new deployment
-const CACHE_VERSION = 10;
+const CACHE_VERSION = 11;
 const CURRENT_CACHE = `main-${CACHE_VERSION}`;
 
 var cacheFiles = [
@@ -10,6 +10,9 @@ var cacheFiles = [
   "/static/style.css",
   "/static/login.css",
   "/static/icon-512x512.png",
+  "/static/particles-7193862_960_720.webp",
+  "/static/offline.jpeg",
+  "/offline",
 ];
 
 // on activation we clean up the previously registered service workers
@@ -36,40 +39,15 @@ self.addEventListener("install", (evt) =>
   )
 );
 
-// fetch the resource from the network
-const fromNetwork = (request, timeout) =>
-  new Promise((fulfill, reject) => {
-    const timeoutId = setTimeout(reject, timeout);
-    fetch(request).then((response) => {
-      clearTimeout(timeoutId);
-      fulfill(response);
-      update(request);
-    }, reject);
-  });
-
-// fetch the resource from the browser cache
-const fromCache = (request) =>
-  caches
-    .open(CURRENT_CACHE)
-    .then((cache) =>
-      cache
-        .match(request)
-        .then((matching) => matching || cache.match("/offline/"))
-    );
-
-// cache the current page to make it available for offline
-const update = (request) =>
-  caches
-    .open(CURRENT_CACHE)
-    .then((cache) =>
-      fetch(request).then((response) => cache.put(request, response))
-    );
-
-// general strategy when making a request (eg if online try to fetch it
-// from the network with a timeout, if something fails serve from cache)
-self.addEventListener("fetch", (evt) => {
-  evt.respondWith(
-    fromNetwork(evt.request, 10000).catch(() => fromCache(evt.request))
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches
+      .match(event.request)
+      .then((response) => response || fetch(event.request))
+      .catch(() => {
+        if (event.request.mode == "navigate") {
+          return caches.match("/offline");
+        }
+      })
   );
-  evt.waitUntil(update(evt.request));
 });
