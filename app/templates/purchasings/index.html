@@ -258,17 +258,19 @@
                 </td>
               </tr>
               {% endfor %}
-               <tr>
-                <td colspan="2" data-title="&#8721">
+              <tr>
+                <td colspan="2" data-title="&#8721;">
                   <span class="d-none d-sm-block me-1 text-end"
-                    ><b>&#8721:</b></span
+                    ><b>&#8721;:</b></span
                   >
                   <span class="d-block d-sm-none">
-                    {{purchasings| sum(attribute='amount') | round(3)}} <small>TND</small>
+                    {{purchasings| sum(attribute='amount') | round(3)}}
+                    <small>TND</small>
                   </span>
                 </td>
                 <td class="d-none d-sm-block">
-                  {{purchasings| sum(attribute='amount') | round(3)}} <small>TND</small>
+                  {{purchasings| sum(attribute='amount') | round(3)}}
+                  <small>TND</small>
                 </td>
               </tr>
             </tbody>

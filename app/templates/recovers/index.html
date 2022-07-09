@@ -23,7 +23,7 @@
             <thead>
               <tr>
                 <th scope="col" class="col-3">Client</th>
-                <th scope="col" lass="col-2">Mode de Payment</th>
+                <th scope="col" class="col-2">Mode de Payment</th>
                 <th scope="col" class="col-3">Montant</th>
                 <th scope="col" class="col-3">Ajouté le</th>
                 <th scope="col" class="col-1"></th>
@@ -256,16 +256,18 @@
               </tr>
               {% endfor %}
               <tr>
-                <td colspan="2" data-title="&#8721">
+                <td colspan="2" data-title="&#8721;">
                   <span class="d-none d-sm-block me-1 text-end"
-                    ><b>&#8721:</b></span
+                    ><b>&#8721;:</b></span
                   >
                   <span class="d-block d-sm-none">
-                    {{sales| sum(attribute='amount') | round(3)}} <small>TND</small>
+                    {{sales| sum(attribute='amount') | round(3)}}
+                    <small>TND</small>
                   </span>
                 </td>
                 <td class="d-none d-sm-block">
-                  {{recovers| sum(attribute='amount') | round(3)}} <small>TND</small>
+                  {{recovers| sum(attribute='amount') | round(3)}}
+                  <small>TND</small>
                 </td>
               </tr>
             </tbody>

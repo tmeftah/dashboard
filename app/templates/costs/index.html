@@ -81,7 +81,9 @@
                         {{costsdef.name}}
                       </option>
                       {% else%}
-                      <option value=" {{costsdef.id}} ">{{costsdef.name}}</option>
+                      <option value=" {{costsdef.id}} ">
+                        {{costsdef.name}}
+                      </option>
                       {% endif%} {% endfor %}
                     </select>
                   </td>
@@ -286,16 +288,18 @@
               </tr>
               {% endfor %}
               <tr>
-                <td colspan="2" data-title="&#8721">
+                <td colspan="2" data-title="&#8721;">
                   <span class="d-none d-sm-block me-1 text-end"
-                    ><b>&#8721:</b></span
+                    ><b>&#8721;:</b></span
                   >
                   <span class="d-block d-sm-none">
-                    {{costsmappings| sum(attribute='amount') | round(3)}} <small>TND</small>
+                    {{costsmappings| sum(attribute='amount') | round(3)}}
+                    <small>TND</small>
                   </span>
                 </td>
                 <td class="d-none d-sm-block">
-                  {{costsmappings| sum(attribute='amount') | round(3)}} <small>TND</small>
+                  {{costsmappings| sum(attribute='amount') | round(3)}}
+                  <small>TND</small>
                 </td>
               </tr>
             </tbody>

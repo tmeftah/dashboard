@@ -24,14 +24,158 @@
           <table class="table table-sm">
             <thead>
               <tr>
-                <th scope="col">Nom</th>
-                <th scope="col">Type</th>
-                <th scope="col">Mode de Payment</th>
-                <th scope="col">Montant</th>
-                <th scope="col">Ajouté le</th>
-                <th scope="col"></th>
+                <th scope="col" class="col-2">Nom</th>
+                <th scope="col" class="col-1">Type</th>
+                <th scope="col" class="col-2">Mode de Payment</th>
+                <th scope="col" class="col-3">Montant</th>
+                <th scope="col" class="col-3">Ajouté le</th>
+                <th scope="col" class="col-1"></th>
               </tr>
             </thead>
+
+            <tbody class="search">
+              <form action="{{ url_for('.index') }}" method="get">
+                <tr>
+                  <td data-title="Client">
+                    <select
+                      name="s_company"
+                      id="s_company"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="-1">---</option>
+                      {% for company in companies %}
+                      <!--  -->
+                      {% if company.id == s_company %}
+                      <option value=" {{company.id}} " selected>
+                        {{company.name}}
+                      </option>
+                      {% else%}
+                      <option value=" {{company.id}} ">{{company.name}}</option>
+                      {% endif%} {% endfor %}
+                    </select>
+                    <select
+                      name="s_company"
+                      id="s_company"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="-1">---</option>
+                      {% for company in companies %}
+                      <!--  -->
+                      {% if company.id == s_company %}
+                      <option value=" {{company.id}} " selected>
+                        {{company.name}}
+                      </option>
+                      {% else%}
+                      <option value=" {{company.id}} ">{{company.name}}</option>
+                      {% endif%} {% endfor %}
+                    </select>
+                  </td>
+                  <td>
+                    <select
+                      name="s_type"
+                      id="s_type"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="0">Encaissement</option>
+                      <option value="1">Decaissement</option>
+                    </select>
+                  </td>
+
+                  <td data-title="Mode de Payment">
+                    <select
+                      name="s_paymentmethod"
+                      id="s_paymentmethod"
+                      class="form-select form-select-sm"
+                    >
+                      <option value="">---</option>
+                      {% for method in paymentmethod %}
+                      <!--  -->
+                      {% if method.id == s_paymentmethod %}
+                      <option value=" {{method.id}} " selected>
+                        {{method.name}}
+                      </option>
+                      {% else%}
+                      <option value=" {{method.id}} ">{{method.name}}</option>
+                      {% endif%} {% endfor %}
+                    </select>
+                  </td>
+
+                  <td data-title="Date">
+                    <div class="input-group input-group-sm d-none d-md-flex">
+                      <select
+                        name="s_op"
+                        id="s_op"
+                        class="form-select form-select-sm"
+                      >
+                        <option value="">---</option>
+                        {%if s_op == "big" %}
+                        <option value="big" selected>></option>
+                        {% else %}
+                        <option value="big">></option>
+                        {% endif %} {%if s_op == "small" %}
+                        <option value="small" selected><</option>
+                        {% else %}
+                        <option value="small"><</option>
+                        {% endif %} {%if s_op == "equal" %}
+                        <option value="equal" selected>=</option>
+                        {% else %}
+                        <option value="equal">=</option>
+                        {% endif %}
+                      </select>
+                      <input
+                        name="s_amount"
+                        id="s_amount"
+                        type="number"
+                        min="0"
+                        step=".001"
+                        class="form-control"
+                        style="width: 40%"
+                        value="{{s_amount}}"
+                      />
+                      <span class="input-group-text d-none d-md-flex">TND</span>
+                    </div>
+                  </td>
+
+                  <td data-title="">
+                    <div class="row">
+                      <div class="col-6">
+                        <input
+                          name="s_start_date"
+                          id="s_start_date"
+                          placeholder="du"
+                          type="text"
+                          onfocus="(this.type='date')"
+                          onblur="(this.type= this.value ? 'date' : 'text')"
+                          class="form-control form-control-sm"
+                          max="{{today()}}"
+                          placeholder="heute"
+                          value="{{s_start_date}}"
+                        />
+                      </div>
+
+                      <div class="col-6">
+                        <input
+                          name="s_end_date"
+                          id="s_end_date"
+                          placeholder="au"
+                          type="text"
+                          onfocus="(this.type='date')"
+                          onblur="(this.type= this.value ? 'date' : 'text')"
+                          class="form-control form-control-sm"
+                          max="{{today()}}"
+                          value="{{s_end_date}}"
+                        />
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <button class="btn btn-info btn-sm">recherche</button>
+                  </td>
+                </tr>
+              </form>
+            </tbody>
+
             <tbody>
               {% for reconciliation in reconciliations %}
               <tr>
@@ -151,6 +295,21 @@
                 </td>
               </tr>
               {% endfor %}
+              <tr>
+                <td colspan="2" data-title="&#8721;">
+                  <span class="d-none d-sm-block me-1 text-end"
+                    ><b>&#8721;:</b></span
+                  >
+                  <span class="d-block d-sm-none">
+                    {{reconciliations| sum(attribute='amount') | round(3)}}
+                    <small>TND</small>
+                  </span>
+                </td>
+                <td class="d-none d-sm-block">
+                  {{reconciliations| sum(attribute='amount') | round(3)}}
+                  <small>TND</small>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
