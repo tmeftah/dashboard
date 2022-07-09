@@ -128,13 +128,27 @@ def get_reconciliations_by_id(id):
         flash("Rapprochement n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
 
-    companies = db.session.query(Companies).filter_by(customer=True).all()
+    query = db.session.query(Companies)
+
+    if reconciliation.company_id:
+
+        is_customer = reconciliation.company.customer
+        is_supplier = reconciliation.company.supplier
+        if is_customer:
+            query = query.filter_by(customer=True)
+        if is_supplier:
+            query = query.filter_by(supplier=True)
+
+    companies = query.all()
+
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
+    cost_defs = db.session.query(CostsDef).all()
 
     return render_template(
         "/reconciliations/_id.html",
         reconciliation=reconciliation,
         companies=companies,
+        cost_defs=cost_defs,
         paymentmethod=paymentmethod,
     )
 
@@ -150,12 +164,15 @@ def update_reconciliations(id):
         return redirect(url_for(".index"))
 
     company_id = request.form.get("company_id", type=int)
+    cost_id = request.form.get("cost_id", type=int)
+
     payment_id = request.form.get("payment_id", type=int)
     date = request.form.get("date")
     amount = request.form.get("amount")
     comment = request.form.get("comment")
 
     reconciliation.company_id = company_id
+    reconciliation.cost_id = cost_id
     reconciliation.paymentmethod_id = payment_id
     reconciliation.date = datetime.datetime.strptime(date, "%Y-%m-%d")
     reconciliation.amount = amount

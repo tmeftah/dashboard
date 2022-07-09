@@ -37,9 +37,9 @@ def add_companies():
         customer = False
         supplier = True
 
-    if company_type == 2:
-        customer = True
-        supplier = True
+    # if company_type == 2:
+    #     customer = True
+    #     supplier = True
 
     new_company = Companies(
         name=name,

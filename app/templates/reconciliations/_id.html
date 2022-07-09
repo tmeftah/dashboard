@@ -11,6 +11,7 @@
       <div class="mb-3">
         <div class="row">
           <div class="col-6">
+            {% if reconciliation.company_id %}
             <label for="recipient-name" class="col-form-label">Client:</label>
             <select
               name="company_id"
@@ -28,6 +29,29 @@
               <!--  -->
               {% endfor %}
             </select>
+            {% endif %}
+            <!--  -->
+            {% if reconciliation.cost_id %}
+            <label for="recipient-name" class="col-form-label">Charge:</label>
+            <select
+              name="cost_id"
+              class="form-select form-select-sm"
+              aria-label="Default select example"
+              required
+            >
+              {% for cost_def in cost_defs %}
+              <!--  -->
+              {% if reconciliation.cost_id == cost_def.id %}
+              <option value="{{cost_def.id}}" selected>
+                {{cost_def.name}}
+              </option>
+              {% else %}
+              <option value="{{cost_def.id}}">{{cost_def.name}}</option>
+              {% endif %}
+              <!--  -->
+              {% endfor %}
+            </select>
+            {% endif %}
           </div>
           <div class="col-6">
             <label for="recipient-name" class="col-form-label"
