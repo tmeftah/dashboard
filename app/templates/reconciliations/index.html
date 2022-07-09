@@ -139,8 +139,19 @@
                       id="s_type"
                       class="form-select form-select-sm"
                     >
+                      {% if s_type == 0 %}
+                      <option value="0" selected>---</option>
+                      {% else %}
+                      <option value="0">---</option>
+                      {% endif %} {% if s_type == 1 %}
+                      <option value="1" selected>Encaissement</option>
+                      {% else %}
                       <option value="1">Encaissement</option>
+                      {% endif %} {% if s_type == 2 %}
+                      <option value="2" selected>Decaissement</option>
+                      {% else %}
                       <option value="2">Decaissement</option>
+                      {% endif %}
                     </select>
                   </td>
 
