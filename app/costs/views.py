@@ -6,12 +6,39 @@ from sqlalchemy.exc import SQLAlchemyError
 from . import costs as bp
 from .. import db
 from ..models import CostsMapping, CostsDef, PaymentMethod
+from ..utilities.utils2 import toDate, compare
 
 
 @bp.route("/", methods=["GET"])
 @login_required
 def index():
-    costsmappings = db.session.query(CostsMapping).order_by(desc(CostsMapping.date)).all()
+    s_costsdef = request.args.get("s_costsdef", type=int, default=0)
+    s_paymentmethod = request.args.get("s_paymentmethod", type=int, default=0)
+    s_op = request.args.get("s_op", type=str, default="")
+    s_amount = request.args.get("s_amount", type=float, default=0.0)
+    s_start_date = request.args.get("s_start_date", type=toDate, default="")
+    s_end_date = request.args.get("s_end_date", type=toDate, default="")
+
+    query = db.session.query(CostsMapping)
+
+    if s_costsdef > 0:
+        query = query.filter(CostsMapping.cost_id == s_costsdef)
+
+    if s_paymentmethod > 0:
+        query = query.filter(CostsMapping.paymentmethod_id == s_paymentmethod)
+
+    if s_op in ["big", "small", "equal"]:
+        if s_amount >= 0:
+            query = query.filter(compare(CostsMapping.amount, s_amount, s_op))
+
+    if s_start_date:
+        query = query.filter(CostsMapping.date >= s_start_date)
+    if s_end_date:
+        query = query.filter(CostsMapping.date <= s_end_date)
+
+    costsmappings = query.order_by(desc(CostsMapping.date)).all()
+
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
     costsdefs = db.session.query(CostsDef).all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
@@ -20,6 +47,12 @@ def index():
         costsmappings=costsmappings,
         costsdefs=costsdefs,
         paymentmethod=paymentmethod,
+        s_costsdef=s_costsdef,
+        s_paymentmethod=s_paymentmethod,
+        s_op=s_op,
+        s_amount=s_amount,
+        s_start_date=s_start_date,
+        s_end_date=s_end_date,
     )
 
 
