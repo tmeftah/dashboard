@@ -259,15 +259,15 @@
               {% endfor %}
               <tr>
                 <td colspan="2" data-title="Somme">
-                  <span class="d-none d-sm-block me-3 text-end"
-                    ><b>Somme:</b></span
+                  <span class="d-none d-sm-block me-1 text-end"
+                    ><b>&#8721:</b></span
                   >
                   <span class="d-block d-sm-none">
-                    {{sales| sum(attribute='amount') | round(3)}}
+                    {{sales| sum(attribute='amount') | round(3)}} <small>TND</small>
                   </span>
                 </td>
                 <td class="d-none d-sm-block">
-                  {{sales| sum(attribute='amount') | round(3)}}
+                  {{sales| sum(attribute='amount') | round(3)}} <small>TND</small>
                 </td>
               </tr>
             </tbody>

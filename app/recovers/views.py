@@ -7,24 +7,54 @@ from . import recovers as bp
 from .. import db
 from ..models import Recovers, Companies, PaymentMethod, SalesCategories
 from ..utilities.utils import get_sold_clients
+from ..utilities.utils2 import toDate, compare
 
 
 @bp.route("/", methods=["GET"])
 @login_required
 def index():
-    recovers = db.session.query(Recovers).order_by(desc(Recovers.date)).all()
+
+    s_company = request.args.get("s_company", type=int, default=0)
+    s_paymentmethod = request.args.get("s_paymentmethod", type=int, default=0)
+    s_op = request.args.get("s_op", type=str, default="")
+    s_amount = request.args.get("s_amount", type=float, default=0.0)
+    s_start_date = request.args.get("s_start_date", type=toDate, default="")
+    s_end_date = request.args.get("s_end_date", type=toDate, default="")
+
+    query = db.session.query(Recovers)
+
+    if s_company > 0:
+        query = query.filter(Recovers.company_id == s_company)
+
+    if s_paymentmethod > 0:
+        query = query.filter(Recovers.paymentmethod_id == s_paymentmethod)
+
+    if s_op in ["big", "small", "equal"]:
+        if s_amount >= 0:
+            query = query.filter(compare(Recovers.amount, s_amount, s_op))
+
+    if s_start_date:
+        query = query.filter(Recovers.date >= s_start_date)
+    if s_end_date:
+        query = query.filter(Recovers.date <= s_end_date)
+
+    recovers = query.order_by(desc(Recovers.date)).all()
+
     companies = db.session.query(Companies).filter_by(customer=True).all()
 
-    paymentmethod = (
-        db.session.query(PaymentMethod).filter(PaymentMethod.name.not_like("Credit")).all()
-    )
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/recovers/index.html",
         recovers=recovers,
         paymentmethod=paymentmethod,
         companies=companies,
-        get_sold_clients=get_sold_clients,
+        s_company=s_company,
+        s_paymentmethod=s_paymentmethod,
+        s_op=s_op,
+        s_amount=s_amount,
+        s_start_date=s_start_date,
+        s_end_date=s_end_date,
     )
 
 

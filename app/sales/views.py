@@ -40,14 +40,12 @@ def index():
     sales = query.order_by(desc(Sales.date)).all()
 
     companies = db.session.query(Companies).filter_by(customer=True).all()
-    salescategories = db.session.query(SalesCategories).all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
         "/sales/index.html",
         sales=sales,
         companies=companies,
-        salescategories=salescategories,
         paymentmethod=paymentmethod,
         s_company=s_company,
         s_paymentmethod=s_paymentmethod,
