@@ -14,7 +14,7 @@ def offline():
 def login():
 
     if current_user.is_authenticated:
-        return redirect(url_for("dash.dashboard"))
+        return redirect(url_for("index"))
     return render_template("login.html")
 
 
@@ -37,7 +37,7 @@ def login_post():
 
     # if the above check passes, then we know the user has the right credentials
     login_user(user, remember=remember)
-    return redirect(url_for("dash.dashboard"))
+    return redirect(url_for("index"))
 
 
 @bp.route("/logout")

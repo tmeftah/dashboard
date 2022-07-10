@@ -32,6 +32,10 @@ body {
   box-shadow: none;
 }
 
+#wellcome-img {
+  max-width: 50%;
+}
+
 #user-info .dropdown-menu {
   right: -3px;
 }
@@ -189,6 +193,10 @@ a {
 }
 
 @media screen and (max-width: 991px) {
+  #wellcome-img {
+    width: 90%;
+    max-width: none;
+  }
   .modal {
     left: 0;
   }
