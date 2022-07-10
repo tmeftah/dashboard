@@ -9,6 +9,7 @@ var cacheFiles = [
   "/static/icon-512x512.png",
   "/static/particles-7193862_960_720.webp",
   "/static/offline.jpeg",
+  "/static/wellcome.png",
   "/offline",
 ];
 
