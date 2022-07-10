@@ -1,5 +1,5 @@
 from flask import render_template, request, flash, redirect, url_for
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
 from . import auth as bp
 from .. import db
 from ..models import User
@@ -17,6 +17,9 @@ def offline():
 
 @bp.route("/login", methods=["GET"])
 def login():
+
+    if current_user.is_authenticated:
+        return redirect(url_for("dash.dashboard"))
     return render_template("login.html")
 
 
