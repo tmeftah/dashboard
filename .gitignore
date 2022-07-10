@@ -7,12 +7,9 @@ __pycache__/
 # C extensions
 *.so
 
-
-
 # Flask stuff:
 instance/
 .webassets-cache
-
 
 # Environments
 .env
@@ -22,7 +19,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
 
 #database
 *.sqlite3
@@ -34,3 +30,5 @@ uploads/
 
 # deploy
 script/
+
+.vscode
