@@ -1,12 +1,9 @@
 // the cache version gets updated every time there is a new deployment
-const CACHE_VERSION = 11;
+const CACHE_VERSION = 12;
 const CURRENT_CACHE = `main-${CACHE_VERSION}`;
 
 var cacheFiles = [
-  "/",
-  "/login",
   "/static/manifest.json",
-
   "/static/style.css",
   "/static/login.css",
   "/static/icon-512x512.png",
