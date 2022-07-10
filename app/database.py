@@ -20,6 +20,9 @@ class SQLITE:
     def create_all(self):
         self.Model.metadata.create_all(bind=self.engine)
 
+    def drop_all(self):
+        self.Model.metadata.drop_all(bind=self.engine)
+
     @property
     def metadata(self):
         """The metadata associated with ``db.Model``."""
