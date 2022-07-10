@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import LoginManager, login_required
 from werkzeug import exceptions
 
@@ -32,12 +32,6 @@ def create_app(config_name):
     login_manager.login_view = "login"
 
     # csrf.init_app(app)
-
-    @app.errorhandler(exceptions.NotFound)
-    def handle_NotFound(e):
-        flash(f"Page introuvable.", category="danger")
-        return redirect(url_for("dash.dashboard"))
-
     @login_manager.unauthorized_handler
     def unauthorized_handler():
         return redirect(url_for("auth.login"))
@@ -102,10 +96,12 @@ def create_app(config_name):
     @app.errorhandler(exceptions.Unauthorized)
     @app.errorhandler(exceptions.BadRequest)
     def common_exception(e):
-        return render_template(f"/errors/{e.code}.html")
+        return render_template(f"/errors/{e.code}.html", next_url=request.path)
 
+    @app.errorhandler(exceptions.HTTPException)
     @app.errorhandler(Exception)
     def handle_exception(e):
+        db.session.rollback()
         return render_template("/errors/500.html")
 
     # *****************************************************************************************************
