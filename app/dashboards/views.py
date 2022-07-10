@@ -8,11 +8,6 @@ from ..models import Companies, SalesCategories, PaymentMethod, Reconciliations
 from ..utilities.utils import *
 
 
-@dash.route("/")
-def index():
-    return "ok"
-
-
 @dash.route("/dashboard")
 @login_required
 def dashboard():

@@ -78,7 +78,7 @@ def create_app(config_name):
     from .companies import companies as companies_blueprint
 
     app.register_blueprint(auth_blueprint, url_prefix="/")
-    app.register_blueprint(dash_blueprint, url_prefix="/")
+    app.register_blueprint(dash_blueprint, url_prefix="/dashboards")
 
     app.register_blueprint(sales_blueprint, url_prefix="/sales")
     app.register_blueprint(recovers_blueprint, url_prefix="/recovers")

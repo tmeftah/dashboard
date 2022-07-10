@@ -5,11 +5,6 @@ from .. import db
 from ..models import User
 
 
-@bp.route("/")
-def index():
-    return "ok"
-
-
 @bp.route("/offline")
 def offline():
     return render_template("offline.html")
