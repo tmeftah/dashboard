@@ -60,7 +60,7 @@ def create_app(config_name):
     @app.route("/")
     @login_required
     def index():
-        return render_template("about.html")
+        return render_template("wellcome.html")
 
     @app.route("/sw.js")
     def sw():
