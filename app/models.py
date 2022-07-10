@@ -1,4 +1,5 @@
 import datetime
+from flask_login import AnonymousUserMixin
 from werkzeug.security import generate_password_hash
 from sqlalchemy import Column, Float, Integer, String, ForeignKey, Boolean, CheckConstraint
 from sqlalchemy.types import Date
@@ -23,12 +24,87 @@ class DictMixIn:
         }
 
 
+# -------------------------------  Role Based Authorization   ----------------------------------
+
+
+class Permission:
+    FOLLOW = 1
+    COMMENT = 2
+    WRITE = 4
+    MODERATE = 8
+    ADMIN = 16
+
+
+class Role(db.Model, DictMixIn):
+    __tablename__ = "roles"
+
+    name = Column(String(64), unique=True)
+    default = Column(Boolean, default=False, index=True)
+    permissions = Column(Integer)
+    users = relationship("User", backref="role", lazy="dynamic")
+
+    def __init__(self, **kwargs):
+        super(Role, self).__init__(**kwargs)
+        if self.permissions is None:
+            self.permissions = 0
+
+    @staticmethod
+    def init_data():
+
+        roles = {
+            "User": [Permission.FOLLOW, Permission.COMMENT, Permission.WRITE],
+            "Moderator": [
+                Permission.FOLLOW,
+                Permission.COMMENT,
+                Permission.WRITE,
+                Permission.MODERATE,
+            ],
+            "Administrator": [
+                Permission.FOLLOW,
+                Permission.COMMENT,
+                Permission.WRITE,
+                Permission.MODERATE,
+                Permission.ADMIN,
+            ],
+        }
+        default_role = "User"
+        for r in roles:
+            role = db.session.query(Role).filter_by(name=r).first()
+            if role is None:
+                role = Role(name=r)
+            role.reset_permissions()
+            for perm in roles[r]:
+                role.add_permission(perm)
+            role.default = role.name == default_role
+            db.session.add(role)
+
+        db.session.commit()
+
+    def add_permission(self, perm):
+        if not self.has_permission(perm):
+            self.permissions += perm
+
+    def remove_permission(self, perm):
+        if self.has_permission(perm):
+            self.permissions -= perm
+
+    def reset_permissions(self):
+        self.permissions = 0
+
+    def has_permission(self, perm):
+        return self.permissions & perm == perm
+
+    def __repr__(self):
+        return "<Role %r>" % self.name
+
+
 class User(db.Model, DictMixIn):
     __tablename__ = "users"
 
     name = Column(String(50), unique=True)
     email = Column(String(120), unique=True)
     password = Column(String(100))
+    role_id = Column(Integer, ForeignKey("roles.id"))
     authenticated = Column(Boolean, default=False)
 
     def __init__(self, name=None, email=None, password=None):
@@ -38,13 +114,13 @@ class User(db.Model, DictMixIn):
 
     @classmethod
     def init_data(cls):
-        db.session.add(
-            cls(
-                name="Saleh",
-                email="user1@test.com",
-                password=generate_password_hash("test"),
-            )
+        admin = cls(
+            name="Saleh",
+            email="user1@test.com",
+            password=generate_password_hash("test"),
         )
+        admin.role = db.session.query(Role).filter_by(name="Administrator").first()
+        db.session.add(admin)
         try:
             db.session.commit()
         except SQLAlchemyError as e:
@@ -68,8 +144,25 @@ class User(db.Model, DictMixIn):
         # returns the user e-mail
         return self.id
 
+    def can(self, perm):
+        return self.role is not None and self.role.has_permission(perm)
+
+    def is_administrator(self):
+        return self.can(Permission.ADMIN)
+
     def __repr__(self):
         return f"<User {self.name!r}>"
+
+
+class AnonymousUser(AnonymousUserMixin):
+    def can(self, permissions):
+        return False
+
+    def is_administrator(self):
+        return False
+
+
+login_manager.anonymous_user = AnonymousUser
 
 
 @login_manager.user_loader

@@ -11,12 +11,14 @@ login_manager = LoginManager()
 
 
 def init_data():
-    from .models import User, PaymentMethod
+    from .models import User, PaymentMethod, Role
 
     admin_exist = db.session.query(User).filter(User.email == "user1@test.com").first()
     if not admin_exist:
-        User.init_data()
+
         PaymentMethod.init_data()
+        Role.init_data()
+        User.init_data()
 
 
 def create_app(config_name):
