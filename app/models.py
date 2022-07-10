@@ -1,6 +1,6 @@
 import datetime
 from flask_login import AnonymousUserMixin
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import Column, Float, Integer, String, ForeignKey, Boolean, CheckConstraint
 from sqlalchemy.types import Date
 from sqlalchemy.exc import SQLAlchemyError
@@ -103,21 +103,25 @@ class User(db.Model, DictMixIn):
 
     name = Column(String(50), unique=True)
     email = Column(String(120), unique=True)
-    password = Column(String(100))
+    password_hash = Column(String(100))
     role_id = Column(Integer, ForeignKey("roles.id"))
     authenticated = Column(Boolean, default=False)
 
-    def __init__(self, name=None, email=None, password=None):
+    def __init__(self, name=None, email=None, password=None, role=None):
         self.name = name
         self.email = email
         self.password = password
+        self.role = role
+
+        if self.role is None:
+            self.role = db.session.query(Role).filter_by(default=True).first()
 
     @classmethod
     def init_data(cls):
         admin = cls(
             name="Saleh",
             email="user1@test.com",
-            password=generate_password_hash("test"),
+            password="test",
         )
         admin.role = db.session.query(Role).filter_by(name="Administrator").first()
         db.session.add(admin)
@@ -126,6 +130,17 @@ class User(db.Model, DictMixIn):
         except SQLAlchemyError as e:
             print(e)
             db.session.rollback()
+
+    @property
+    def password(self):
+        raise AttributeError("password is not a readable attribute")
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
     @property
     def is_active(self):
