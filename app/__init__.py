@@ -95,6 +95,19 @@ def create_app(config_name):
 
     # *****************************************************************************************************
 
+    @app.errorhandler(exceptions.NotFound)
+    @app.errorhandler(exceptions.Forbidden)
+    @app.errorhandler(exceptions.Unauthorized)
+    @app.errorhandler(exceptions.BadRequest)
+    def common_exception(e):
+        return render_template(f"/errors/{e.code}.html")
+
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        return render_template("/errors/500.html")
+
+    # *****************************************************************************************************
+
     @app.context_processor
     def utility_processor():
         import calendar
