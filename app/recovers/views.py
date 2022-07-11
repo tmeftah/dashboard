@@ -21,7 +21,7 @@ def index():
     s_start_date = request.args.get("s_start_date", type=toDate, default="")
     s_end_date = request.args.get("s_end_date", type=toDate, default="")
 
-    query = db.session.query(Recovers)
+    query = Recovers.query()
 
     if s_company > 0:
         query = query.filter(Recovers.company_id == s_company)
@@ -40,7 +40,7 @@ def index():
 
     recovers = query.order_by(desc(Recovers.date)).all()
 
-    companies = db.session.query(Companies).filter_by(customer=True).all()
+    companies = Companies.query().filter_by(customer=True).all()
 
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
@@ -103,13 +103,13 @@ def add_recovers():
 @login_required
 def get_recovers_by_id(id):
 
-    recover = db.session.query(Recovers).filter(Recovers.id == id).first()
+    recover = Recovers.query().filter(Recovers.id == id).first()
 
     if not recover:
         flash("Recouvrement n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
 
-    companies = db.session.query(Companies).filter_by(customer=True).all()
+    companies = Companies.query().filter_by(customer=True).all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
 
     return render_template(
@@ -124,7 +124,7 @@ def get_recovers_by_id(id):
 @login_required
 def update_recovers(id):
 
-    recover = db.session.query(Recovers).filter(Recovers.id == id).first()
+    recover = Recovers.query().filter(Recovers.id == id).first()
 
     if not recover:
         flash("Recouvrement n'exist pas !!!")
@@ -168,7 +168,7 @@ def update_recovers(id):
 @login_required
 def remove_recovers(id):
 
-    recover = db.session.query(Recovers).filter(Recovers.id == id).first()
+    recover = Recovers.query().filter(Recovers.id == id).first()
 
     if not recover:
         flash("Recouvrement n'exist pas !!!", category="warning")

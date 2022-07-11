@@ -20,7 +20,7 @@ def index():
     s_start_date = request.args.get("s_start_date", type=toDate, default="")
     s_end_date = request.args.get("s_end_date", type=toDate, default="")
 
-    query = db.session.query(Purchasing)
+    query = Purchasing.query()
 
     if s_company > 0:
         query = query.filter(Purchasing.company_id == s_company)
@@ -39,8 +39,8 @@ def index():
 
     purchasings = query.order_by(desc(Purchasing.date)).all()
 
-    companies = db.session.query(Companies).filter_by(supplier=True).all()
-    salescategories = db.session.query(SalesCategories).all()
+    companies = Companies.query().filter_by(supplier=True).all()
+    salescategories = SalesCategories.query().all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
@@ -90,7 +90,7 @@ def add_purchasings():
     except SQLAlchemyError as e:
         print(e)
         db.session.rollback()
-        flash("db error", category="error")
+        flash("db error", category="danger")
 
     else:
         flash("Achat ajouter", category="success")
@@ -102,14 +102,14 @@ def add_purchasings():
 @login_required
 def get_purchasings_by_id(id):
 
-    purchasing = db.session.query(Purchasing).filter(Purchasing.id == id).first()
+    purchasing = Purchasing.query().filter(Purchasing.id == id).first()
 
     if not purchasing:
         flash("Achat n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
 
-    companies = db.session.query(Companies).filter_by(supplier=True).all()
-    salescategories = db.session.query(SalesCategories).all()
+    companies = Companies.query().filter_by(supplier=True).all()
+    salescategories = SalesCategories.query().all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
@@ -125,10 +125,10 @@ def get_purchasings_by_id(id):
 @login_required
 def update_purchasings(id):
 
-    purchasing = db.session.query(Purchasing).filter(Purchasing.id == id).first()
+    purchasing = Purchasing.query().filter(Purchasing.id == id).first()
 
     if not purchasing:
-        flash("Achat n'exist pas !!!")
+        flash("Achat n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
 
     company_id = request.form.get("company_id", type=int)
@@ -157,7 +157,7 @@ def update_purchasings(id):
     except SQLAlchemyError as e:
         print(e)
         db.session.rollback()
-        flash("db error", category="error")
+        flash("db error", category="danger")
 
     else:
         flash("Achat modiffier", category="success")
@@ -169,7 +169,7 @@ def update_purchasings(id):
 @login_required
 def remove_purchasings(id):
 
-    purchasing = db.session.query(Purchasing).filter(Purchasing.id == id).first()
+    purchasing = Purchasing.query().filter(Purchasing.id == id).first()
 
     if not purchasing:
         flash("Achat n'exist pas !!!", category="warning")

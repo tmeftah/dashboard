@@ -24,7 +24,7 @@ def index():
     s_start_date = request.args.get("s_start_date", type=toDate, default="")
     s_end_date = request.args.get("s_end_date", type=toDate, default="")
 
-    query = db.session.query(Reconciliations)
+    query = Reconciliations.query()
     if s_categorie == 1:
         query = query.join(Companies).filter(Companies.customer == True)
         if s_company > 0:
@@ -59,9 +59,9 @@ def index():
 
     reconciliations = query.order_by(desc(Reconciliations.date)).all()
 
-    companies = db.session.query(Companies).all()
+    companies = Companies.query().all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
-    cosdefs = db.session.query(CostsDef).all()
+    cosdefs = CostsDef.query().all()
 
     return render_template(
         "/reconciliations/index.html",
@@ -110,7 +110,7 @@ def add_reconciliations():
     except SQLAlchemyError as e:
         print(e)
         db.session.rollback()
-        flash("db error", category="error")
+        flash("db error", category="danger")
 
     else:
         flash("Rapprochement ajouter", category="success")
@@ -122,13 +122,13 @@ def add_reconciliations():
 @login_required
 def get_reconciliations_by_id(id):
 
-    reconciliation = db.session.query(Reconciliations).filter(Reconciliations.id == id).first()
+    reconciliation = Reconciliations.query().filter(Reconciliations.id == id).first()
 
     if not reconciliation:
         flash("Rapprochement n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
 
-    query = db.session.query(Companies)
+    query = Companies.query()
 
     if reconciliation.company_id:
 
@@ -142,7 +142,7 @@ def get_reconciliations_by_id(id):
     companies = query.all()
 
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4])).all()
-    cost_defs = db.session.query(CostsDef).all()
+    cost_defs = CostsDef.query().all()
 
     return render_template(
         "/reconciliations/_id.html",
@@ -157,10 +157,10 @@ def get_reconciliations_by_id(id):
 @login_required
 def update_reconciliations(id):
 
-    reconciliation = db.session.query(Reconciliations).filter(Reconciliations.id == id).first()
+    reconciliation = Reconciliations.query().filter(Reconciliations.id == id).first()
 
     if not reconciliation:
-        flash("Rapprochement n'exist pas !!!")
+        flash("Rapprochement n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
 
     company_id = request.form.get("company_id", type=int)
@@ -186,7 +186,7 @@ def update_reconciliations(id):
     except SQLAlchemyError as e:
         print(e)
         db.session.rollback()
-        flash("db error", category="error")
+        flash("db error", category="danger")
 
     else:
         flash("Rapprochement modiffier", category="success")
@@ -198,7 +198,7 @@ def update_reconciliations(id):
 @login_required
 def remove_reconciliations(id):
 
-    reconciliation = db.session.query(Reconciliations).filter(Reconciliations.id == id).first()
+    reconciliation = Reconciliations.query().filter(Reconciliations.id == id).first()
 
     if not reconciliation:
         flash("Rapprochement n'exist pas !!!", category="warning")

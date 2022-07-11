@@ -20,7 +20,7 @@ def index_purchasings():
     s_start_date = request.args.get("s_start_date", type=toDate, default="")
     s_end_date = request.args.get("s_end_date", type=toDate, default="")
 
-    query = db.session.query(Payments).filter(Payments.company_id.isnot(None))
+    query = Payments.query().filter(Payments.company_id.isnot(None))
 
     if s_company > 0:
         query = query.filter(Payments.company_id == s_company)
@@ -39,7 +39,7 @@ def index_purchasings():
 
     payments = query.order_by(desc(Payments.date)).all()
 
-    suppliers = db.session.query(Companies).filter_by(supplier=True).all()
+    suppliers = Companies.query().filter_by(supplier=True).all()
 
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
@@ -68,7 +68,7 @@ def index_costs():
     s_start_date = request.args.get("s_start_date", type=toDate, default="")
     s_end_date = request.args.get("s_end_date", type=toDate, default="")
 
-    query = db.session.query(Payments).filter(Payments.cost_id.isnot(None))
+    query = Payments.query().filter(Payments.cost_id.isnot(None))
 
     if s_company > 0:
         query = query.filter(Payments.cost_id == s_company)
@@ -87,7 +87,7 @@ def index_costs():
 
     payments = query.order_by(desc(Payments.date)).all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
-    cost_defs = db.session.query(CostsDef).all()
+    cost_defs = CostsDef.query().all()
 
     return render_template(
         "/payments/costs.html",
@@ -139,7 +139,7 @@ def add_payments():
     except SQLAlchemyError as e:
         print(e)
         db.session.rollback()
-        flash("db error", category="error")
+        flash("db error", category="danger")
 
     else:
         flash("Payment ajouter", category="success")
@@ -155,13 +155,13 @@ def add_payments():
 @login_required
 def get_payment_purchasing_by_id(id):
 
-    payment = db.session.query(Payments).filter(Payments.id == id).first()
+    payment = Payments.query().filter(Payments.id == id, Payments.company_id.isnot(None)).first()
 
     if not payment:
-        flash("Le paiement n'exist pas !!!")
+        flash("Le paiement n'exist pas !!!", category="warning")
         return redirect(url_for(".index_purchasings"))
 
-    suppliers = db.session.query(Companies).filter(Companies.supplier == True).all()
+    suppliers = Companies.query().filter(Companies.supplier == True).all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
@@ -176,7 +176,7 @@ def get_payment_purchasing_by_id(id):
 @login_required
 def update_payment_purchasing(id):
 
-    payment = db.session.query(Payments).filter(Payments.id == id).first()
+    payment = Payments.query().filter(Payments.id == id, Payments.company_id.isnot(None)).first()
 
     if not payment:
         flash("Le paiement n'exist pas !!!", category="warning")
@@ -220,7 +220,11 @@ def update_payment_purchasing(id):
 @login_required
 def remove_payment_purchasings(id):
 
-    payment = db.session.query(Payments).filter(Payments.id == id).first()
+    payment = (
+        Payments.query()
+        .filter(Payments.id == id, Payments.company_id.isnot(None), Payments.company_id.isnot(None))
+        .first()
+    )
 
     if not payment:
         flash("Le paiement n'exist pas !!!", category="warning")
@@ -244,13 +248,13 @@ def remove_payment_purchasings(id):
 @login_required
 def get_payment_costs_by_id(id):
 
-    payment = db.session.query(Payments).filter(Payments.id == id).first()
+    payment = Payments.query().filter(Payments.id == id, Payments.cost_id.isnot(None)).first()
 
     if not payment:
-        flash("Le paiement n'exist pas !!!")
-        return redirect(url_for(".index_purchasings"))
+        flash("Le paiement n'exist pas !!!", category="warning")
+        return redirect(url_for(".index_costs"))
 
-    cost_defs = db.session.query(CostsDef).all()
+    cost_defs = CostsDef.query().all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
@@ -265,7 +269,7 @@ def get_payment_costs_by_id(id):
 @login_required
 def update_payment_cost(id):
 
-    payment = db.session.query(Payments).filter(Payments.id == id).first()
+    payment = Payments.query().filter(Payments.id == id, Payments.cost_id.isnot(None)).first()
 
     if not payment:
         flash("Le paiement n'exist pas !!!", category="warning")
@@ -309,7 +313,7 @@ def update_payment_cost(id):
 @login_required
 def remove_payment_cost(id):
 
-    payment = db.session.query(Payments).filter(Payments.id == id).first()
+    payment = Payments.query().filter(Payments.id == id, Payments.cost_id.isnot(None)).first()
 
     if not payment:
         flash("Le paiement n'exist pas !!!", category="warning")

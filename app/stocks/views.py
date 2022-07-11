@@ -11,7 +11,7 @@ from ..models import Stocks
 @bp.route("/", methods=["GET"])
 @login_required
 def index():
-    stocks = db.session.query(Stocks).order_by(desc(Stocks.date)).all()
+    stocks = Stocks.query().order_by(desc(Stocks.date)).all()
 
     return render_template(
         "/stocks/index.html",
@@ -39,7 +39,7 @@ def add_stocks():
     except SQLAlchemyError as e:
         print(e)
         db.session.rollback()
-        flash("db error", category="error")
+        flash("db error", category="danger")
 
     else:
         flash("Stock ajouter", category="success")
@@ -51,7 +51,7 @@ def add_stocks():
 @login_required
 def get_stocks_by_id(id):
 
-    stock = db.session.query(Stocks).filter(Stocks.id == id).first()
+    stock = Stocks.query().filter(Stocks.id == id).first()
 
     if not stock:
         flash("Stock n'exist pas !!!", category="warning")
@@ -67,10 +67,10 @@ def get_stocks_by_id(id):
 @login_required
 def update_stocks(id):
 
-    stock = db.session.query(Stocks).filter(Stocks.id == id).first()
+    stock = Stocks.query().filter(Stocks.id == id).first()
 
     if not stock:
-        flash("Stock n'exist pas !!!")
+        flash("Stock n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
 
     date = request.form.get("date")
@@ -88,7 +88,7 @@ def update_stocks(id):
     except SQLAlchemyError as e:
         print(e)
         db.session.rollback()
-        flash("db error", category="error")
+        flash("db error", category="danger")
 
     else:
         flash("Stock modiffier", category="success")
@@ -100,7 +100,7 @@ def update_stocks(id):
 @login_required
 def remove_stocks(id):
 
-    stock = db.session.query(Stocks).filter(Stocks.id == id).first()
+    stock = Stocks.query().filter(Stocks.id == id).first()
 
     if not stock:
         flash("Stock n'exist pas !!!", category="warning")

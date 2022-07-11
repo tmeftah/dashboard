@@ -40,6 +40,7 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    TESTING = True
     DATABASE_URI = environ.get("DEV_DATABASE_URI") or "sqlite:///test.db"
 
 

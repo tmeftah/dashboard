@@ -7,6 +7,32 @@
 </span>
 <div class="sidebar" id="sidebar">
   <ul class="nav float-start" id="nav">
+    <li class="nav-item mt-4 ms-3 me-5">
+      <label for="" class="text-light fs-4">Société</label>
+      <form action="/change_tenant" method="post">
+        <select
+          name="tenant_id"
+          id="tenant_id"
+          class="form-select form-select-sm"
+          onchange="this.form.submit()"
+        >
+          {% for tenantmap in current_user.tenants %}
+          <!--  -->
+          {% if session["tenant"] == tenantmap.tenant.id %}
+          <option value="{{tenantmap.tenant.id}}" selected>
+            {{tenantmap.tenant.name}}
+          </option>
+          {% else %}
+          <option value="{{tenantmap.tenant.id}}">
+            {{tenantmap.tenant.name}}
+          </option>
+          {% endif %}
+          <!--  -->
+          {% endfor %}
+        </select>
+      </form>
+    </li>
+
     <li class="nav-item mt-4">
       <a
         href="/dashboards/dashboard"

@@ -19,7 +19,7 @@ def index():
     s_start_date = request.args.get("s_start_date", type=toDate, default="")
     s_end_date = request.args.get("s_end_date", type=toDate, default="")
 
-    query = db.session.query(CostsMapping)
+    query = CostsMapping.query()
 
     if s_costsdef > 0:
         query = query.filter(CostsMapping.cost_id == s_costsdef)
@@ -38,8 +38,7 @@ def index():
 
     costsmappings = query.order_by(desc(CostsMapping.date)).all()
 
-    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
-    costsdefs = db.session.query(CostsDef).all()
+    costsdefs = CostsDef.query().all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
@@ -100,13 +99,13 @@ def add_costs():
 @login_required
 def get_costs_by_id(id):
 
-    cost = db.session.query(CostsMapping).filter(CostsMapping.id == id).first()
+    cost = CostsMapping.query().filter(CostsMapping.id == id).first()
 
     if not cost:
-        flash("Charge n'exist pas !!!")
+        flash("Charge n'exist pas !!!", category="warning")
         return redirect(url_for(".index"))
 
-    costsdefs = db.session.query(CostsDef).all()
+    costsdefs = CostsDef.query().all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
@@ -121,7 +120,7 @@ def get_costs_by_id(id):
 @login_required
 def update_costs(id):
 
-    cost = db.session.query(CostsMapping).filter(CostsMapping.id == id).first()
+    cost = CostsMapping.query().filter(CostsMapping.id == id).first()
 
     if not cost:
         flash("La cahrge n'exist pas !!!", category="warning")
@@ -165,7 +164,7 @@ def update_costs(id):
 @login_required
 def remove_costs(id):
 
-    cost = db.session.query(CostsMapping).filter(CostsMapping.id == id).first()
+    cost = CostsMapping.query().filter(CostsMapping.id == id).first()
 
     if not cost:
         flash("La charge n'exist pas !!!", category="warning")

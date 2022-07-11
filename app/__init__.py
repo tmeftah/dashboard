@@ -11,11 +11,11 @@ login_manager = LoginManager()
 
 
 def init_data():
-    from .models import User, PaymentMethod, Role
+    from .models import User, PaymentMethod, Role, Tenants
 
     admin_exist = db.session.query(User).filter(User.email == "user1@test.com").first()
     if not admin_exist:
-
+        Tenants.init_data()
         PaymentMethod.init_data()
         Role.init_data()
         User.init_data()
@@ -98,11 +98,11 @@ def create_app(config_name):
     def common_exception(e):
         return render_template(f"/errors/{e.code}.html", next_url=request.path)
 
-    @app.errorhandler(exceptions.HTTPException)
-    @app.errorhandler(Exception)
-    def handle_exception(e):
-        db.session.rollback()
-        return render_template("/errors/500.html")
+    # @app.errorhandler(exceptions.HTTPException)
+    # @app.errorhandler(Exception)
+    # def handle_exception(e):
+    #     db.session.rollback()
+    #     return render_template("/errors/500.html")
 
     # *****************************************************************************************************
 

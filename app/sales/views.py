@@ -20,7 +20,7 @@ def index():
     s_start_date = request.args.get("s_start_date", type=toDate, default="")
     s_end_date = request.args.get("s_end_date", type=toDate, default="")
 
-    query = db.session.query(Sales)
+    query = Sales.query()
 
     if s_company > 0:
         query = query.filter(Sales.company_id == s_company)
@@ -39,7 +39,7 @@ def index():
 
     sales = query.order_by(desc(Sales.date)).all()
 
-    companies = db.session.query(Companies).filter_by(customer=True).all()
+    companies = Companies.query().filter_by(customer=True).all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
@@ -100,14 +100,14 @@ def add_sales():
 @login_required
 def get_sale_by_id(id):
 
-    sale = db.session.query(Sales).filter(Sales.id == id).first()
+    sale = Sales.query().filter(Sales.id == id).first()
 
     if not sale:
         flash("Chiffre d'affaire n'exist pas !!!")
         return redirect(url_for(".index"))
 
-    companies = db.session.query(Companies).filter_by(customer=True).all()
-    salescategories = db.session.query(SalesCategories).all()
+    companies = Companies.query().filter_by(customer=True).all()
+    salescategories = SalesCategories.query().all()
     paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     return render_template(
@@ -123,7 +123,7 @@ def get_sale_by_id(id):
 @login_required
 def update_sales(id):
 
-    sale = db.session.query(Sales).filter(Sales.id == id).first()
+    sale = Sales.query().filter(Sales.id == id).first()
 
     if not sale:
         flash("Chiffre d'affaire n'exist pas !!!", category="warning")
@@ -167,7 +167,7 @@ def update_sales(id):
 @login_required
 def remove_sales(id):
 
-    sale = db.session.query(Sales).filter(Sales.id == id).first()
+    sale = Sales.query().filter(Sales.id == id).first()
 
     if not sale:
         flash("Chiffre d'affaire n'exist pas !!!", category="warning")

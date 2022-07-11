@@ -10,7 +10,7 @@ from ..models import Companies
 @bp.route("/", methods=["GET"])
 @login_required
 def index():
-    companies = db.session.query(Companies).all()
+    companies = Companies.query().all()
     return render_template("companies/index.html", companies=companies)
 
 
@@ -23,7 +23,7 @@ def add_companies():
     company_type = request.form.get("company_type", type=int)
     phone = request.form.get("phone")
 
-    company = db.session.query(Companies).filter(Companies.name == name).first()
+    company = Companies.query().filter(Companies.name == name).first()
 
     if company:
         flash("Le Fournissuer/Client exist deja. Le nom doit être unique!!!", category="warning")
@@ -68,7 +68,7 @@ def add_companies():
 @login_required
 def get_sale_by_id(id):
 
-    company = db.session.query(Companies).filter(Companies.id == id).first()
+    company = Companies.query().filter(Companies.id == id).first()
 
     if not company:
         flash("Le Fournissuer/Client n'exist pas !!!")
@@ -81,7 +81,7 @@ def get_sale_by_id(id):
 @login_required
 def update_companies(id):
 
-    company = db.session.query(Companies).filter(Companies.id == id).first()
+    company = Companies.query().filter(Companies.id == id).first()
 
     if not company:
         flash("Le Fournissuer/Client n'exist pas !!!", category="warning")
@@ -129,7 +129,7 @@ def update_companies(id):
 @login_required
 def remove_companies(id):
 
-    company = db.session.query(Companies).filter(Companies.id == id).first()
+    company = Companies.query().filter(Companies.id == id).first()
 
     if not company:
         flash("Le Fournissuer/Client n'exist pas !!!", category="warning")

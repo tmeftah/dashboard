@@ -1,6 +1,6 @@
-from flask import render_template, request
+from flask import render_template, request, session
 
-from flask_login import login_required
+from flask_login import login_required, current_user
 from sqlalchemy import desc
 from . import dash
 from .. import db
@@ -12,7 +12,7 @@ from ..utilities.utils import *
 @login_required
 def dashboard():
 
-    companies = db.session.query(Companies).all()
+    companies = Companies.query().all()
 
     return render_template(
         "dashboard/dashboard.html",
@@ -36,7 +36,7 @@ def dashboard():
 @dash.route("/exploit")
 @login_required
 def exploit():
-    salesCategories = db.session.query(SalesCategories).all()
+    salesCategories = SalesCategories.query().all()
 
     return render_template(
         "dashboard/exploit.html",
@@ -76,7 +76,7 @@ def tresor():
         day = first_day + datetime.timedelta(days=daynumber)
         day_befor = first_day + datetime.timedelta(days=daynumber - 1)
 
-        query = db.session.query(func.coalesce(func.sum(Reconciliations.amount), 0))
+        query = Reconciliations.query_sum()
         query = query.filter(Reconciliations.date == day)
 
         init_sold.append(get_banque_on_date(end=day_befor))
@@ -100,13 +100,13 @@ def tresor():
     paymentmethods = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
 
     encaiss = (
-        db.session.query(Reconciliations)
+        Reconciliations.query()
         .filter(Reconciliations.cashing == True)
         .order_by(desc(Reconciliations.date))
         .all()
     )
     decaiss = (
-        db.session.query(Reconciliations)
+        Reconciliations.query()
         .filter(Reconciliations.cashing == False)
         .order_by(desc(Reconciliations.date))
         .all()
