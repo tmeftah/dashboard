@@ -292,7 +292,12 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action="/sales" method="post" enctype="multipart/form-data">
+      <form
+        action="/sales"
+        method="post"
+        enctype="multipart/form-data"
+        onsubmit="formsubmit.disabled = true; return true;"
+      >
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
             Ajouter un nouveau Chiffre d'affaire
@@ -389,7 +394,9 @@
           >
             Fermer
           </button>
-          <button type="submit" class="btn btn-primary">Sauvegarder</button>
+          <button name="formsubmit" type="submit" class="btn btn-primary">
+            Sauvegarder
+          </button>
         </div>
       </form>
     </div>

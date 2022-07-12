@@ -266,7 +266,11 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action="/companies" method="post">
+      <form
+        action="/companies"
+        method="post"
+        onsubmit="formsubmit.disabled = true; return true;"
+      >
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
             Ajouter un nouveau Tiers
@@ -339,7 +343,9 @@
           >
             Fermer
           </button>
-          <button type="submit" class="btn btn-primary">Sauvegarder</button>
+          <button name="formsubmit" type="submit" class="btn btn-primary">
+            Sauvegarder
+          </button>
         </div>
       </form>
     </div>

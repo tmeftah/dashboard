@@ -405,7 +405,11 @@
 >
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
-      <form action="/reconciliations" method="post">
+      <form
+        action="/reconciliations"
+        method="post"
+        onsubmit="formsubmit.disabled = true; return true;"
+      >
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
             Ajouter un nouveau Rapprochement
@@ -597,7 +601,9 @@
           >
             Fermer
           </button>
-          <button type="submit" class="btn btn-primary">Sauvegarder</button>
+          <button name="formsubmit" type="submit" class="btn btn-primary">
+            Sauvegarder
+          </button>
         </div>
       </form>
     </div>

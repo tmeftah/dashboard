@@ -2,7 +2,7 @@
 
 <div class="card">
   <div class="card-header">Modiffier le Client/Fournisseur</div>
-  <form action="/companies/{{company.id}}" method="post">
+  <form action="/companies/{{company.id}}" method="post" onsubmit="formsubmit.disabled = true; return true;">
     <div class="card-body">
       <div class="mb-3">
         <div class="row">
@@ -63,7 +63,8 @@
 
       <div class="text-center mb-2">
         <a class="btn btn-secondary" href="/companies">Fermer</a>
-        <button type="submit" class="btn btn-primary">Sauvegarder</button>
+        <button name="formsubmit" type="submit" class="btn btn-primary"> Sauvegarder </button>
+         
       </div>
     </div>
   </form>

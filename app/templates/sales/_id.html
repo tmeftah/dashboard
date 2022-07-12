@@ -2,7 +2,12 @@
 
 <div class="card">
   <div class="card-header">Modiffier le chiffre d'affaire</div>
-  <form action="/sales/{{sale.id}}" method="post" enctype="multipart/form-data">
+  <form
+    action="/sales/{{sale.id}}"
+    method="post"
+    enctype="multipart/form-data"
+    onsubmit="formsubmit.disabled = true; return true;"
+  >
     <div class="card-body">
       <div class="mb-3">
         <div class="row">
@@ -102,7 +107,9 @@
 
       <div class="text-center mb-2">
         <a class="btn btn-secondary" href="/sales">Fermer</a>
-        <button type="submit" class="btn btn-primary">Sauvegarder</button>
+        <button name="formsubmit" type="submit" class="btn btn-primary">
+          Sauvegarder
+        </button>
       </div>
     </div>
   </form>

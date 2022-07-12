@@ -323,7 +323,12 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action="/costs" method="post" enctype="multipart/form-data">
+      <form
+        action="/costs"
+        method="post"
+        enctype="multipart/form-data"
+        onsubmit="formsubmit.disabled = true; return true;"
+      >
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
             Ajouter une nouvelle Charge
@@ -421,7 +426,9 @@
           >
             Fermer
           </button>
-          <button type="submit" class="btn btn-primary">Sauvegarder</button>
+          <button name="formsubmit" type="submit" class="btn btn-primary">
+            Sauvegarder
+          </button>
         </div>
       </form>
     </div>
@@ -438,7 +445,11 @@
 >
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action="/costs/costs_type" method="post">
+      <form
+        action="/costs/costs_type"
+        method="post"
+        onsubmit="formsubmit.disabled = true; return true;"
+      >
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">
             Ajouter un nouveau type de Charge
@@ -484,7 +495,9 @@
           >
             Fermer
           </button>
-          <button type="submit" class="btn btn-primary">Sauvegarder</button>
+          <button name="formsubmit" type="submit" class="btn btn-primary">
+            Sauvegarder
+          </button>
         </div>
       </form>
     </div>
