@@ -8,8 +8,9 @@
 <div class="sidebar" id="sidebar">
   <ul class="nav float-start" id="nav">
     <li class="nav-item mt-4 ms-3 me-5">
-      <label for="" class="text-light fs-4">Société</label>
-      <form action="/change_tenant" method="post">
+      <small for="" class="text-light fs-6">Société</small>
+      {% if current_user.tenants | count > 1 %}
+      <form action="/change_tenant" method="post" class="mt-1">
         <select
           name="tenant_id"
           id="tenant_id"
@@ -31,8 +32,15 @@
           {% endfor %}
         </select>
       </form>
-    </li>
+      {% else %}
 
+      <h3 class="text-light text-uppercase">
+        {{current_user.tenants[0].tenant.name}}
+      </h3>
+
+      {% endif %}
+    </li>
+    <span class="separator"></span>
     <li class="nav-item mt-4">
       <a
         href="/dashboards/dashboard"
