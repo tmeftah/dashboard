@@ -3,7 +3,16 @@ from sqlalchemy.sql import func
 from sqlalchemy import extract
 
 from .. import db
-from ..models import Sales, Recovers, CostsMapping, Purchasing, Reconciliations, Stocks, CostsDef
+from ..models import (
+    Payments,
+    Sales,
+    Recovers,
+    CostsMapping,
+    Purchasing,
+    Reconciliations,
+    Stocks,
+    CostsDef,
+)
 
 
 def get_sum_sales(company_id=0, pay_methode_id=0):
@@ -69,6 +78,7 @@ def get_sold_clients(company=0):
     return round(sum_credits - sum_recovers - sum_reconciliations, 3)
 
 
+# TODO: Fix erro on Ticket resto
 def get_sold_portefeuille(company=0, pay_methode=0):
     # le raprochement doit etre pris en compte
     sum_sales = get_sum_sales(company, pay_methode)
@@ -172,35 +182,83 @@ def get_purchasing(company=0, pay_methode=0):
     return round(sum_purchasing, 3)
 
 
+def get_payments_per_company(company=0, pay_methode=0):
+    query = Payments.query_sum().filter(Payments.company_id.isnot(None))
+
+    if company:
+        query = query.filter(Payments.company_id == company)
+
+    if pay_methode:
+        query = query.filter(Payments.paymentmethod_id == pay_methode)
+
+    sum_payments = query.scalar()
+
+    return round(sum_payments, 3)
+
+
+def get_payments_per_cost(cost=0, pay_methode=0):
+    query = Payments.query_sum().filter(Payments.cost_id.isnot(None))
+
+    if cost:
+        query = query.filter(Payments.cost_id == cost)
+
+    if pay_methode:
+        query = query.filter(Payments.paymentmethod_id == pay_methode)
+
+    sum_payments = query.scalar()
+
+    return round(sum_payments, 3)
+
+
 def get_liabilites_per_company(company=0, pay_methode=0):
 
     sum_purchasing = get_purchasing(company=company, pay_methode=pay_methode)
+
+    # TODO: add payment
+    sum_payments = get_payments_per_company(company=company, pay_methode=pay_methode)
 
     sum_decaissements = get_sum_reconciliations(
         company_id=company, pay_methode_id=pay_methode, cashing=False
     )
 
-    return round(sum_purchasing - sum_decaissements, 3)
+    return round(sum_purchasing + sum_payments - sum_decaissements, 3)
 
 
 def get_liabilites_per_cost(cost=0, pay_methode=0):
 
     sum_costs = get_costs(cost == cost, pay_methode=pay_methode)
 
+    # TODO: add payment
+    sum_payments = get_payments_per_cost(cost=cost, pay_methode=pay_methode)
+
     sum_decaissements = get_sum_reconciliations_costs(
         cost_id=cost, pay_methode_id=pay_methode, cashing=False
     )
 
-    return round(sum_costs - sum_decaissements, 3)
+    return round(sum_costs + sum_payments - sum_decaissements, 3)
 
 
-def get_debt(company=0):
+def get_debt_per_company(company=0):
 
-    sum_purchasing = get_purchasing(company_id=company, pay_methode=4)
-    sum_cost = get_costs(pay_methode=4)
+    sum_purchasing = get_purchasing(company=company, pay_methode=4)
+    sum_payments = get_payments_per_company(company=company)
 
-    sum_decaissements = get_sum_reconciliations(company_id=company, pay_methode_id=7, cashing=False)
-    return round(sum_purchasing + sum_cost - sum_decaissements, 2)
+    # sum_decaissements = get_sum_reconciliations(company_id=company, pay_methode_id=7, cashing=False)
+    return round(sum_purchasing - sum_payments, 3)
+
+
+def get_debt_per_cost(cost=0):
+
+    sum_costs = get_costs(cost=cost, pay_methode=4)
+    sum_payments = get_payments_per_cost(cost=cost)
+
+    # sum_decaissements = get_sum_reconciliations(company_id=company, pay_methode_id=7, cashing=False)
+    return round(sum_costs - sum_payments, 3)
+
+
+def get_debt():
+    print(get_purchasing(pay_methode=4), get_payments_per_company(), get_debt_per_company())
+    return round(get_debt_per_company() + get_debt_per_cost(), 3)
 
 
 def get_all_liabilities():  # tout les engagements/dettes
