@@ -41,7 +41,7 @@ def index_purchasings():
 
     suppliers = Companies.query().filter_by(supplier=True).all()
 
-    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4, 7])).all()
 
     return render_template(
         "/payments/index.html",

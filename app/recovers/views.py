@@ -42,7 +42,7 @@ def index():
 
     companies = Companies.query().filter_by(customer=True).all()
 
-    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([7])).all()
+    paymentmethod = db.session.query(PaymentMethod).filter(PaymentMethod.id.notin_([4, 7])).all()
 
     return render_template(
         "/recovers/index.html",
