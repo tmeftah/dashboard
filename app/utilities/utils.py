@@ -78,6 +78,32 @@ def get_sold_clients(company=0):
     return round(sum_credits - sum_recovers - sum_reconciliations, 3)
 
 
+def get_ticket():
+
+    sum_credits = get_sum_sales(pay_methode_id=6)  # ticket resto
+    sum_recovers = get_sum_recovers(pay_methode_id=6)  # all recovers
+    sum_purchasing = get_purchasing(pay_methode=6)  # all purchasings
+    sum_costs = get_costs(pay_methode=6)
+    sum_payment_companies = get_payments_per_company(pay_methode=6)
+    get_payment_costs = get_payments_per_cost(pay_methode=6)
+    sum_reconciliations_cashing = get_sum_reconciliations(cashing=True, pay_methode_id=6)
+    sum_reconciliations_nocashing = get_sum_reconciliations(cashing=False, pay_methode_id=6)
+
+    return round(
+        (
+            sum_credits
+            + sum_recovers
+            - sum_purchasing
+            - sum_costs
+            - sum_payment_companies
+            - get_payment_costs
+            - sum_reconciliations_cashing
+            - sum_reconciliations_nocashing
+        ),
+        3,
+    )
+
+
 # TODO: Fix erro on Ticket resto
 def get_sold_portefeuille(company=0, pay_methode=0):
     # le raprochement doit etre pris en compte
@@ -344,19 +370,24 @@ def get_sales_on_date(start=None, end=None, cum=0, today=0):
     return round(query.scalar(), 3)
 
 
-def get_stock_on_date(initial=0):
+def get_stock_on_date(initial=0, cum=0, today=0):
+
+    query = Stocks.query_sum()
+
+    if cum:
+        start = datetime.datetime.today().replace(day=1).date()  # first day of the  month
+        query = query.filter(Stocks.date <= start)
+    else:
+        if today:
+            start = datetime.date.today()
+            query = query.filter(Purchasing.date == start)
 
     today = datetime.date.today()
     if initial:
         today = today - datetime.timedelta(days=1)
 
-    res = (
-        Stocks.query_sum()
-        .filter(Stocks.date <= today)
-        .order_by(Stocks.date.desc())
-        .group_by(Stocks.date)
-        .all()
-    )
+    res = query.order_by(Stocks.date.desc()).group_by(Stocks.date).all()
+
     if len(res) > 0:
         return round(res[0][0], 3)
     else:

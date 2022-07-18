@@ -18,6 +18,7 @@ def dashboard():
         "dashboard/dashboard.html",
         get_sold_clients=get_sold_clients,
         get_sold_portefeuille=get_sold_portefeuille,
+        get_ticket=get_ticket,
         get_impayees=get_impayees,
         get_banque=get_banque,
         get_caisse=get_caisse,
